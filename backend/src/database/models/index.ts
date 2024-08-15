@@ -1,39 +1,27 @@
-'use strict';
+"use strict";
 
-import fs from 'fs'
-import path from 'path';
+import fs from "fs";
+import path from "path";
 import { DataTypes, Sequelize } from "sequelize";
-const process = require('process');
+import { Course, initCourseModel } from "./course";
+import process from "process";
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.ts')[env];
-const db: any = {};
+const env = process.env.NODE_ENV || "development";
+import config from "../config/config";
 
-let sequelize: Sequelize = 
-  new Sequelize(config.database, config.username, config.password, config);
+let sequelize: Sequelize = new Sequelize(
+  config.database!,
+  config.username!,
+  config.password!,
+  { host: config.host, dialect: "mysql" }
+);
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
-  });
+initCourseModel(sequelize);
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+const db = {
+  sequelize: sequelize,
+  Sequelize: Sequelize,
+  course: Course,
+};
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-export default db
+export default db;

@@ -1,27 +1,45 @@
-"use strict";
+import { DataTypes, Optional, Sequelize, Model, ModelStatic } from "sequelize";
 
-import { DataTypes, Sequelize } from "sequelize";
+interface CourseAttributes {
+  id: number;
+  name: string;
+  // other attributes
+}
 
-const { Model } = require("sequelize");
-module.exports = (sequelize: Sequelize) => {
-  class Course extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models: any) {
-      // define association here
-    }
+export interface CourseCreationAttributes extends Optional<CourseAttributes, 'id'> {}
+
+export class Course extends Model<CourseAttributes, CourseCreationAttributes> 
+  implements CourseAttributes {
+  public id!: number;
+  public name!: string;
+
+  // Add any associations if needed
+  static associate(models: any) {
+    // Define associations here
   }
+}
+
+export const initCourseModel = (sequelize: Sequelize) => {
+  console.log('Initializing Course model');
+
   Course.init(
     {
-      name: DataTypes.STRING,
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      // Define other attributes here
     },
     {
       sequelize,
       modelName: "Course",
     }
   );
+
   return Course;
 };

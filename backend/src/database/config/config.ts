@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-module.exports = {
-  development: {
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    database: process.env.DATABASE_NAME,
-    host: process.env.HOST,
-    dialect: "mysql",
-  },
+const config = {
+  username: process.env.DB_USER,
+  password: process.env.DB_PSW,
+  database: process.env.DATABASE_NAME,
+  host: process.env.HOST,
+  dialect: "mysql",
 };
+
+export default config;

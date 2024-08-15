@@ -1,23 +1,53 @@
 "use strict";
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 
-module.exports = (sequelize: Sequelize) => {
-  class Student extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models: any) {
-      // define association here
-    }
+interface StudentAttributes {
+  id: number;
+  name: string;
+  age: number;
+  class: string;
+}
+
+export interface StudentCreationAttributes
+  extends Optional<StudentAttributes, "id"> {}
+
+export class Student
+  extends Model<StudentAttributes, StudentCreationAttributes>
+  implements StudentAttributes
+{
+  public id!: number;
+  public name!: string;
+  public age!: number;
+  public class: string;
+  static associate(models: any) {
+    // define association here
   }
+}
+
+export const initStudentModel = (sequelize: Sequelize) => {
   Student.init(
     {
-      name: DataTypes.STRING,
-      age: DataTypes.INTEGER,
-      class: DataTypes.STRING,
-      // courses: DataTypes.STRING
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      age: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      class: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      // courses: {
+      //   type: DataTypes.STRING,
+      //   allowNull: true,
+      // }
     },
     {
       sequelize,

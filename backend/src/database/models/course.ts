@@ -3,7 +3,6 @@ import { DataTypes, Optional, Sequelize, Model, ModelStatic } from "sequelize";
 interface CourseAttributes {
   id: number;
   name: string;
-  // other attributes
 }
 
 export interface CourseCreationAttributes extends Optional<CourseAttributes, 'id'> {}
@@ -20,8 +19,6 @@ export class Course extends Model<CourseAttributes, CourseCreationAttributes>
 }
 
 export const initCourseModel = (sequelize: Sequelize) => {
-  console.log('Initializing Course model');
-
   Course.init(
     {
       id: {

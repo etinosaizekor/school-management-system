@@ -8,6 +8,8 @@ import process from "process";
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
 import config from "../config/config";
+import { Class, initClassModel } from "./class";
+import { Student, initStudentModel } from "./student";
 
 let sequelize: Sequelize = new Sequelize(
   config.database!,
@@ -17,11 +19,15 @@ let sequelize: Sequelize = new Sequelize(
 );
 
 initCourseModel(sequelize);
+initClassModel(sequelize);
+initStudentModel(sequelize);
 
 const db = {
   sequelize: sequelize,
   Sequelize: Sequelize,
   course: Course,
+  class: Class,
+  student: Student,
 };
 
 export default db;

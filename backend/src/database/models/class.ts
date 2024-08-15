@@ -1,17 +1,23 @@
 "use strict";
+import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 
-import { DataTypes, Model, Sequelize } from "sequelize";
-export const ClassModel = (sequelize: Sequelize) => {
-  class Class extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models: any) {
-      // define association here
-    }
+interface ClassAttributes {
+  id: number;
+  name: string;
+}
+
+export interface ClassCreationAttributes
+  extends Optional<ClassAttributes, "id"> {}
+
+export class Class extends Model<ClassCreationAttributes, ClassCreationAttributes> {
+  public id!: number;
+  public name!: string;
+  static associate(models: any) {
+    // define association here
   }
+}
+
+export const initClassModel = (sequelize: Sequelize) => {
   Class.init(
     {
       name: DataTypes.STRING,

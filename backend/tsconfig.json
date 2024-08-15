@@ -1,13 +1,29 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "outDir": "./dist",
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true
-    },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
-  }
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": "./src",
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "strict": true,
+    "pretty": true,
+    "target": "es6",
+    // "typeRoots": ["./src/typings", "../../node_modules/@types"],
+    "outDir": "build"
+    
+  },
+  "include": ["./**/*.ts", "src/database/config/config.tsx", ".sequelizerc"],
+  "exclude": ["node_modules", "build", "dist"]
+}

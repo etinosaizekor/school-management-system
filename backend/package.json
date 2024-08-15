@@ -5,15 +5,15 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "nodemon --exec npx tsx src/app.ts",
-    "migrate": "ts-node -r tsconfig-paths/register ./node_modules/.bin/sequelize-cli db:migrate",
-    "seed": "ts-node -r tsconfig-paths/register ./node_modules/.bin/sequelize-cli db:seed:all"
+    "start": "npx nodemon --exec ts-node ./src/app.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "http-status": "^1.7.4",
     "mysql2": "^3.11.0",
     "nodemon": "^3.1.4",
     "sequelize": "^6.37.3",

@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-import 'ts-node/register'
 
 module.exports = {
   development: {

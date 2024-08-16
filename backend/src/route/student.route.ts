@@ -6,15 +6,16 @@ import {
     deleteStudent,
   } from "../controllers/student.controller";
   import express from "express";
+import { validate } from "../middleware/validate";
+import { createStudentSchema, updateStudentSchema } from "../validations/student.validation";
   
   const router = express.Router();
   
-  router.post("/student.controllers", createStudent);
-  router.get("/student.controllers", getStudents);
-  
-  router.get("/student.controllers/:id", getStudentById);
-  router.patch("/student.controllers", updateStudent);
-  router.delete("/student.controllers", deleteStudent);
+  router.post("/students", validate(createStudentSchema), createStudent);
+  router.get("/students", getStudents);
+  router.get("/students/:id", getStudentById);
+  router.patch("/students", validate(updateStudentSchema), updateStudent);
+  router.delete("/students", deleteStudent);
   
   export default router;
   

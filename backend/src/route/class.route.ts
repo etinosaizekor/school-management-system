@@ -6,14 +6,16 @@ import {
   deleteClass,
 } from "../controllers/class.controller";
 import express from "express";
+import { validate } from "../middleware/validate";
+import { classSchema } from "../validations/class.validation";
 
 const router = express.Router();
 
-router.post("/class.controllers", createClass);
-router.get("/class.controllers", getClasses);
+router.post("/classes", validate(classSchema), createClass);
+router.get("/classes", getClasses);
 
-router.get("/class.controllers/:id", getClassById);
-router.patch("/class.controllers", updateClass);
-router.delete("/class.controllers", deleteClass);
+router.get("/classes/:id", getClassById);
+router.patch("/classes", validate(classSchema), updateClass);
+router.delete("/classes", deleteClass);
 
 export default router;

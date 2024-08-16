@@ -6,9 +6,11 @@ export default function Layout() {
   return (
     <div className="flex h-screen bg-red-500">
       <Sidebar />
-      <section className="bg-orange-400 h-screen w-full">
+      <section className="bg-gray-100 h-screen w-full">
         <Appbar />
-        <Outlet/>
+        <main className="h-full m-6">
+          <Outlet />
+        </main>
       </section>
     </div>
   );

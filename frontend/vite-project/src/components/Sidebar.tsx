@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   return (
-    <aside className="h-screen bg-sky-950 w-40 mt">
+    <aside className="h-screen primary-color w-40 mt">
       <div className="mt-40">
-        <ul className="flex flex-col gap-5">
+        <ul className="flex flex-col gap-5 p-10 items-center text-slate-100">
           <li>
             <Link to="#">Classes</Link>
           </li>

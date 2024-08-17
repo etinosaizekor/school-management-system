@@ -1,14 +1,19 @@
-import { Route, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/Layout";
-import Classes from "./pages/Classes";
+import Classes, { fetchClasses } from "./pages/Classes";
 
-function App() {
-  return <Routes >
-    <Route element={<Layout/>}>
-    <Route path="/classes" element={<Classes/>}/>
 
-    </Route>
-  </Routes>;
-}
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      {
+        path: "/classes",
+        element: <Classes />,
+        loader: fetchClasses,
+      },
+    ],
+  },
+]);
 
-export default App;
+export default router;

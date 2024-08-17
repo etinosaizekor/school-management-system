@@ -11,9 +11,6 @@ import config from "../config/config";
 import { Class, initClassModel } from "./class";
 import { Student, initStudentModel } from "./student";
 
-console.log(config);
-
-
 let sequelize: Sequelize = new Sequelize(
   config.development.database!,
   config.development.username!,

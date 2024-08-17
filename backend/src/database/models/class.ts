@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 
 interface ClassAttributes {
   id: number;
-  name: string;
+  className: string;
 }
 
 export interface ClassCreationAttributes
@@ -11,20 +11,21 @@ export interface ClassCreationAttributes
 
 export class Class extends Model<ClassCreationAttributes, ClassCreationAttributes> {
   public id!: number;
-  public name!: string;
+  public className!: string;
   static associate(models: any) {
-    // define association here
+    this.hasMany(models.Student);
   }
 }
 
 export const initClassModel = (sequelize: Sequelize) => {
   Class.init(
     {
-      name: DataTypes.STRING,
+      className: DataTypes.STRING,
     },
     {
       sequelize,
       modelName: "Class",
+      timestamps: true
     }
   );
   return Class;

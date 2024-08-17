@@ -3,9 +3,9 @@ import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 
 interface StudentAttributes {
   id: number;
-  name: string;
-  age: number;
-  class: string;
+  firstName: string;
+  lastName: string,
+  // classId: number;
 }
 
 export interface StudentCreationAttributes
@@ -16,11 +16,11 @@ export class Student
   implements StudentAttributes
 {
   public id!: number;
-  public name!: string;
-  public age!: number;
-  public class: string;
+  public firstName!: string;
+  public lastName!: string;
+  // public classId: number;
   static associate(models: any) {
-    // define association here
+    this.belongsTo(models.Class);
   }
 }
 
@@ -32,26 +32,23 @@ export const initStudentModel = (sequelize: Sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      age: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      class: {
+      lastName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // courses: {
-      //   type: DataTypes.STRING,
-      //   allowNull: true,
-      // }
+      // classId: {
+      //   type: DataTypes.INTEGER,
+      //   allowNull: false,
+      // },
     },
     {
       sequelize,
       modelName: "Student",
+      timestamps: true
     }
   );
   return Student;

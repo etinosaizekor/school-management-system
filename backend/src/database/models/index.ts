@@ -11,16 +11,23 @@ import config from "../config/config";
 import { Class, initClassModel } from "./class";
 import { Student, initStudentModel } from "./student";
 
+console.log(config);
+
+
 let sequelize: Sequelize = new Sequelize(
-  config.database!,
-  config.username!,
-  config.password!,
-  { host: config.host, dialect: "mysql" }
+  config.development.database!,
+  config.development.username!,
+  config.development.password!,
+  { host: config.development.host, dialect: "mysql", logging: false }
 );
 
 initCourseModel(sequelize);
 initClassModel(sequelize);
 initStudentModel(sequelize);
+
+Student.associate({Class})
+Class.associate({Student})
+
 
 const db = {
   sequelize: sequelize,

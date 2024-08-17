@@ -33,10 +33,12 @@ export class BaseService<T extends Model> {
     } = {}
   ): Promise<{
     items: T[];
-    totalPages: number;
-    currentPage: number;
-    totalItems: number;
-    limit: number;
+    pagination: {
+      totalPages: number;
+      currentPage: number;
+      totalItems: number;
+      limit: number;
+    };
   }> {
     const { page = 1, limit = 15 } = pagination;
 
@@ -54,10 +56,12 @@ export class BaseService<T extends Model> {
 
       return {
         items: results,
-        totalPages,
-        currentPage: page,
-        totalItems: totalDocumentCount,
-        limit,
+        pagination: {
+          totalPages,
+          currentPage: page,
+          totalItems: totalDocumentCount,
+          limit,
+        },
       };
     } catch (error) {
       throw error;

@@ -5,14 +5,19 @@ import { FindQueryResult } from "../sharedTypes";
 import db from "../db";
 
 interface CourseListCardProps {
+  id: string;
   courseName: string;
   numberOfStudent: number;
 }
 
-function CourseListCard({ courseName, numberOfStudent }: CourseListCardProps) {
+function CourseListCard({
+  id,
+  courseName,
+  numberOfStudent,
+}: CourseListCardProps) {
   return (
     <Paper w={300} h={130} p={10} className="border border-gray-400">
-      <Link to="#">
+      <Link to={`/courses/${id}`}>
         <div className="flex flex-col justify-center h-full gap-1">
           <h5 className="secondary-color">{courseName}</h5>
           <h6> {numberOfStudent} students</h6>
@@ -29,9 +34,10 @@ export default function CourseList() {
 
   return (
     <Grid grow>
-      {courses?.items?.map(({ courseName, students }, index) => (
+      {courses?.items?.map(({ id, courseName, students }, index) => (
         <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
           <CourseListCard
+            id={id}
             courseName={courseName}
             numberOfStudent={numberOfStudent + 1}
           />

@@ -16,6 +16,8 @@ export interface Course {
 export interface Student {
   firstName: string;
   lastName: string;
+  age: number, 
+  courses: Course[]
   class: Class;
 }
 

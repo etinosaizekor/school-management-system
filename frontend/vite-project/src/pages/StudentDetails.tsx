@@ -2,17 +2,17 @@ import { Button, Paper, Table } from "@mantine/core";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
 import db from "../db";
-import { Course } from "../sharedTypes";
+import { Student } from "../sharedTypes";
 
 
-export default function CourseDetails() {
-  const courseDetails = useLoaderData() as Course;
+export default function StudentDetails() {
+  const studentDetails = useLoaderData() as Student;
   
-  const {courseName, students} = courseDetails
+  const {firstName, lastName, age, courses} = studentDetails
 
   return (
     <div>
-      <h4>{courseName}</h4>
+      <h4>{firstName}</h4>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <span className="flex gap-6">
@@ -52,16 +52,16 @@ export default function CourseDetails() {
   );
 }
 
-export const fetchCourseDetails = async (id: string): Promise<Course | null> => {
+export const fetchStudentDetails = async (id: string): Promise<Student | null> => {
   const serverUrl = db.serverUrl;
   console.log("Server URL:", serverUrl);
   try {
-    const response = await axios.get(`${serverUrl}/courses/${id}`);
+    const response = await axios.get(`${serverUrl}/students/${id}`);
     console.log(response);
 
     return response.data;
   } catch (err) {
-    console.error("Error fetching course:", err);
+    console.error("Error fetching studentes:", err);
     return null
   }
 };

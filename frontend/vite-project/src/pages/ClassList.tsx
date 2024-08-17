@@ -2,6 +2,7 @@ import { Grid, Paper } from "@mantine/core";
 import axios from "axios";
 import { Link, useLoaderData } from "react-router-dom";
 import { IFindResult } from "../types";
+import db from "../db";
 
 // interface IStudent {
 //   name: string;
@@ -36,7 +37,7 @@ export default function Classes() {
 
   return (
     <Grid grow>
-      {classes.items.map(({ className, students }, index) => (
+      {classes?.items?.map(({ className, students }, index) => (
         <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
           <ClassListCard
             className={className}
@@ -48,16 +49,16 @@ export default function Classes() {
   );
 }
 
-export const fetchClasses = async (): Promise<IFindResult> => {
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
+export const fetchClasses = async () => {
+  const serverUrl = db.serverUrl;
   console.log("Server URL:", serverUrl);
   try {
-    const response = await axios.get(`${serverUrl}/classes`); // Hardcoded URL for testing
+    const response = await axios.get(`${serverUrl}/classes`);
     console.log(response);
 
     return response.data;
   } catch (err) {
     console.error("Error fetching classes:", err);
-    throw err;
+    return null
   }
 };

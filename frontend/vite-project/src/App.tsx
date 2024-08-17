@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
 import Classes, { fetchClasses } from "./pages/ClassList";
-import ClassDetails from "./pages/ClassDetails";
+import ClassDetails, { fetchClassDetails } from "./pages/ClassDetails";
 
 const router = createBrowserRouter([
   {
@@ -13,8 +13,9 @@ const router = createBrowserRouter([
         loader: fetchClasses,
       },
       {
-        path: "/classDetails",
+        path: "/classes/:classId",
         element: <ClassDetails />,
+        loader: async ({ params }) => fetchClassDetails(params.classId!),
       },
     ],
   },

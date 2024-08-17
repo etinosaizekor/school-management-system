@@ -6,7 +6,7 @@ export default function Sidebar() {
       <div className="mt-40">
         <ul className="flex flex-col gap-5 p-10 items-center text-slate-100">
           <li>
-            <Link to="#">Classes</Link>
+            <Link to="/classes">Classes</Link>
           </li>
           <li>
             <Link to="#">Courses</Link>

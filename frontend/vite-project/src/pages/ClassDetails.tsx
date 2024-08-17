@@ -1,10 +1,13 @@
 import { Button, Paper, Table } from "@mantine/core";
 import axios from "axios";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import db from "../db";
+import { Class } from "../sharedTypes";
+
 
 export default function ClassDetails() {
-  const classDetails = useLoaderData();
+  const classDetails = useLoaderData() as Class;
+  
   const {className, students} = classDetails
 
   return (
@@ -49,7 +52,7 @@ export default function ClassDetails() {
   );
 }
 
-export const fetchClassDetails = async (id: string) => {
+export const fetchClassDetails = async (id: string): Promise<Class | null> => {
   const serverUrl = db.serverUrl;
   console.log("Server URL:", serverUrl);
   try {

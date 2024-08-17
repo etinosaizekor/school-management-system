@@ -1,13 +1,8 @@
 import { Grid, Paper } from "@mantine/core";
 import axios from "axios";
 import { Link, useLoaderData } from "react-router-dom";
-import { IFindResult } from "../types";
+import { FindQueryResult } from "../sharedTypes";
 import db from "../db";
-
-// interface IStudent {
-//   name: string;
-//   lastName: string;
-// }
 
 interface ClassListCardProps {
   className: string;
@@ -31,7 +26,7 @@ function ClassListCard({
 }
 
 export default function Classes() {
-  const classes = useLoaderData() as IFindResult;
+  const classes = useLoaderData() as FindQueryResult;
   console.log(classes);
   let numberOfStudent = 1;
 

@@ -10,7 +10,7 @@ import router from "./App.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <MantineProvider>
-      <RouterProvider router={router} />
+      <RouterProvider router={router}/>
     </MantineProvider>
   </StrictMode>
 );

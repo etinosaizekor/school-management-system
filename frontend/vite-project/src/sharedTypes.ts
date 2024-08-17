@@ -10,6 +10,7 @@ export interface FindQueryResult {
 
 export interface Course {
   courseName: string
+  students: Student[]
 }
 
 export interface Student {

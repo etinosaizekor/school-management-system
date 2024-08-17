@@ -7,15 +7,13 @@ import db from "../db";
 interface ClassListCardProps {
   className: string;
   numberOfStudent: number;
+  id: string
 }
 
-function ClassListCard({
-  className,
-  numberOfStudent,
-}: ClassListCardProps) {
+function ClassListCard({ className, numberOfStudent, id }: ClassListCardProps) {
   return (
     <Paper w={300} h={130} p={10} className="border border-gray-400">
-      <Link to="#">
+      <Link to={`/classes/${id}`}>
         <div className="flex flex-col justify-center h-full gap-1">
           <h5 className="secondary-color">{className}</h5>
           <h6> {numberOfStudent} students</h6>
@@ -32,11 +30,12 @@ export default function Classes() {
 
   return (
     <Grid grow>
-      {classes?.items?.map(({ className, students }, index) => (
+      {classes?.items?.map(({ id, className, students }, index) => (
         <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
           <ClassListCard
             className={className}
             numberOfStudent={numberOfStudent + 1}
+            id={id}
           />
         </Grid.Col>
       ))}
@@ -54,6 +53,6 @@ export const fetchClasses = async () => {
     return response.data;
   } catch (err) {
     console.error("Error fetching classes:", err);
-    return null
+    return null;
   }
 };

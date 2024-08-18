@@ -52,7 +52,7 @@ class StudentService extends BaseService<Student> {
       include: [
         {
           model: Course,
-          attributes: ["id", "courseName"],
+          attributes: ["id", "courseName", "courseCode", "credit"],
           through: { attributes: [] },
         },
       ],

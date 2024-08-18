@@ -10,8 +10,8 @@ export interface ClassCreationAttributes
   extends Optional<ClassAttributes, "id"> {}
 
 export class Class extends Model<ClassCreationAttributes, ClassCreationAttributes> {
-  public id!: number;
-  public className!: string;
+  declare id: number;
+  declare className: string;
   static associate(models: any) {
     this.hasMany(models.Student);
   }

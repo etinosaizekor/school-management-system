@@ -1,6 +1,6 @@
 class ApiError extends Error {
-  public statusCode: number;
-  public isOperational: boolean;
+  declare statusCode: number;
+  declare isOperational: boolean;
 
   constructor(
     statusCode: number,
@@ -8,7 +8,6 @@ class ApiError extends Error {
     isOperational: boolean = true,
     stack: string = ""
   ) {
-    console.log("stack", stack);
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;

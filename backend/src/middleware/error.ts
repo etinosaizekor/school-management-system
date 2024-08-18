@@ -3,7 +3,7 @@ import ApiError from '../helper/ApiError';
 
 const env = process.env.NODE_ENV || 'development';
 
-export const errorConverter = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const errorFormatter = (err: any, req: Request, res: Response, next: NextFunction) => {
   let error = err;
   if (!(error instanceof ApiError)) {
     const statusCode = error.statusCode || 500;

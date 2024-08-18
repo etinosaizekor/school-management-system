@@ -9,8 +9,12 @@ export interface CourseCreationAttributes extends Optional<CourseAttributes, 'id
 
 export class Course extends Model<CourseAttributes, CourseCreationAttributes> 
   implements CourseAttributes {
-  public id!: number;
-  public courseName!: string;
+  declare id: number;
+  declare courseName: string;
+  static associate(models: any) {
+    this.belongsTo(models.Class);
+    this.belongsToMany(models.Student, {through: 'StudentCourses' as 'courses'})
+  }
 }
 
 export const initCourseModel = (sequelize: Sequelize) => {

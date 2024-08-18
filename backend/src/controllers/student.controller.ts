@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { studentService } from "../services/student.service";
-import asyncHandler from "express-async-handler";
+import asyncHandler from "../utils/asynHandler";
 
 export const createStudent = asyncHandler(
   async (req: Request, res: Response) => {
@@ -10,6 +10,18 @@ export const createStudent = asyncHandler(
     res.status(201).json(newStudent);
   }
 );
+
+export const addCourses = asyncHandler(async (req: Request, res: Response) => {
+  const courses = req.body;
+  const { studentId } = req.params;
+
+  console.log(studentId, courses);
+
+  const studentCourses = await studentService.addCourses(studentId, courses);
+  console.log(studentCourses);
+  
+  res.send(studentCourses);
+});
 
 export const getStudents = asyncHandler(async (req: Request, res: Response) => {
   const students = await studentService.find();

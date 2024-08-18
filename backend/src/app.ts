@@ -3,7 +3,7 @@ import routes from "./route";
 import dotenv from "dotenv";
 import ApiError from "./helper/ApiError";
 import httpStatus from "http-status";
-import { errorConverter, errorHandler } from "./middleware/error";
+import { errorFormatter, errorHandler } from "./middleware/error";
 import db from "./database/models";
 dotenv.config();
 import cors from "cors";
@@ -24,8 +24,11 @@ app.use(
 
 app.use("/api", routes);
 
-app.use(errorConverter);
+app.use((req: Request, res: Response, next: NextFunction) => {
+  next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
+});
 
+app.use(errorFormatter);
 app.use(errorHandler);
 
 const port: string | undefined = process.env.PORT;

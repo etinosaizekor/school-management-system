@@ -18,20 +18,21 @@ let sequelize: Sequelize = new Sequelize(
   { host: config.development.host, dialect: "mysql", logging: false }
 );
 
-initCourseModel(sequelize);
-initClassModel(sequelize);
-initStudentModel(sequelize);
+const courseModel = initCourseModel(sequelize);
+const classModel = initClassModel(sequelize);
+const studentModel = initStudentModel(sequelize);
 
-Student.associate({Class})
-Class.associate({Student})
+courseModel.associate({Class, Student})
+studentModel.associate({Class, Course})
+classModel.associate({Student})
 
 
 const db = {
   sequelize: sequelize,
   Sequelize: Sequelize,
-  course: Course,
-  class: Class,
-  student: Student,
+  course: courseModel,
+  class: classModel,
+  student: studentModel,
 };
 
 export default db;

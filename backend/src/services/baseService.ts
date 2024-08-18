@@ -1,4 +1,5 @@
 import { Model, FindOptions, ModelStatic, CreationAttributes } from "sequelize";
+import { PageOptions, PaginatedResult } from "../sharedTypes";
 
 export class BaseService<T extends Model> {
   protected model: ModelStatic<T>;
@@ -25,47 +26,30 @@ export class BaseService<T extends Model> {
 
   async find(
     criteria: Record<string, any> = {},
-    pagination: {
-      page?: number;
-      limit?: number;
-      searchColumns?: string[];
-      searchKeyword?: string;
-    } = {}
-  ): Promise<{
-    items: T[];
-    pagination: {
-      totalPages: number;
-      currentPage: number;
-      totalItems: number;
-      limit: number;
+    options: PageOptions = { page: 1, limit: 15 }
+  ): Promise<PaginatedResult | null> {
+    const { page , limit } = options;
+
+    const startIndex = (page - 1) * limit;
+
+    const results = await this.model.findAll({
+      where: criteria,
+      offset: startIndex,
+      limit: limit,
+    });
+
+    const totalDocumentCount = await this.model.count(criteria);
+    const totalPages = Math.ceil(totalDocumentCount / limit);
+
+    return {
+      items: results,
+      pagination: {
+        totalPages,
+        currentPage: page,
+        totalItems: totalDocumentCount,
+        limit,
+      },
     };
-  }> {
-    const { page = 1, limit = 15 } = pagination;
-
-    try {
-      const startIndex = (page - 1) * limit;
-
-      const results = await this.model.findAll({
-        where: criteria,
-        offset: startIndex,
-        limit: limit,
-      });
-
-      const totalDocumentCount = await this.model.count(criteria);
-      const totalPages = Math.ceil(totalDocumentCount / limit);
-
-      return {
-        items: results,
-        pagination: {
-          totalPages,
-          currentPage: page,
-          totalItems: totalDocumentCount,
-          limit,
-        },
-      };
-    } catch (error) {
-      throw error;
-    }
   }
 
   async findById(id: string): Promise<T | null> {

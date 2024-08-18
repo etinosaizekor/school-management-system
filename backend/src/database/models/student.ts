@@ -1,11 +1,24 @@
 "use strict";
-import { DataTypes, Model, Optional, Sequelize } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  HasManyAddAssociationsMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  Model,
+  Optional,
+  Sequelize,
+} from "sequelize";
+import { Course } from "./course";
 
 interface StudentAttributes {
   id: number;
   firstName: string;
-  lastName: string,
-  // classId: number;
+  lastName: string;
+  age: number;
+  classId?: string,
+  courses?: Course[]
 }
 
 export interface StudentCreationAttributes
@@ -15,12 +28,22 @@ export class Student
   extends Model<StudentAttributes, StudentCreationAttributes>
   implements StudentAttributes
 {
-  public id!: number;
-  public firstName!: string;
-  public lastName!: string;
-  // public classId: number;
+  declare id: number;
+  declare firstName: string;
+  declare lastName: string;
+  declare age: number;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+  declare addCourses: HasManyAddAssociationsMixin<Course, number>;
+  declare getCourses: HasManyGetAssociationsMixin<Course>;
+  declare countCourses: HasManyCountAssociationsMixin;
+  declare createCourse: HasManyCreateAssociationMixin<Course, "id">;
+
   static associate(models: any) {
     this.belongsTo(models.Class);
+    this.belongsToMany(models.Course, {
+      through: "StudentCourses" as "courses",
+    });
   }
 }
 
@@ -40,15 +63,12 @@ export const initStudentModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      // classId: {
-      //   type: DataTypes.INTEGER,
-      //   allowNull: false,
-      // },
+      age: DataTypes.INTEGER,
     },
     {
       sequelize,
       modelName: "Student",
-      timestamps: true
+      timestamps: true,
     }
   );
   return Student;

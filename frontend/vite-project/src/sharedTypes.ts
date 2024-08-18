@@ -9,15 +9,17 @@ export interface FindQueryResult {
 }
 
 export interface Course {
-  courseName: string
-  students: Student[]
+  courseName: string;
+  students: Student[];
+  courseCode: string,
+  credit: number
 }
 
 export interface Student {
   firstName: string;
   lastName: string;
-  age: number, 
-  courses: Course[]
+  age: number;
+  Courses: Course[];
   class: Class;
 }
 
@@ -25,3 +27,5 @@ export interface Class {
   className: string;
   students: Student;
 }
+
+

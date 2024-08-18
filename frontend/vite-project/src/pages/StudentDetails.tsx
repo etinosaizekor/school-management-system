@@ -1,8 +1,9 @@
-import { Button, Paper, Table } from "@mantine/core";
+import { Button, Paper, Table, Tooltip } from "@mantine/core";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
 import db from "../db";
 import { Student } from "../sharedTypes";
+import { CgRemove } from "react-icons/cg";
 
 function StudentDetail({ label, value }: { label: string; value: any }) {
   return (
@@ -18,22 +19,24 @@ function StudentDetail({ label, value }: { label: string; value: any }) {
 }
 
 export default function StudentDetails() {
-  const studentDetails = useLoaderData() as Student;
-
-  const { firstName, lastName, age, Courses } = studentDetails;
+  const studentDetails = useLoaderData() as Student | null;
 
   return (
     <div>
       <div className="w-60 mb-10">
-        <StudentDetail label="First name" value={firstName} />
-        <StudentDetail label="Last name" value={lastName} />
-        <StudentDetail label="Age" value={age} />
+        <StudentDetail label="First name" value={studentDetails?.firstName} />
+        <StudentDetail label="Last name" value={studentDetails?.lastName} />
+        <StudentDetail label="Age" value={studentDetails?.age} />
       </div>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
-        <span className="flex gap-6">
-          <h6>Number of courses enrolled: </h6>
-          <p> {Courses.length}</p>
+        <span className="flex gap-6 justify-between">
+          <>
+            <h6>Number of courses enrolled: </h6>
+            <p> {studentDetails?.Courses.length}</p>
+          </>
+
+          <Button>Add Course</Button>
         </span>
         {/* <Paper w="100%" mih={100}> */}
         <Table
@@ -52,16 +55,22 @@ export default function StudentDetails() {
               <Table.Th>Credit </Table.Th>
               <Table.Th>Action</Table.Th>
             </Table.Tr>
-            {Courses.map(({courseName, credit, courseCode}) => (
-              <Table.Tr>
-                <Table.Td>{courseCode}</Table.Td>
-                <Table.Td>{courseName}</Table.Td>
-                <Table.Td>{credit}</Table.Td>
-                <Table.Td>
-                  <Button color="#fc3f3f">Unenrol</Button>
-                </Table.Td>
-              </Table.Tr>
-            ))}
+            {studentDetails?.Courses.map(
+              ({ courseName, credit, courseCode }) => (
+                <Table.Tr>
+                  <Table.Td>{courseCode}</Table.Td>
+                  <Table.Td>{courseName}</Table.Td>
+                  <Table.Td>{credit}</Table.Td>
+                  <Table.Td>
+                    <Tooltip label="Unenrol" position="top" withArrow>
+                      <Button variant="outline" color="red" size="xs">
+                        <CgRemove fontSize={20} />
+                      </Button>
+                    </Tooltip>
+                  </Table.Td>
+                </Table.Tr>
+              )
+            )}
           </Table.Thead>
         </Table>
       </Paper>

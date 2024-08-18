@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer tailwind {
+  @tailwind base;
+}
 
 #root {
   width: 100%;
@@ -9,7 +12,6 @@
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
 }
 

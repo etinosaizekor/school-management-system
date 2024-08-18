@@ -9,6 +9,7 @@ export interface FindQueryResult {
 }
 
 export interface Course {
+  id: string,
   courseName: string;
   students: Student[];
   courseCode: string,

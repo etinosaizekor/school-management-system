@@ -37,12 +37,16 @@ class StudentService extends BaseService<Student> {
       where: {
         id: courseIds,
       },
+      raw: true,
     });
 
-    const studentCourseIds = courses.map((course) => course.id);
-    await student.addCourses(studentCourseIds);
+    console.log(courses);
 
-    const studentCourses = await student?.getCourses({ raw: true, });
+    const studentCourseIds = courses.map((course) => course.id);
+    const newlyAddedCourse = await student.addCourses(studentCourseIds);
+    console.log("Newly added", newlyAddedCourse);
+
+    const studentCourses = await student?.getCourses({ raw: true });
 
     return studentCourses;
   }

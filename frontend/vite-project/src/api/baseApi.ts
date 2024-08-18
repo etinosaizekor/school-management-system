@@ -4,4 +4,5 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_SERVER_URL }),
   endpoints: (builder) => ({}),
+  tagTypes: ['Student', 'Course', 'Class']
 });

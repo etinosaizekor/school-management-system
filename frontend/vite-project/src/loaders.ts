@@ -3,7 +3,6 @@ import { classApi } from "./api/classApi";
 import { courseApi } from "./api/courseApi";
 import { studentApi } from "./api/studentApi";
 
-// Loaders for fetching lists
 export const fetchClasses = async () => {
   const result = await store.dispatch(
     classApi.endpoints.getClasses.initiate()
@@ -25,7 +24,6 @@ export const fetchStudents = async () => {
   return result.data;
 };
 
-// Loaders for fetching details by ID
 export const fetchClassById = async (id: string) => {
   const result = await store.dispatch(
     classApi.endpoints.getClassById.initiate(id)

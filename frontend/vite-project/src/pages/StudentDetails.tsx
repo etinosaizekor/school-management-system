@@ -15,7 +15,6 @@ import { notifications } from "@mantine/notifications";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import {
   useUnenrollCoursesMutation,
-  useGetStudentQuery,
   useEnrollCoursesMutation,
 } from "../api/studentApi";
 import { useLazyGetCoursesQuery } from "../api/courseApi";
@@ -34,44 +33,48 @@ function StudentDetail({ label, value }: { label: string; value: any }) {
 }
 
 export default function StudentDetails() {
-  const studentDetails = useLoaderData() as Student | null;
+  const [studentDetails, setStudentDetails] = useState(
+    useLoaderData() as Student | null
+  );
   const [opened, { open, close }] = useDisclosure(false);
-  const [courses, setCourses] = useState<string[]>([]);
+  const [courseIds, setCourseIds] = useState<string[]>([]);
+  const [courses, setCourses] = useState(studentDetails?.Courses);
   const [courseOptions, setCourseOptions] = useState<
     { value: string; label: string }[]
   >([]);
-  const [enrollCourses, { isLoading: isEnrolling, isSuccess, isError }] =
+  const [enrollCourses, { isLoading: isEnrolling }] =
     useEnrollCoursesMutation();
+  const [unenrollCourse, { isLoading: isUnenrolling }] =
+    useUnenrollCoursesMutation();
   const [
     getCourses,
-    {
-      isLoading,
-      isSuccess: isGetCoursesSuccess,
-      isError: isGetCoursesError,
-      data: coursesData,
-    },
+    { isLoading, isSuccess: isGetCoursesSuccess, data: coursesData },
   ] = useLazyGetCoursesQuery();
+  const [courseToUnenroll, setCourseToUnenroll] = useState<number | null>(null);
+  const [
+    confirmUnenrollOpened,
+    { open: openConfirmUnenroll, close: closeConfirmUnenroll },
+  ] = useDisclosure(false);
 
   useEffect(() => {
     if (coursesData) {
       const allCourses = coursesData?.items || [];
-
       const enrolledCourseIds = studentDetails?.Courses.map((course) =>
         course.id.toString()
       );
 
       const availableCourses = allCourses.filter(
-        (course: any) => !enrolledCourseIds?.includes(course.id.toString())
+        (course) => !enrolledCourseIds?.includes(course.id.toString())
       );
 
-      const courseData = availableCourses.map((course: any) => ({
+      const courseData = availableCourses.map((course) => ({
         value: course.id.toString(),
         label: course.courseName,
       }));
 
       setCourseOptions(courseData);
     }
-  }, [isGetCoursesSuccess, coursesData]);
+  }, [isGetCoursesSuccess, coursesData, studentDetails?.Courses]);
 
   const handleOpen = () => {
     if (courseOptions.length === 0) {
@@ -80,14 +83,20 @@ export default function StudentDetails() {
     open();
   };
 
+  useEffect(() => {
+    console.log(courseIds);
+  }, [courseIds]);
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const courseText = courses.length === 1 ? "course" : "courses";
-    const courseIds = courses.map((courseId) => Number(courseId));
+    const courseText = courseIds.length === 1 ? "course" : "courses";
+    const ids = courseIds.map((courseId) => Number(courseId));
+    console.log("ids", ids);
 
-    enrollCourses({ studentId: studentDetails?.id || "", courseIds })
+    enrollCourses({ studentId: studentDetails?.id, courseIds: ids })
       .unwrap()
-      .then(() => {
+      .then((data) => {
+        setCourses(data);
         notifications.show({
           title: "Successful",
           message: `Student successfully enrolled in ${courseText}`,
@@ -95,7 +104,7 @@ export default function StudentDetails() {
           color: "teal",
           position: "top-right",
         });
-        setCourses([]);
+        setCourseIds([])
       })
       .catch((error) => {
         notifications.show({
@@ -109,6 +118,43 @@ export default function StudentDetails() {
       .finally(() => {
         close();
       });
+  };
+
+  const handleUnenroll = (courseId: number) => {
+    setCourseToUnenroll(courseId);
+    openConfirmUnenroll();
+  };
+
+  const confirmUnenroll = () => {
+    if (courseToUnenroll !== null) {
+      unenrollCourse({
+        studentId: studentDetails?.id,
+        courseId: courseToUnenroll,
+      })
+        .unwrap()
+        .then((data) => {
+          setCourses(data);
+          notifications.show({
+            title: "Successful",
+            message: "Course successfully unenrolled",
+            icon: <FaCheck />,
+            color: "teal",
+            position: "top-right",
+          });
+        })
+        .catch((error) => {
+          notifications.show({
+            title: "Failed to unenroll course",
+            message: error?.data?.message || "An error occurred",
+            icon: <FaTimes />,
+            color: "red",
+            position: "top-right",
+          });
+        })
+        .finally(() => {
+          closeConfirmUnenroll();
+        });
+    }
   };
 
   return (
@@ -143,50 +189,79 @@ export default function StudentDetails() {
               <Table.Th>Credit</Table.Th>
               <Table.Th>Action</Table.Th>
             </Table.Tr>
-            {studentDetails?.Courses.map(
-              ({ courseName, credit, courseCode }) => (
-                <Table.Tr key={courseCode}>
-                  <Table.Td>{courseCode}</Table.Td>
-                  <Table.Td>{courseName}</Table.Td>
-                  <Table.Td>{credit}</Table.Td>
-                  <Table.Td>
-                    <Tooltip label="Unenrol" position="top" withArrow>
-                      <Button variant="outline" color="red" size="xs">
-                        <CgRemove fontSize={20} />
-                      </Button>
-                    </Tooltip>
-                  </Table.Td>
-                </Table.Tr>
-              )
-            )}
           </Table.Thead>
+          <Table.Tbody>
+            {courses?.map(({ courseName, credit, courseCode, id }) => (
+              <Table.Tr key={courseCode}>
+                <Table.Td>{courseCode}</Table.Td>
+                <Table.Td>{courseName}</Table.Td>
+                <Table.Td>{credit}</Table.Td>
+                <Table.Td>
+                  <Tooltip label="Unenroll" position="top" withArrow>
+                    <Button
+                      variant="outline"
+                      color="red"
+                      size="xs"
+                      onClick={() => handleUnenroll(id)}
+                    >
+                      <CgRemove fontSize={20} />
+                    </Button>
+                  </Tooltip>
+                </Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
         </Table>
       </Paper>
+
       <Modal
         opened={opened}
         onClose={close}
-        title="Enrol Student to course"
+        title="Enroll Student to course"
         size="lg"
         padding={30}
       >
         <form onSubmit={handleSubmit}>
           <MultiSelect
             data={courseOptions}
-            value={courses}
+            value={courseIds}
             placeholder="Select courses"
             searchable
-            onChange={setCourses}
+            onChange={setCourseIds}
           />
           <Button
             type="submit"
             mt={10}
             radius={20}
             color="#15803d"
-            loading={isEnrolling} // Disable button and show loading state
+            loading={isEnrolling}
           >
             Submit
           </Button>
         </form>
+      </Modal>
+
+      <Modal
+        opened={confirmUnenrollOpened}
+        onClose={closeConfirmUnenroll}
+        title="Confirm Unenrollment"
+        size="sm"
+        padding={30}
+      >
+        <p>Are you sure you want to unenroll this course?</p>
+        <div className="flex justify-between gap-10 w-full">
+          <Button mt={10} onClick={closeConfirmUnenroll}>
+            Cancel
+          </Button>
+          <Button
+            mt={10}
+            color="red"
+            onClick={confirmUnenroll}
+            loading={isUnenrolling}
+          >
+            Confirm
+          </Button>
+        </div>
       </Modal>
     </div>
   );

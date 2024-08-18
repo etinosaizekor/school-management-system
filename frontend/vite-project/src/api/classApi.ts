@@ -5,9 +5,11 @@ export const classApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getClasses: builder.query<FindQueryResult, void>({
       query: () => "/classes",
+      providesTags: ["Class"],
     }),
     getClassById: builder.query({
       query: (id) => `/classes/${id}`,
+      providesTags: ["Class"],
     }),
     createClass: builder.mutation({
       query: (newClass) => ({
@@ -15,6 +17,7 @@ export const classApi = api.injectEndpoints({
         method: "POST",
         body: newClass,
       }),
+      invalidatesTags: ["Class"],
     }),
     updateClass: builder.mutation({
       query: ({ id, ...updateData }) => ({
@@ -22,12 +25,14 @@ export const classApi = api.injectEndpoints({
         method: "PUT",
         body: updateData,
       }),
+      invalidatesTags: ["Class"],
     }),
     deleteClass: builder.mutation({
       query: (id) => ({
         url: `/classes/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Class"],
     }),
   }),
 });

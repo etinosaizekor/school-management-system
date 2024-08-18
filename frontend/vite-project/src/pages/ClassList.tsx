@@ -2,7 +2,6 @@ import { Grid, Paper } from "@mantine/core";
 import axios from "axios";
 import { Link, useLoaderData } from "react-router-dom";
 import { FindQueryResult } from "../sharedTypes";
-import db from "../db";
 
 interface ClassListCardProps {
   className: string;
@@ -43,16 +42,16 @@ export default function Classes() {
   );
 }
 
-export const fetchClasses = async () => {
-  const serverUrl = db.serverUrl;
-  console.log("Server URL:", serverUrl);
-  try {
-    const response = await axios.get(`${serverUrl}/classes`);
-    console.log(response);
+// export const fetchClasses = async () => {
+//   const serverUrl = db.serverUrl;
+//   console.log("Server URL:", serverUrl);
+//   try {
+//     const response = await axios.get(`${serverUrl}/classes`);
+//     console.log(response);
 
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching classes:", err);
-    return null;
-  }
-};
+//     return response.data;
+//   } catch (err) {
+//     console.error("Error fetching classes:", err);
+//     return null;
+//   }
+// };

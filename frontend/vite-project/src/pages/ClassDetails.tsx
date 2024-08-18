@@ -1,7 +1,6 @@
 import { Button, Paper, Table } from "@mantine/core";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
-import db from "../db";
 import { Class } from "../sharedTypes";
 
 
@@ -52,16 +51,16 @@ export default function ClassDetails() {
   );
 }
 
-export const fetchClassDetails = async (id: string): Promise<Class | null> => {
-  const serverUrl = db.serverUrl;
-  console.log("Server URL:", serverUrl);
-  try {
-    const response = await axios.get(`${serverUrl}/classes/${id}`);
-    console.log(response);
+// export const fetchClassDetails = async (id: string): Promise<Class | null> => {
+//   const serverUrl = db.serverUrl;
+//   console.log("Server URL:", serverUrl);
+//   try {
+//     const response = await axios.get(`${serverUrl}/classes/${id}`);
+//     console.log(response);
 
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching classes:", err);
-    return null
-  }
-};
+//     return response.data;
+//   } catch (err) {
+//     console.error("Error fetching classes:", err);
+//     return null
+//   }
+// };

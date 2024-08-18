@@ -6,15 +6,19 @@ import {
   Table,
   Tooltip,
 } from "@mantine/core";
-import axios from "axios";
 import { useLoaderData } from "react-router-dom";
-import db from "../db";
 import { Student } from "../sharedTypes";
 import { CgRemove } from "react-icons/cg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { FaCheck, FaTimes } from "react-icons/fa"; // Importing the success and error icons from react-icons
+import { FaCheck, FaTimes } from "react-icons/fa";
+import {
+  useUnenrollCoursesMutation,
+  useGetStudentQuery,
+  useEnrollCoursesMutation,
+} from "../api/studentApi";
+import { useLazyGetCoursesQuery } from "../api/courseApi";
 
 function StudentDetail({ label, value }: { label: string; value: any }) {
   return (
@@ -36,74 +40,74 @@ export default function StudentDetails() {
   const [courseOptions, setCourseOptions] = useState<
     { value: string; label: string }[]
   >([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [enrollCourses, { isLoading: isEnrolling, isSuccess, isError }] =
+    useEnrollCoursesMutation();
+  const [
+    getCourses,
+    {
+      isLoading,
+      isSuccess: isGetCoursesSuccess,
+      isError: isGetCoursesError,
+      data: coursesData,
+    },
+  ] = useLazyGetCoursesQuery();
 
-  const fetchCourses = async () => {
-    try {
-      const response = await axios.get(`${db.serverUrl}/courses`); // Adjust the URL as needed
-      const allCourses = response?.data?.items || [];
+  useEffect(() => {
+    if (coursesData) {
+      const allCourses = coursesData?.items || [];
 
-      // Get the IDs of the courses the student is already enrolled in
       const enrolledCourseIds = studentDetails?.Courses.map((course) =>
         course.id.toString()
       );
 
-      // Filter the courses to only include those not already enrolled
       const availableCourses = allCourses.filter(
         (course: any) => !enrolledCourseIds?.includes(course.id.toString())
       );
 
-      // Map to the structure required by MultiSelect
       const courseData = availableCourses.map((course: any) => ({
         value: course.id.toString(),
         label: course.courseName,
       }));
 
       setCourseOptions(courseData);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
     }
-  };
+  }, [isGetCoursesSuccess, coursesData]);
 
   const handleOpen = () => {
     if (courseOptions.length === 0) {
-      fetchCourses();
+      getCourses();
     }
     open();
   };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    setIsSubmitting(true); // Set loading state to true
     const courseText = courses.length === 1 ? "course" : "courses";
     const courseIds = courses.map((courseId) => Number(courseId));
 
-    axios
-      .post(`${db.serverUrl}/students/${studentDetails?.id}/courses`, courseIds)
+    enrollCourses({ studentId: studentDetails?.id || "", courseIds })
+      .unwrap()
       .then(() => {
-        console.log("Successful");
-        
         notifications.show({
           title: "Successful",
           message: `Student successfully enrolled in ${courseText}`,
-          icon: <FaCheck />, // Adding the success icon
+          icon: <FaCheck />,
           color: "teal",
           position: "top-right",
         });
-        setCourses([]); // Clear selected courses
+        setCourses([]);
       })
       .catch((error) => {
         notifications.show({
           title: `Failed to enrol ${courseText}`,
-          message: error.response?.data?.message || "An error occurred",
-          icon: <FaTimes />, // Adding the error icon
+          message: error?.data?.message || "An error occurred",
+          icon: <FaTimes />,
           color: "red",
           position: "top-right",
         });
       })
       .finally(() => {
-        setIsSubmitting(false); // Reset loading state
-        close()
+        close();
       });
   };
 
@@ -178,7 +182,7 @@ export default function StudentDetails() {
             mt={10}
             radius={20}
             color="#15803d"
-            loading={isSubmitting} // Disable button and show loading state
+            loading={isEnrolling} // Disable button and show loading state
           >
             Submit
           </Button>
@@ -187,19 +191,3 @@ export default function StudentDetails() {
     </div>
   );
 }
-
-export const fetchStudentDetails = async (
-  id: string
-): Promise<Student | null> => {
-  const serverUrl = db.serverUrl;
-  console.log("Server URL:", serverUrl);
-  try {
-    const response = await axios.get(`${serverUrl}/students/${id}`);
-    console.log(response);
-
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching students:", err);
-    return null;
-  }
-};

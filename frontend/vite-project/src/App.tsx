@@ -1,11 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
-import Classes, { fetchClasses } from "./pages/ClassList";
-import ClassDetails, { fetchClassDetails } from "./pages/ClassDetails";
-import CourseList, { fetchCourses } from "./pages/CourseList";
-import CourseDetails, { fetchCourseDetails } from "./pages/CourseDetails";
-import StudentList, { fetchStudents } from "./pages/StudentList";
-import StudentDetails, { fetchStudentDetails } from "./pages/StudentDetails";
+import Classes from "./pages/ClassList";
+import ClassDetails from "./pages/ClassDetails";
+import CourseList from "./pages/CourseList";
+import CourseDetails from "./pages/CourseDetails";
+import StudentList from "./pages/StudentList";
+import StudentDetails from "./pages/StudentDetails";
+import {
+  fetchClasses,
+  fetchClassById,
+  fetchCourses,
+  fetchCourseById,
+  fetchStudents,
+  fetchStudentById
+} from "./loaders";
 
 const router = createBrowserRouter([
   {
@@ -19,7 +27,7 @@ const router = createBrowserRouter([
       {
         path: "/classes/:classId",
         element: <ClassDetails />,
-        loader: async ({ params }) => fetchClassDetails(params.classId!),
+        loader: async ({ params }) => fetchClassById(params.classId!),
       },
       {
         path: "/courses",
@@ -29,18 +37,17 @@ const router = createBrowserRouter([
       {
         path: "/courses/:courseId",
         element: <CourseDetails />,
-        loader: async ({ params }) => fetchCourseDetails(params.courseId!),
+        loader: async ({ params }) => fetchCourseById(params.courseId!),
       },
       {
         path: "/students",
         element: <StudentList />,
         loader: fetchStudents,
       },
-
       {
         path: "/students/:studentId",
         element: <StudentDetails />,
-        loader: async ({ params }) => fetchStudentDetails(params.studentId!),
+        loader: async ({ params }) => fetchStudentById(params.studentId!),
       },
     ],
   },

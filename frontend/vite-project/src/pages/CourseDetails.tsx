@@ -1,7 +1,7 @@
 import { Button, Paper, Table } from "@mantine/core";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
-import db from "../db";
+// import db from "../db";
 import { Course } from "../sharedTypes";
 
 
@@ -52,16 +52,16 @@ export default function CourseDetails() {
   );
 }
 
-export const fetchCourseDetails = async (id: string): Promise<Course | null> => {
-  const serverUrl = db.serverUrl;
-  console.log("Server URL:", serverUrl);
-  try {
-    const response = await axios.get(`${serverUrl}/courses/${id}`);
-    console.log(response);
+// export const fetchCourseDetails = async (id: string): Promise<Course | null> => {
+//   const serverUrl = db.serverUrl;
+//   console.log("Server URL:", serverUrl);
+//   try {
+//     const response = await axios.get(`${serverUrl}/courses/${id}`);
+//     console.log(response);
 
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching course:", err);
-    return null
-  }
-};
+//     return response.data;
+//   } catch (err) {
+//     console.error("Error fetching course:", err);
+//     return null
+//   }
+// };

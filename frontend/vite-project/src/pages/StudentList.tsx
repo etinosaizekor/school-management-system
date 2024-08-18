@@ -2,7 +2,7 @@ import { Grid, Paper } from "@mantine/core";
 import axios from "axios";
 import { Link, useLoaderData } from "react-router-dom";
 import { FindQueryResult } from "../sharedTypes";
-import db from "../db";
+// import db from "../db";
 
 interface StudentListCardProps {
   id: string;
@@ -49,16 +49,16 @@ export default function StudentList() {
   );
 }
 
-export const fetchStudents = async () => {
-  const serverUrl = db.serverUrl;
-  console.log("Server URL:", serverUrl);
-  try {
-    const response = await axios.get(`${serverUrl}/students`);
-    console.log(response);
+// export const fetchStudents = async () => {
+//   const serverUrl = db.serverUrl;
+//   console.log("Server URL:", serverUrl);
+//   try {
+//     const response = await axios.get(`${serverUrl}/students`);
+//     console.log(response);
 
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching students:", err);
-    return null;
-  }
-};
+//     return response.data;
+//   } catch (err) {
+//     console.error("Error fetching students:", err);
+//     return null;
+//   }
+// };

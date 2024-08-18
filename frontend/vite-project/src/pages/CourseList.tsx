@@ -2,7 +2,9 @@ import { Grid, Paper } from "@mantine/core";
 import axios from "axios";
 import { Link, useLoaderData } from "react-router-dom";
 import { FindQueryResult } from "../sharedTypes";
-import db from "../db";
+import { courseApi } from "../api/courseApi";
+import store from "../api";
+// import db from "../db";
 
 interface CourseListCardProps {
   id: string;
@@ -48,15 +50,8 @@ export default function CourseList() {
 }
 
 export const fetchCourses = async () => {
-  const serverUrl = db.serverUrl;
-  console.log("Server URL:", serverUrl);
-  try {
-    const response = await axios.get(`${serverUrl}/courses`);
-    console.log(response);
-
-    return response.data;
-  } catch (err) {
-    console.error("Error fetching courses:", err);
-    return null;
-  }
+  const result = await store.dispatch(
+    courseApi.endpoints.getCourses.initiate()
+  );
+  return result.data;
 };

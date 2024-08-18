@@ -39,28 +39,26 @@ class StudentService extends BaseService<Student> {
       },
     });
 
-
-    // Extract the IDs of the courses that were found
-    // const foundCourseIds = courses.map((course) => course.id);
-
-    // // Determine which course IDs do not exist
-    // const nonExistingCourseIds = courseIds.filter(
-    //   (courseId) => !foundCourseIds.includes(courseId)
-    // );
-
-    // if (nonExistingCourseIds.length > 0) {
-    //   throw new ApiError(
-    //     404,
-    //     `Courses with ID(s) ${nonExistingCourseIds.join(", ")} not found`
-    //   );
-    // }
-
-    const studentCourseIds = courses.map((course) => course.id)
+    const studentCourseIds = courses.map((course) => course.id);
     await student.addCourses(studentCourseIds);
 
     const studentCourses = await student?.getCourses({ raw: true });
-    
+
     return studentCourses;
+  }
+
+  async findById(studentId: string): Promise<Student | null> {
+    const student = await this.model.findByPk(studentId, {
+      include: [
+        {
+          model: Course,
+          attributes: ["id", "courseName"],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    return student;
   }
 
   async find(

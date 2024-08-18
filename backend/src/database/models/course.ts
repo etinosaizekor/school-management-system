@@ -11,9 +11,11 @@ export class Course extends Model<CourseAttributes, CourseCreationAttributes>
   implements CourseAttributes {
   declare id: number;
   declare courseName: string;
+  
+
   static associate(models: any) {
     this.belongsTo(models.Class);
-    this.belongsToMany(models.Student, {through: 'StudentCourses' as 'courses'})
+    this.belongsToMany(models.Student, {through: 'StudentCourses'})
   }
 }
 

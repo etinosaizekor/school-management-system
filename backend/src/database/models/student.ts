@@ -42,7 +42,7 @@ export class Student
   static associate(models: any) {
     this.belongsTo(models.Class);
     this.belongsToMany(models.Course, {
-      through: "StudentCourses" as "courses",
+      through: "StudentCourses",
     });
   }
 }

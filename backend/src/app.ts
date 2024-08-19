@@ -25,7 +25,7 @@ app.use(
 app.use("/api", routes);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
+  next(new ApiError(httpStatus.NOT_FOUND, "Route Not found"));
 });
 
 app.use(errorFormatter);

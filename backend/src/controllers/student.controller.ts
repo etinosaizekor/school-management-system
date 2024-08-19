@@ -4,10 +4,12 @@ import asyncHandler from "../utils/asynHandler";
 
 export const createStudent = asyncHandler(
   async (req: Request, res: Response) => {
-    const body = req.body;
+    const { courseIds } = req.body;
 
-    const newStudent = await studentService.create(body);
-    res.status(201).json(newStudent);
+    const newStudent = await studentService.create(req.body);
+    const newStudentCourses = await newStudent.addCourses(courseIds, { raw: true });
+
+    res.status(201).json({ ...newStudent.dataValues, Courses: newStudentCourses });
   }
 );
 
@@ -48,5 +50,19 @@ export const deleteStudent = asyncHandler(
     const body = req.body;
     const deletedStudent = await studentService.deleteOne(id);
     res.status(200).json(deletedStudent);
+  }
+);
+
+export const removeCourses = asyncHandler(
+  async (req: Request, res: Response) => {
+    const courses = req.body;
+    const { studentId } = req.params;
+
+    const studentCourses = await studentService.removeCourses(
+      studentId,
+      courses
+    );
+
+    res.send(studentCourses);
   }
 );

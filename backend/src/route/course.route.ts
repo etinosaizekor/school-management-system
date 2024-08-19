@@ -11,7 +11,7 @@ import { validate } from "../middleware/validate";
 
 const router = express.Router();
 
-router.post("/courses", createCourse);
+router.post("/courses", validate(courseSchema), createCourse);
 router.get("/courses", getCourses);
 
 router.get("/courses/:id", getCourseById);

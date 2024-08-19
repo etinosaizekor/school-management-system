@@ -6,6 +6,8 @@ import {
   HasManyCountAssociationsMixin,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyRemoveAssociationsMixin,
   Model,
   Optional,
   Sequelize,
@@ -16,9 +18,9 @@ interface StudentAttributes {
   id: number;
   firstName: string;
   lastName: string;
-  age: number;
-  classId?: string,
-  courses?: Course[]
+  dateOfBirth: Date;
+  classId?: string;
+  courses?: Course[];
 }
 
 export interface StudentCreationAttributes
@@ -31,13 +33,15 @@ export class Student
   declare id: number;
   declare firstName: string;
   declare lastName: string;
-  declare age: number;
+  declare dateOfBirth: Date;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare addCourses: HasManyAddAssociationsMixin<Course, number>;
   declare getCourses: HasManyGetAssociationsMixin<Course>;
   declare countCourses: HasManyCountAssociationsMixin;
   declare createCourse: HasManyCreateAssociationMixin<Course, "id">;
+  declare removeCourse: HasManyRemoveAssociationMixin<Course, string>;
+  declare removeCourses: HasManyRemoveAssociationsMixin<Course, string>;
 
   static associate(models: any) {
     this.belongsTo(models.Class);
@@ -63,7 +67,7 @@ export const initStudentModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      age: DataTypes.INTEGER,
+      dateOfBirth: DataTypes.DATE
     },
     {
       sequelize,

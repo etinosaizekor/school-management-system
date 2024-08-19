@@ -5,6 +5,7 @@ import { CreationAttributes, Model, ModelStatic } from "sequelize";
 import { PageOptions, PaginatedResult } from "../sharedTypes";
 import { Course } from "../database/models/course";
 import ApiError from "../helper/ApiError";
+import { getCourses } from "../controllers/course.controller";
 
 class StudentService extends BaseService<Student> {
   constructor(model: ModelStatic<Student>) {
@@ -27,6 +28,9 @@ class StudentService extends BaseService<Student> {
 
   async addCourses(studentId: string, courseIds: number[]): Promise<Course[]> {
     // Find the student by ID
+
+    console.log(courseIds);
+    
     const student = await this.model.findByPk(studentId);
 
     if (!student) {
@@ -40,15 +44,32 @@ class StudentService extends BaseService<Student> {
       raw: true,
     });
 
-    console.log(courses);
+    console.log("Found courses", courses);
 
     const studentCourseIds = courses.map((course) => course.id);
     const newlyAddedCourse = await student.addCourses(studentCourseIds);
     console.log("Newly added", newlyAddedCourse);
 
-    const studentCourses = await student?.getCourses({ raw: true });
+    const studentCourses = await student.getCourses();
 
     return studentCourses;
+  }
+
+  async removeCourses(
+    studentId: string,
+    courseIds: string[]
+  ): Promise<Course[]> {
+    // Fetch the student
+    const student = await this.model.findByPk(studentId);
+
+    if (!student) {
+      throw new ApiError(404, "Student not found");
+    }
+
+    student.removeCourses(courseIds);
+    const updatedCourses = await student.getCourses();
+
+    return updatedCourses;
   }
 
   async findById(studentId: string): Promise<Student | null> {
@@ -67,7 +88,7 @@ class StudentService extends BaseService<Student> {
 
   async find(
     criteria: Record<string, any> = {},
-    options: PageOptions = { page: 1, limit: 15 }
+    options: PageOptions = { page: 1, limit: 20 }
   ): Promise<PaginatedResult | null> {
     const { page, limit } = options;
 

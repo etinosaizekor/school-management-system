@@ -9,7 +9,7 @@ export interface FindQueryResult {
 }
 
 export interface Course {
-  id: string,
+  id: number,
   courseName: string;
   students: Student[];
   courseCode: string,
@@ -17,11 +17,12 @@ export interface Course {
 }
 
 export interface Student {
+  id: number
   firstName: string;
   lastName: string;
   age: number;
   Courses: Course[];
-  class: Class;
+  classId: number;
 }
 
 export interface Class {

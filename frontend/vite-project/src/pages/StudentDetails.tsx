@@ -33,9 +33,11 @@ function StudentDetail({ label, value }: { label: string; value: any }) {
 }
 
 export default function StudentDetails() {
-  const [studentDetails, setStudentDetails] = useState(
+  const [studentDetails] = useState(
     useLoaderData() as Student | null
   );
+  console.log(studentDetails);
+  
   const [opened, { open, close }] = useDisclosure(false);
   const [courseIds, setCourseIds] = useState<string[]>([]);
   const [courses, setCourses] = useState(studentDetails?.Courses);

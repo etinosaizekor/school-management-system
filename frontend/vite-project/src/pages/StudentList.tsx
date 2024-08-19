@@ -1,14 +1,35 @@
-import { Grid, Paper } from "@mantine/core";
-import axios from "axios";
+import {
+  Button,
+  Grid,
+  Paper,
+  Modal,
+  TextInput,
+  Select,
+  Group,
+  Loader,
+  MultiSelect,
+} from "@mantine/core";
+import { useState, useEffect } from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { FindQueryResult } from "../sharedTypes";
-// import db from "../db";
+import { Class, Course, FindQueryResult, Student } from "../sharedTypes";
+import { useForm } from "react-hook-form";
+import { notifications } from "@mantine/notifications";
+import { FaCheck, FaTimes } from "react-icons/fa";
+import { useDisclosure } from "@mantine/hooks";
+import { useLazyGetCoursesQuery } from "../api/courseApi";
+import { useLazyGetClassesQuery } from "../api/classApi";
+import { useCreateStudentMutation } from "../api/studentApi";
 
 interface StudentListCardProps {
-  id: string;
+  id: number;
   firstName: string;
   classId: string;
   numberOfCoursesEnrolled: number;
+}
+
+export interface StudentInfo extends Omit<Student, "Courses"> {
+  courseIds: string[];
+  dateOfBirth: Date;
 }
 
 function StudentListCard({
@@ -29,36 +50,195 @@ function StudentListCard({
 }
 
 export default function StudentList() {
-  const students = useLoaderData() as FindQueryResult;
-  console.log(students);
-  let numberOfCoursesEnrolled = 1;
+  const studentLoaderData = useLoaderData() as FindQueryResult;
+  const [students, setStudents] = useState<Student[]>([]);
+
+  useEffect(() => {
+    setStudents(studentLoaderData.items);
+  }, [studentLoaderData]);
+
+  const [opened, { open, close }] = useDisclosure(false);
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm<StudentInfo>();
+  const [classes, setClasses] = useState<{ label: string; value: string }[]>(
+    []
+  );
+  const [courses, setCourses] = useState<{ label: string; value: string }[]>(
+    []
+  );
+  const [courseIds, setCourseIds] = useState<string[]>([]);
+  const [createStudent] = useCreateStudentMutation();
+
+  const [
+    getCourses,
+    {
+      isLoading: isGetCoursesLoading,
+      isSuccess: isGetCoursesSuccess,
+      isError: isGetCoursesError,
+    },
+  ] = useLazyGetCoursesQuery();
+  const [
+    getClasses,
+    {
+      isLoading: isGetClassesLoading,
+      isSuccess: isGetClassesSuccess,
+      isError: isGetClassesError,
+    },
+  ] = useLazyGetClassesQuery();
+
+  const handleDialogOpen = () => {
+    open();
+    if (classes.length === 0) {
+      getClasses()
+        .unwrap()
+        .then((data) =>
+          setClasses(
+            data.items.map((cls) => ({
+              value: cls.id.toString(),
+              label: cls.className,
+            }))
+          )
+        );
+    }
+    if (courses.length === 0) {
+      getCourses()
+        .unwrap()
+        .then((data) =>
+          setCourses(
+            data.items.map((course) => ({
+              value: course.id.toString(),
+              label: course.courseName,
+            }))
+          )
+        );
+    }
+  };
+
+  const onSubmit = async (data: StudentInfo) => {
+    console.log(data);
+    const { courseIds, classId } = data;
+    const studentFormData = {
+      ...data,
+      courseIds: courseIds.map((courseId) => parseInt(courseId)),
+      classId: parseInt(classId),
+    };
+
+    createStudent(studentFormData)
+      .unwrap()
+      .then((newStudent) => {
+        setStudents([...students, newStudent]);
+        notifications.show({
+          title: "Success",
+          message: "Student created successfully!",
+          icon: <FaCheck />,
+          color: "teal",
+          position: "top-right",
+        });
+        reset();
+      })
+      .catch((error) =>
+        notifications.show({
+          title: "Error",
+          message: error?.data?.message || "An error occurred",
+          icon: <FaTimes />,
+          color: "red",
+          position: "top-right",
+        })
+      )
+      .finally(() => close());
+  };
 
   return (
-    <Grid grow>
-      {students?.items?.map(({ id, firstName, students }, index) => (
-        <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
-          <StudentListCard
-            id={id}
-            firstName={firstName}
-            numberOfCoursesEnrolled={numberOfCoursesEnrolled + 1}
-            classId="12"
+    <>
+      <div className="flex justify-end">
+        <Button m={30} color="#15803d" onClick={handleDialogOpen}>
+          Create New Student
+        </Button>
+      </div>
+      <Grid>
+        {students?.map(({ id, firstName, Courses }, index) => (
+          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
+            <StudentListCard
+              id={id}
+              firstName={firstName}
+              numberOfCoursesEnrolled={Courses?.length || 0}
+              classId="12"
+            />
+          </Grid.Col>
+        ))}
+      </Grid>
+
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Create New Student"
+        size="lg"
+      >
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <TextInput
+            label="First Name"
+            placeholder="Enter first name"
+            {...register("firstName", { required: "First name is required" })}
+            error={errors?.firstName?.message}
           />
-        </Grid.Col>
-      ))}
-    </Grid>
+
+          <TextInput
+            label="Last Name"
+            placeholder="Enter last name"
+            {...register("lastName", { required: "Last name is required" })}
+            error={errors.lastName?.message}
+          />
+
+          <TextInput
+            label="Date of Birth"
+            type="date"
+            {...register("dateOfBirth", {
+              required: "Date of birth is required",
+            })}
+            error={errors.dateOfBirth?.message}
+          />
+
+          <Select
+            value={watch("classId")}
+            label="Class"
+            placeholder="Select class"
+            data={classes}
+            {...register("classId", { required: "Class is required" })}
+            error={errors.classId?.message}
+            onChange={(value) => {
+              if (value) {
+                setValue("classId", value);
+              }
+            }}
+            nothingFoundMessage="No classes available"
+            rightSection={isGetClassesLoading && <Loader />}
+          />
+
+          <MultiSelect
+            value={watch("courseIds")}
+            label="Courses"
+            placeholder="Select courses"
+            data={courses}
+            error={errors.courseIds?.message}
+            multiple
+            onChange={(selectedValues: string[]) => {
+              setValue("courseIds", selectedValues);
+            }}
+            nothingFoundMessage="No courses available"
+            rightSection={isGetCoursesLoading && <Loader />}
+          />
+
+          <Button type="submit" color="#15803d" mt={10}>
+            Submit
+          </Button>
+        </form>
+      </Modal>
+    </>
   );
 }
-
-// export const fetchStudents = async () => {
-//   const serverUrl = db.serverUrl;
-//   console.log("Server URL:", serverUrl);
-//   try {
-//     const response = await axios.get(`${serverUrl}/students`);
-//     console.log(response);
-
-//     return response.data;
-//   } catch (err) {
-//     console.error("Error fetching students:", err);
-//     return null;
-//   }
-// };

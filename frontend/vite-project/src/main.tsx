@@ -4,15 +4,15 @@ import { Provider } from "react-redux";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import "@mantine/core/styles.css";
-import "@mantine/notifications/styles.css";
 import { MantineProvider } from "@mantine/core";
 import router from "./App.tsx";
 import { Notifications } from "@mantine/notifications";
 import store from "./api"; // Import your Redux store
+import "@mantine/notifications/styles.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Provider store={store}> {/* Add Provider here */}
+    <Provider store={store}>
       <MantineProvider>
         <Notifications />
         <RouterProvider router={router} />

@@ -1,10 +1,6 @@
 import { Grid, Paper } from "@mantine/core";
-import axios from "axios";
 import { Link, useLoaderData } from "react-router-dom";
 import { FindQueryResult } from "../sharedTypes";
-import { courseApi } from "../api/courseApi";
-import store from "../api";
-// import db from "../db";
 
 interface CourseListCardProps {
   id: string;
@@ -49,9 +45,3 @@ export default function CourseList() {
   );
 }
 
-export const fetchCourses = async () => {
-  const result = await store.dispatch(
-    courseApi.endpoints.getCourses.initiate()
-  );
-  return result.data;
-};

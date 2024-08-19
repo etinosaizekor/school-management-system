@@ -22,7 +22,7 @@ export interface Student {
   lastName: string;
   age: number;
   Courses: Course[];
-  classId: number;
+  classId: string;
 }
 
 export interface Class {

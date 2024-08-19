@@ -18,7 +18,11 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
 import { useLazyGetCoursesQuery } from "../api/courseApi";
 import { useLazyGetClassesQuery } from "../api/classApi";
-import { useCreateStudentMutation } from "../api/studentApi";
+import {
+  useCreateStudentMutation,
+  useGetStudentsQuery,
+} from "../api/studentApi";
+import { fetchStudents } from "../loaders";
 
 interface StudentListCardProps {
   id: number;
@@ -50,12 +54,14 @@ function StudentListCard({
 }
 
 export default function StudentList() {
-  const studentLoaderData = useLoaderData() as FindQueryResult;
   const [students, setStudents] = useState<Student[]>([]);
+  const { data, isLoading, isSuccess } = useGetStudentsQuery();
 
   useEffect(() => {
-    setStudents(studentLoaderData.items);
-  }, [studentLoaderData]);
+    if (isSuccess && data) {
+      setStudents(data.items);
+    }
+  }, [isSuccess, data]);
 
   const [opened, { open, close }] = useDisclosure(false);
   const {
@@ -65,6 +71,7 @@ export default function StudentList() {
     formState: { errors },
     reset,
     setValue,
+    clearErrors,
   } = useForm<StudentInfo>();
   const [classes, setClasses] = useState<{ label: string; value: string }[]>(
     []
@@ -154,6 +161,9 @@ export default function StudentList() {
       .finally(() => close());
   };
 
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <>
       <div className="flex justify-end">
@@ -213,6 +223,7 @@ export default function StudentList() {
             error={errors.classId?.message}
             onChange={(value) => {
               if (value) {
+                clearErrors("classId");
                 setValue("classId", value);
               }
             }}
@@ -228,6 +239,7 @@ export default function StudentList() {
             error={errors.courseIds?.message}
             multiple
             onChange={(selectedValues: string[]) => {
+              clearErrors("courseIds");
               setValue("courseIds", selectedValues);
             }}
             nothingFoundMessage="No courses available"

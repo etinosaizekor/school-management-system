@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Button,
   Modal,
   MultiSelect,
@@ -6,18 +7,29 @@ import {
   Table,
   Tooltip,
 } from "@mantine/core";
-import { useLoaderData } from "react-router-dom";
+import {
+  redirect,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Student } from "../sharedTypes";
 import { CgRemove } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+
 import {
   useUnenrollCoursesMutation,
   useEnrollCoursesMutation,
+  useDeleteStudentMutation,
 } from "../api/studentApi";
 import { useLazyGetCoursesQuery } from "../api/courseApi";
+import ConfirmationModal from "../components/ConfirmationModal";
+import { displayNotification } from "../components/notifications";
+import { useRevalidator } from "react-router-dom";
 
 function StudentDetail({ label, value }: { label: string; value: any }) {
   return (
@@ -33,11 +45,9 @@ function StudentDetail({ label, value }: { label: string; value: any }) {
 }
 
 export default function StudentDetails() {
-  const [studentDetails] = useState(
-    useLoaderData() as Student | null
-  );
+  const [studentDetails] = useState(useLoaderData() as Student | null);
   console.log(studentDetails);
-  
+
   const [opened, { open, close }] = useDisclosure(false);
   const [courseIds, setCourseIds] = useState<string[]>([]);
   const [courses, setCourses] = useState(studentDetails?.Courses);
@@ -57,6 +67,20 @@ export default function StudentDetails() {
     confirmUnenrollOpened,
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
   ] = useDisclosure(false);
+  const [
+    confirmStudentDeletion,
+    { open: openConfirmDeletion, close: closeConfirmDeletion },
+  ] = useDisclosure(false);
+  const [deleteStudent, { isLoading: isDeletionLoading }] =
+    useDeleteStudentMutation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const revalidator = useRevalidator();
+
+  useEffect(() => {
+    // Trigger revalidation or refetch when the location changes
+    revalidator.revalidate(); // This assumes revalidator is properly hooked up to your routes
+  }, [location.pathname]); // Dependency on location.pathname ensures revalidation on route changes
 
   useEffect(() => {
     if (coursesData) {
@@ -106,7 +130,7 @@ export default function StudentDetails() {
           color: "teal",
           position: "top-right",
         });
-        setCourseIds([])
+        setCourseIds([]);
       })
       .catch((error) => {
         notifications.show({
@@ -136,21 +160,24 @@ export default function StudentDetails() {
         .unwrap()
         .then((data) => {
           setCourses(data);
-          notifications.show({
+          // notifications.show({
+          //   title: "Successful",
+          //   message: "Course successfully unenrolled",
+          //   icon: <FaCheck />,
+          //   color: "teal",
+          //   position: "top-right",
+          // });\
+          displayNotification({
             title: "Successful",
             message: "Course successfully unenrolled",
-            icon: <FaCheck />,
-            color: "teal",
-            position: "top-right",
+            type: "success",
           });
         })
         .catch((error) => {
-          notifications.show({
+          displayNotification({
             title: "Failed to unenroll course",
             message: error?.data?.message || "An error occurred",
-            icon: <FaTimes />,
-            color: "red",
-            position: "top-right",
+            type: "error",
           });
         })
         .finally(() => {
@@ -159,13 +186,38 @@ export default function StudentDetails() {
     }
   };
 
+  const handleStudentDeletion = () => {
+    deleteStudent(studentDetails?.id)
+      .then(() => {
+        closeConfirmDeletion();
+        navigate("/students", { replace: true });
+        displayNotification({
+          title: "Sucess",
+          message: "Student deleted successfully",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        displayNotification({
+          title: "Deletion failed",
+          message: error?.data?.message || "An error occurred",
+          type: "error",
+        });
+      });
+  };
+
   return (
     <div>
-      <div className="w-60 mb-10">
-        <StudentDetail label="First name" value={studentDetails?.firstName} />
-        <StudentDetail label="Last name" value={studentDetails?.lastName} />
-        <StudentDetail label="Age" value={studentDetails?.age} />
-      </div>
+      <section className="flex justify-between">
+        <div className="w-60 mb-10">
+          <StudentDetail label="First name" value={studentDetails?.firstName} />
+          <StudentDetail label="Last name" value={studentDetails?.lastName} />
+          <StudentDetail label="Age" value={studentDetails?.age} />
+        </div>
+        <ActionIcon variant="subtle" onClick={openConfirmDeletion}>
+          <MdDelete fontSize="20px" color="red" />
+        </ActionIcon>
+      </section>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <span className="flex gap-6 justify-between">
@@ -243,28 +295,22 @@ export default function StudentDetails() {
         </form>
       </Modal>
 
-      <Modal
+      <ConfirmationModal
         opened={confirmUnenrollOpened}
         onClose={closeConfirmUnenroll}
         title="Confirm Unenrollment"
-        size="sm"
-        padding={30}
-      >
-        <p>Are you sure you want to unenroll this course?</p>
-        <div className="flex justify-between gap-10 w-full">
-          <Button mt={10} onClick={closeConfirmUnenroll}>
-            Cancel
-          </Button>
-          <Button
-            mt={10}
-            color="red"
-            onClick={confirmUnenroll}
-            loading={isUnenrolling}
-          >
-            Confirm
-          </Button>
-        </div>
-      </Modal>
+        confirmationMessage="Are you sure you want to unenroll this course"
+        onConfirm={confirmUnenroll}
+        loading={isUnenrolling}
+      />
+      <ConfirmationModal
+        opened={confirmStudentDeletion}
+        onClose={closeConfirmDeletion}
+        title="Confirm Deletion"
+        confirmationMessage="Are you sure you want to delete this student"
+        onConfirm={handleStudentDeletion}
+        loading={isDeletionLoading}
+      />
     </div>
   );
 }

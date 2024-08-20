@@ -2,7 +2,7 @@ export interface Student {
   id: number;
   firstName: string;
   lastName: string;
-  age: number;
+  dateOfBirth: string;
   Courses: Course[];
   classId: string;
 }
@@ -32,5 +32,4 @@ export interface Class {
 
 export interface StudentInfo extends Omit<Student, "Courses"> {
   courseIds: string[];
-  dateOfBirth: Date;
 }

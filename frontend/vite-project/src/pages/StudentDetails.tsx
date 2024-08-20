@@ -35,6 +35,8 @@ import { MdModeEdit } from "react-icons/md";
 import StudentForm from "../components/StudentForm";
 import { FormProvider, useForm } from "react-hook-form";
 import { StudentInfo } from "../sharedTypes";
+import { calculateAge, formatDate } from "../utils/dateUtils";
+import dayjs from "dayjs";
 
 function StudentDetail({ label, value }: { label: string; value: any }) {
   return (
@@ -79,17 +81,21 @@ export default function StudentDetails() {
   ] = useDisclosure(false);
   const [deleteStudent, { isLoading: isDeletionLoading }] =
     useDeleteStudentMutation();
+  const dob = studentDetails?.dateOfBirth && dayjs(studentDetails?.dateOfBirth);
   const formMethods = useForm<StudentInfo>({
     defaultValues: {
       firstName: studentDetails?.firstName || "",
       lastName: studentDetails?.lastName || "",
-      dateOfBirth: new Date() || "",
+      dateOfBirth: dob ? dob.format("YYYY-MM-DD") : "",
       courseIds:
         studentDetails?.Courses.map((course) => course.id.toString()) || [],
       classId: (studentDetails?.classId as any) || "",
     },
   });
-  const { reset } = formMethods;
+
+  useEffect(() => {
+    console.log(studentDetails);
+  }, [studentDetails]);
 
   const navigate = useNavigate();
 
@@ -266,7 +272,14 @@ export default function StudentDetails() {
       <div className="w-60 mb-10">
         <StudentDetail label="First name" value={studentDetails?.firstName} />
         <StudentDetail label="Last name" value={studentDetails?.lastName} />
-        <StudentDetail label="Age" value={studentDetails?.age} />
+        <StudentDetail
+          label="Age"
+          value={
+            studentDetails?.dateOfBirth
+              ? calculateAge(studentDetails.dateOfBirth)
+              : ""
+          }
+        />
       </div>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>

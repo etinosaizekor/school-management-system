@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useGetClassesQuery, useLazyGetClassesQuery } from "../api/classApi";
 import { useGetCoursesQuery } from "../api/courseApi";
 import { StudentInfo } from "../sharedTypes";
+import { formatDate } from "../utils/dateUtils";
+import dayjs from "dayjs";
 
 interface StudentFormProps {
   mode?: "creation" | "edit";
@@ -107,6 +109,7 @@ StudentFormProps) {
       <TextInput
         label="Date of Birth"
         type="date"
+        value={formatDate(watch("dateOfBirth"))}
         {...register("dateOfBirth", {
           required: "Date of birth is required",
         })}

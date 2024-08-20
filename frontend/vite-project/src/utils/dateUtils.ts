@@ -10,7 +10,7 @@ export const formatDate = (dateString: string) => {
   }
   return "";
 };
-/**s
+/**
  * Calculates the age given a date of birth.
  *
  * @param dateOfBirth - The date of birth as a Date object.

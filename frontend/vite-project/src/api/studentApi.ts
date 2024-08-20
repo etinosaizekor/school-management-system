@@ -1,4 +1,4 @@
-import { FindQueryResult, Student } from "../sharedTypes";
+import { FindQueryResult, Student, StudentInfo } from "../sharedTypes";
 import { api } from "./baseApi";
 
 export const studentApi = api.injectEndpoints({
@@ -35,6 +35,15 @@ export const studentApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Student"],
     }),
+    updateStudent: builder.mutation<Student, {id: number, modifiedStudentData: any}>({
+      query: ({id, modifiedStudentData}) => ({
+        url: `/students/${id}`,
+        method: "PUT",
+        body: modifiedStudentData
+      }),
+      
+      invalidatesTags: ["Student"],
+    }),
     deleteStudent: builder.mutation({
       query: (id) => ({
         url: `/students/${id}`,
@@ -51,5 +60,6 @@ export const {
   useGetStudentsQuery,
   useEnrollCoursesMutation,
   useUnenrollCoursesMutation,
+  useUpdateStudentMutation,
   useDeleteStudentMutation,
 } = studentApi;

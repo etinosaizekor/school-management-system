@@ -11,8 +11,14 @@ import {
 } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { Class, Course, FindQueryResult, Student } from "../sharedTypes";
-import { useForm } from "react-hook-form";
+import {
+  Class,
+  Course,
+  FindQueryResult,
+  Student,
+  StudentInfo,
+} from "../sharedTypes";
+import { FormProvider, useForm } from "react-hook-form";
 import { notifications } from "@mantine/notifications";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
@@ -23,17 +29,14 @@ import {
   useGetStudentsQuery,
 } from "../api/studentApi";
 import { fetchStudents } from "../loaders";
+import StudentForm from "../components/StudentForm";
+import { displayNotification } from "../components/notifications";
 
 interface StudentListCardProps {
   id: number;
   firstName: string;
   classId: string;
   numberOfCoursesEnrolled: number;
-}
-
-export interface StudentInfo extends Omit<Student, "Courses"> {
-  courseIds: string[];
-  dateOfBirth: Date;
 }
 
 function StudentListCard({
@@ -64,15 +67,8 @@ export default function StudentList() {
   }, [isSuccess, data]);
 
   const [opened, { open, close }] = useDisclosure(false);
-  const {
-    register,
-    watch,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    clearErrors,
-  } = useForm<StudentInfo>();
+  const formMethods = useForm<StudentInfo>();
+  const { reset } = formMethods;
   const [classes, setClasses] = useState<{ label: string; value: string }[]>(
     []
   );
@@ -82,50 +78,50 @@ export default function StudentList() {
   const [courseIds, setCourseIds] = useState<string[]>([]);
   const [createStudent] = useCreateStudentMutation();
 
-  const [
-    getCourses,
-    {
-      isLoading: isGetCoursesLoading,
-      isSuccess: isGetCoursesSuccess,
-      isError: isGetCoursesError,
-    },
-  ] = useLazyGetCoursesQuery();
-  const [
-    getClasses,
-    {
-      isLoading: isGetClassesLoading,
-      isSuccess: isGetClassesSuccess,
-      isError: isGetClassesError,
-    },
-  ] = useLazyGetClassesQuery();
+  // const [
+  //   getCourses,
+  //   {
+  //     isLoading: isGetCoursesLoading,
+  //     isSuccess: isGetCoursesSuccess,
+  //     isError: isGetCoursesError,
+  //   },
+  // ] = useLazyGetCoursesQuery();
+  // const [
+  //   getClasses,
+  //   {
+  //     isLoading: isGetClassesLoading,
+  //     isSuccess: isGetClassesSuccess,
+  //     isError: isGetClassesError,
+  //   },
+  // ] = useLazyGetClassesQuery();
 
-  const handleDialogOpen = () => {
-    open();
-    if (classes.length === 0) {
-      getClasses()
-        .unwrap()
-        .then((data) =>
-          setClasses(
-            data.items.map((cls) => ({
-              value: cls.id.toString(),
-              label: cls.className,
-            }))
-          )
-        );
-    }
-    if (courses.length === 0) {
-      getCourses()
-        .unwrap()
-        .then((data) =>
-          setCourses(
-            data.items.map((course) => ({
-              value: course.id.toString(),
-              label: course.courseName,
-            }))
-          )
-        );
-    }
-  };
+  // const handleDialogOpen = () => {
+  //   open();
+  //   if (classes.length === 0) {
+  //     getClasses()
+  //       .unwrap()
+  //       .then((data) =>
+  //         setClasses(
+  //           data.items.map((cls) => ({
+  //             value: cls.id.toString(),
+  //             label: cls.className,
+  //           }))
+  //         )
+  //       );
+  //   }
+  //   if (courses.length === 0) {
+  //     getCourses()
+  //       .unwrap()
+  //       .then((data) =>
+  //         setCourses(
+  //           data.items.map((course) => ({
+  //             value: course.id.toString(),
+  //             label: course.courseName,
+  //           }))
+  //         )
+  //       );
+  //   }
+  // };
 
   const onSubmit = async (data: StudentInfo) => {
     console.log(data);
@@ -140,22 +136,19 @@ export default function StudentList() {
       .unwrap()
       .then((newStudent) => {
         setStudents([...students, newStudent]);
-        notifications.show({
+
+        displayNotification({
           title: "Success",
           message: "Student created successfully!",
-          icon: <FaCheck />,
-          color: "teal",
-          position: "top-right",
+          type: "success",
         });
         reset();
       })
       .catch((error) =>
-        notifications.show({
+        displayNotification({
           title: "Error",
           message: error?.data?.message || "An error occurred",
-          icon: <FaTimes />,
-          color: "red",
-          position: "top-right",
+          type: "error",
         })
       )
       .finally(() => close());
@@ -164,10 +157,11 @@ export default function StudentList() {
   if (isLoading) {
     return <Loader />;
   }
+
   return (
     <>
       <div className="flex justify-end">
-        <Button m={30} color="#15803d" onClick={handleDialogOpen}>
+        <Button m={30} color="#15803d" onClick={open}>
           Create New Student
         </Button>
       </div>
@@ -190,7 +184,7 @@ export default function StudentList() {
         title="Create New Student"
         size="lg"
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
+        {/* <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput
             label="First Name"
             placeholder="Enter first name"
@@ -249,7 +243,10 @@ export default function StudentList() {
           <Button type="submit" color="#15803d" mt={10}>
             Submit
           </Button>
-        </form>
+        </form> */}
+        <FormProvider {...formMethods}>
+          <StudentForm onSubmit={onSubmit} />
+        </FormProvider>
       </Modal>
     </>
   );

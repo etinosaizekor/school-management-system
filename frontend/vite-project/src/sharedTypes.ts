@@ -1,3 +1,12 @@
+export interface Student {
+  id: number;
+  firstName: string;
+  lastName: string;
+  age: number;
+  Courses: Course[];
+  classId: string;
+}
+
 export interface FindQueryResult {
   items: any[];
   pagination: {
@@ -9,20 +18,11 @@ export interface FindQueryResult {
 }
 
 export interface Course {
-  id: number,
+  id: number;
   courseName: string;
   students: Student[];
-  courseCode: string,
-  credit: number
-}
-
-export interface Student {
-  id: number
-  firstName: string;
-  lastName: string;
-  age: number;
-  Courses: Course[];
-  classId: string;
+  courseCode: string;
+  credit: number;
 }
 
 export interface Class {
@@ -30,4 +30,7 @@ export interface Class {
   students: Student;
 }
 
-
+export interface StudentInfo extends Omit<Student, "Courses"> {
+  courseIds: string[];
+  dateOfBirth: Date;
+}

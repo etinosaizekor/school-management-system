@@ -92,13 +92,6 @@ export default function StudentDetails() {
   const { reset } = formMethods;
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const revalidator = useRevalidator();
-
-  useEffect(() => {
-    // Trigger revalidation or refetch when the location changes
-    revalidator.revalidate(); // This assumes revalidator is properly hooked up to your routes
-  }, [location.pathname]); // Dependency on location.pathname ensures revalidation on route changes
 
   useEffect(() => {
     if (coursesData) {
@@ -241,13 +234,11 @@ export default function StudentDetails() {
       .unwrap()
       .then((updatedStudentDetails) => {
         setStudentDetails(updatedStudentDetails);
-
         displayNotification({
           title: "Success",
           message: "Student updated successfully!",
           type: "success",
         });
-        reset();
       })
       .catch((error) =>
         displayNotification({

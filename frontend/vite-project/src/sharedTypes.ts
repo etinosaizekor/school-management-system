@@ -28,7 +28,7 @@ export interface Course {
 export interface Class {
   id: number
   className: string;
-  students: Student;
+  Students: Student[];
 }
 
 export type StudentInfo = Omit<Student, "Courses" | "Class"> & {

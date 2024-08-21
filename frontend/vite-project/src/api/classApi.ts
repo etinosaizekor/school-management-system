@@ -34,6 +34,14 @@ export const classApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Class"],
     }),
+    unenrollStudent: builder.mutation({
+      query: ({ classId, studentIds }) => ({
+        url: `/classes/${classId}/students`,
+        method: "PATCH",
+        body: studentIds,
+      }),
+      invalidatesTags: ["Class"],
+    }),
   }),
 });
 
@@ -44,4 +52,5 @@ export const {
   useCreateClassMutation,
   useUpdateClassMutation,
   useDeleteClassMutation,
+  useUnenrollStudentMutation,
 } = classApi;

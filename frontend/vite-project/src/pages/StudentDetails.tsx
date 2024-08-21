@@ -93,10 +93,6 @@ export default function StudentDetails() {
     },
   });
 
-  useEffect(() => {
-    console.log(studentDetails);
-  }, [studentDetails]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,10 +121,6 @@ export default function StudentDetails() {
     }
     open();
   };
-
-  useEffect(() => {
-    console.log(courseIds);
-  }, [courseIds]);
 
   const handleSubmit = () => {
     const courseText = courseIds.length === 1 ? "course" : "courses";
@@ -176,13 +168,6 @@ export default function StudentDetails() {
         .unwrap()
         .then((data) => {
           setCourses(data);
-          // notifications.show({
-          //   title: "Successful",
-          //   message: "Course successfully unenrolled",
-          //   icon: <FaCheck />,
-          //   color: "teal",
-          //   position: "top-right",
-          // });\
           displayNotification({
             title: "Successful",
             message: "Course successfully unenrolled",
@@ -332,36 +317,6 @@ export default function StudentDetails() {
           </Table.Tbody>
         </Table>
       </Paper>
-
-      {/* <Modal
-        opened={opened}
-        onClose={close}
-        title="Enroll Student to course"
-        size="lg"
-        padding={30}
-      >
-        <form onSubmit={handleSubmit}>
-          <MultiSelect
-            data={courseOptions}
-            value={courseIds}
-            placeholder="Select courses"
-            searchable
-            onChange={setCourseIds}
-          />
-          <Button
-            type="submit"
-            mt={10}
-            radius={20}
-            color="#15803d"
-            loading={isEnrolling}
-          >
-            Submit
-          </Button>
-        </form>
-      </Modal> */}
-
-      {/* <StudentForm onSubmit={handleSubmit}/> */}
-
       <Modal
         opened={opened}
         onClose={close}

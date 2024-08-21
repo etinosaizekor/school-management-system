@@ -1,7 +1,5 @@
+frontend/node_modules
 
-# Dependency directories
-backend/node_modules/
-
-# dotenv environment variable files
-backend/.env/
-frontend/.env/
+backend/node_modules
+backend/build
+backend/dist

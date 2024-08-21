@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Classes from "./pages/ClassList";
 import ClassDetails from "./pages/ClassDetails";
@@ -12,7 +12,7 @@ import {
   fetchCourses,
   fetchCourseById,
   fetchStudents,
-  fetchStudentById
+  fetchStudentById,
 } from "./loaders";
 
 const router = createBrowserRouter([
@@ -48,6 +48,10 @@ const router = createBrowserRouter([
         path: "/students/:studentId",
         element: <StudentDetails />,
         loader: async ({ params }) => fetchStudentById(params.studentId!),
+      },
+      {
+        path: "/",
+        element: <Navigate to="/classes" replace />,
       },
     ],
   },

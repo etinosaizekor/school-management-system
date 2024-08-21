@@ -5,7 +5,6 @@ import { CreationAttributes, Model, ModelStatic } from "sequelize";
 import { PageOptions, PaginatedResult } from "../sharedTypes";
 import { Student } from "../database/models/student";
 import ApiError from "../helper/ApiError";
-import { getStudents } from "../controllers/student.controller";
 
 class ClassService extends BaseService<Class> {
   constructor(model: ModelStatic<Class>) {

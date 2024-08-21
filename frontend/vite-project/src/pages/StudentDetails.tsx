@@ -57,8 +57,15 @@ export default function StudentDetails() {
   );
 
   const [opened, { open, close }] = useDisclosure(false);
+  const [
+    isCourseEnrolmentModalOpen,
+    { open: openCourseEnrolmentModal, close: closeCourseEnrolmentModal },
+  ] = useDisclosure(false);
+
   const [courseIds, setCourseIds] = useState<string[]>([]);
   const [courses, setCourses] = useState(studentDetails?.Courses);
+  const [coursesToEnrol, setCoursesToEnrol] = useState<string[]>([]);
+
   const [courseOptions, setCourseOptions] = useState<
     { value: string; label: string }[]
   >([]);
@@ -115,16 +122,20 @@ export default function StudentDetails() {
     }
   }, [isGetCoursesSuccess, coursesData, studentDetails?.Courses]);
 
-  const handleOpen = () => {
+  const handleCourseModalOpen = () => {
     if (courseOptions.length === 0) {
       getCourses();
     }
-    open();
+    openCourseEnrolmentModal();
   };
 
-  const handleSubmit = () => {
-    const courseText = courseIds.length === 1 ? "course" : "courses";
-    const ids = courseIds.map((courseId) => Number(courseId));
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    console.log(coursesToEnrol);
+
+    const courseText = coursesToEnrol.length === 1 ? "course" : "courses";
+    const ids = coursesToEnrol.map((courseId) => Number(courseId));
     console.log("ids", ids);
 
     enrollCourses({ studentId: studentDetails?.id, courseIds: ids })
@@ -139,6 +150,7 @@ export default function StudentDetails() {
           position: "top-right",
         });
         setCourseIds([]);
+        closeCourseEnrolmentModal()
       })
       .catch((error) => {
         notifications.show({
@@ -275,7 +287,7 @@ export default function StudentDetails() {
             <h6>Number of courses enrolled: </h6>
             <p>{studentDetails?.Courses.length}</p>
           </>
-          <Button onClick={handleOpen}>Add Course</Button>
+          <Button onClick={handleCourseModalOpen}>Add Course</Button>
         </span>
         <Table
           striped
@@ -320,12 +332,38 @@ export default function StudentDetails() {
       <Modal
         opened={opened}
         onClose={close}
-        title="Create New Student"
+        title="Edit Student Information"
         size="lg"
       >
         <FormProvider {...formMethods}>
           <StudentForm onSubmit={onSubmit} />
         </FormProvider>
+      </Modal>
+      <Modal
+        opened={isCourseEnrolmentModalOpen}
+        onClose={closeCourseEnrolmentModal}
+        title="Enrol Student to course"
+        size="lg"
+        padding={30}
+      >
+        <form onSubmit={handleSubmit}>
+          <MultiSelect
+            data={courseOptions}
+            value={coursesToEnrol}
+            placeholder="Select courses"
+            searchable
+            onChange={setCoursesToEnrol}
+          />
+          <Button
+            type="submit"
+            mt={10}
+            radius={20}
+            color="#15803d"
+            loading={isEnrolling} // Disable button and show loading state
+          >
+            Submit
+          </Button>
+        </form>
       </Modal>
 
       <ConfirmationModal

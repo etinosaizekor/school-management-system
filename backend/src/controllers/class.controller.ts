@@ -35,3 +35,12 @@ export const deleteClass = asyncHandler(async (req: Request, res: Response) => {
   const deletedClass = await classService.deleteOne(id);
   res.status(200).json(deletedClass);
 });
+
+export const removeStudentFromClass = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { classId } = req.params;
+    const studentIds = req.body;
+    const deletedClass = await classService.removeStudents(classId, studentIds);
+    res.status(200).json(deletedClass);
+  }
+);

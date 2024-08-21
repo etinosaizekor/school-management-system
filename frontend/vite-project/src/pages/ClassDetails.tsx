@@ -21,7 +21,8 @@ export default function ClassDetails() {
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
   ] = useDisclosure(false);
 
-  const [unenrollStudent, {isLoading: isUnenrolling}] = useUnenrollStudentMutation();
+  const [unenrollStudent, { isLoading: isUnenrolling }] =
+    useUnenrollStudentMutation();
 
   const { className, Students } = classDetails;
 
@@ -39,7 +40,7 @@ export default function ClassDetails() {
         .unwrap()
         .then(() => {
           console.log();
-          
+
           setStudents(
             students.filter((student) => student.id != studentToUnenroll)
           );
@@ -68,8 +69,10 @@ export default function ClassDetails() {
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <span className="flex gap-6">
-          <h6>Number of students enrolled: </h6>
-          <p> {Students.length}</p>
+          <>
+            <h6>Number of students enrolled: </h6>
+            <p> {Students.length}</p>
+          </>
         </span>
         {/* <Paper w="100%" mih={100}> */}
         <Table

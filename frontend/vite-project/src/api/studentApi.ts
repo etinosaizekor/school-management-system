@@ -22,7 +22,7 @@ export const studentApi = api.injectEndpoints({
     enrollCourses: builder.mutation({
       query: ({ studentId, courseIds }) => ({
         url: `/students/${studentId}/courses`,
-        method: "PATCH",
+        method: "POST",
         body: courseIds,
       }),
       invalidatesTags: ["Student"],
@@ -57,6 +57,7 @@ export const studentApi = api.injectEndpoints({
 export const {
   useCreateStudentMutation,
   useGetStudentQuery,
+  useLazyGetStudentsQuery,
   useLazyGetStudentQuery,
   useGetStudentsQuery,
   useEnrollCoursesMutation,

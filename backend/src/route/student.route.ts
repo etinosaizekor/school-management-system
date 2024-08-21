@@ -18,7 +18,7 @@ router.post("/students/:studentId/courses", addCourses);
 router.get("/students", getStudents);
 router.get("/students/:id", getStudentById);
 router.put("/students/:id", validate(studentSchema), updateStudent);
-router.delete("/students/:id", deleteStudent);
 router.delete("/students/:studentId/courses", removeCourses);
+router.delete("/students/:id", deleteStudent);
 
 export default router;

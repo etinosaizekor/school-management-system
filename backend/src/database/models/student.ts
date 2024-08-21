@@ -41,7 +41,6 @@ export class Student
   declare updatedAt: CreationOptional<Date>;
   declare addCourses: HasManyAddAssociationsMixin<Course, number>;
   declare getCourses: HasManyGetAssociationsMixin<Course>;
-  declare countCourses: HasManyCountAssociationsMixin;
   declare createCourse: HasManyCreateAssociationMixin<Course, "id">;
   declare removeCourse: HasManyRemoveAssociationMixin<Course, string>;
   declare removeCourses: HasManyRemoveAssociationsMixin<Course, string>;

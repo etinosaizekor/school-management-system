@@ -1,17 +1,42 @@
 "use strict";
-import { DataTypes, Model, Optional, Sequelize } from "sequelize";
+import {
+  DataTypes,
+  HasManyAddAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyRemoveAssociationsMixin,
+  HasOneGetAssociationMixin,
+  HasOneSetAssociationMixin,
+  Model,
+  Optional,
+  Sequelize,
+} from "sequelize";
+import { Student } from "./student";
 
 interface ClassAttributes {
   id: number;
   className: string;
+  studentIds?: number[]
 }
 
 export interface ClassCreationAttributes
   extends Optional<ClassAttributes, "id"> {}
 
-export class Class extends Model<ClassCreationAttributes, ClassCreationAttributes> {
+export class Class extends Model<
+  ClassCreationAttributes,
+  ClassCreationAttributes
+> {
   declare id: number;
   declare className: string;
+  declare addStudents: HasManyAddAssociationsMixin<Student, number>;
+  declare getStudents: HasManyGetAssociationsMixin<Student>;
+  declare createStudent: HasManyCreateAssociationMixin<Student, "id">;
+  declare removeStudent: HasManyRemoveAssociationMixin<Student, string>;
+  declare removeStudents: HasManyRemoveAssociationsMixin<Student, string>;
+  declare getClass: HasOneGetAssociationMixin<Class>;
+  declare setClass: HasOneSetAssociationMixin<Class, Class["id"]>;
+
   static associate(models: any) {
     this.hasMany(models.Student);
   }
@@ -25,7 +50,7 @@ export const initClassModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: "Class",
-      timestamps: true
+      timestamps: true,
     }
   );
   return Class;

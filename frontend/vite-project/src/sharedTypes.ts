@@ -4,7 +4,7 @@ export interface Student {
   lastName: string;
   dateOfBirth: string;
   Courses: Course[];
-  classId: string;
+  Class: Class;
 }
 
 export interface FindQueryResult {
@@ -26,10 +26,12 @@ export interface Course {
 }
 
 export interface Class {
+  id: number
   className: string;
   students: Student;
 }
 
-export interface StudentInfo extends Omit<Student, "Courses"> {
+export type StudentInfo = Omit<Student, "Courses" | "Class"> & {
   courseIds: string[];
-}
+  classId: string;
+};

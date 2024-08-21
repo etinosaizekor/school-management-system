@@ -89,7 +89,7 @@ export default function StudentDetails() {
       dateOfBirth: dob ? dob.format("YYYY-MM-DD") : "",
       courseIds:
         studentDetails?.Courses.map((course) => course.id.toString()) || [],
-      classId: (studentDetails?.classId as any) || "",
+      classId: studentDetails?.Class?.id.toString() || "",
     },
   });
 
@@ -269,9 +269,11 @@ export default function StudentDetails() {
           <MdDelete fontSize="20px" color="red" />
         </ActionIcon>
       </section>
-      <div className="w-60 mb-10">
+      <div className="w-72 mb-10">
         <StudentDetail label="First name" value={studentDetails?.firstName} />
         <StudentDetail label="Last name" value={studentDetails?.lastName} />
+        <StudentDetail label="Class" value={studentDetails?.Class?.className} />
+
         <StudentDetail
           label="Age"
           value={

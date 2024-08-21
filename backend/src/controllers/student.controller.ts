@@ -2,14 +2,15 @@ import { Request, Response } from "express";
 import { studentService } from "../services/student.service";
 import asyncHandler from "../utils/asynHandler";
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const createStudent = asyncHandler(
   async (req: Request, res: Response) => {
-    const { courseIds } = req.body;
+    const { courseIds, classId } = req.body;
 
     const newStudent = await studentService.create(req.body);
-    const newStudentCourses = await newStudent.addCourses(courseIds, { raw: true });
 
-    res.status(201).json({ ...newStudent.dataValues, Courses: newStudentCourses });
+    res.status(201).json(newStudent);
   }
 );
 
@@ -23,6 +24,7 @@ export const addCourses = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getStudents = asyncHandler(async (req: Request, res: Response) => {
+  delay(10000);
   const students = await studentService.find();
   res.status(200).json(students);
 });

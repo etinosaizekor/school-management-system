@@ -8,19 +8,22 @@ import {
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
   HasManyRemoveAssociationsMixin,
+  HasOneGetAssociationMixin,
+  HasOneSetAssociationMixin,
   Model,
   Optional,
   Sequelize,
 } from "sequelize";
 import { Course } from "./course";
+import { Class } from "./class";
 
 interface StudentAttributes {
   id: number;
   firstName: string;
   lastName: string;
   dateOfBirth: Date;
-  classId?: string;
-  courses?: Course[];
+  classId?: number;
+  courseIds?: number[];
 }
 
 export interface StudentCreationAttributes
@@ -42,6 +45,9 @@ export class Student
   declare createCourse: HasManyCreateAssociationMixin<Course, "id">;
   declare removeCourse: HasManyRemoveAssociationMixin<Course, string>;
   declare removeCourses: HasManyRemoveAssociationsMixin<Course, string>;
+  declare getClass: HasOneGetAssociationMixin<Class>;
+  declare setClass: HasOneSetAssociationMixin<Class, Class['id']>;
+
 
   static associate(models: any) {
     this.belongsTo(models.Class);

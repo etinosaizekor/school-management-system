@@ -28,7 +28,7 @@ export class BaseService<T extends Model> {
     criteria: Record<string, any> = {},
     options: PageOptions = { page: 1, limit: 15 }
   ): Promise<PaginatedResult | null> {
-    const { page , limit } = options;
+    const { page, limit } = options;
 
     const startIndex = (page - 1) * limit;
 
@@ -67,10 +67,11 @@ export class BaseService<T extends Model> {
     return data;
   }
 
-  async update(id: number | string, criteria: Partial<T>): Promise<number> {
-    const [affectedCount] = await this.model.update(criteria, {
+  async update(id: number | string, updatedData: Partial<T>): Promise<T | null> {
+    await this.model.update(updatedData, {
       where: { id: id as any },
     });
-    return affectedCount;
+
+    return this.model.findByPk(id);
   }
 }

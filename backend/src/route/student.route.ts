@@ -9,18 +9,15 @@ import {
 } from "../controllers/student.controller";
 import express from "express";
 import { validate } from "../middleware/validate";
-import {
-  createStudentSchema,
-  updateStudentSchema,
-} from "../validations/student.validation";
+import { studentSchema } from "../validations/student.validation";
 
 const router = express.Router();
 
-router.post("/students", validate(createStudentSchema), createStudent);
+router.post("/students", validate(studentSchema), createStudent);
 router.post("/students/:studentId/courses", addCourses);
 router.get("/students", getStudents);
 router.get("/students/:id", getStudentById);
-router.patch("/students", validate(updateStudentSchema), updateStudent);
+router.put("/students/:id", validate(studentSchema), updateStudent);
 router.delete("/students/:id", deleteStudent);
 router.delete("/students/:studentId/courses", removeCourses);
 

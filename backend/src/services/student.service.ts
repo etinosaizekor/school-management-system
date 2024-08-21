@@ -6,31 +6,24 @@ import { PageOptions, PaginatedResult } from "../sharedTypes";
 import { Course } from "../database/models/course";
 import ApiError from "../helper/ApiError";
 import { getCourses } from "../controllers/course.controller";
+import { Class } from "../database/models/class";
 
 class StudentService extends BaseService<Student> {
   constructor(model: ModelStatic<Student>) {
     super(model);
   }
 
-  async create(
-    studentData: CreationAttributes<Student>,
-    courseIds?: number[]
-  ): Promise<Student> {
-    const { courses } = studentData;
+  async create(studentData: CreationAttributes<Student>): Promise<Student> {
+    const { courseIds, classId } = studentData;
     const student = await this.model.create(studentData);
 
-    if (courses && courses.length > 0) {
-      await student.addCourses(courses);
-    }
+    await student.addCourses(courseIds, { raw: true });
+    await student.setClass(classId);
 
     return student;
   }
 
   async addCourses(studentId: string, courseIds: number[]): Promise<Course[]> {
-    // Find the student by ID
-
-    console.log(courseIds);
-    
     const student = await this.model.findByPk(studentId);
 
     if (!student) {
@@ -44,11 +37,8 @@ class StudentService extends BaseService<Student> {
       raw: true,
     });
 
-    console.log("Found courses", courses);
-
     const studentCourseIds = courses.map((course) => course.id);
     const newlyAddedCourse = await student.addCourses(studentCourseIds);
-    console.log("Newly added", newlyAddedCourse);
 
     const studentCourses = await student.getCourses();
 
@@ -80,6 +70,10 @@ class StudentService extends BaseService<Student> {
           attributes: ["id", "courseName", "courseCode", "credit"],
           through: { attributes: [] },
         },
+        {
+          model: Class,
+          attributes: ["id", "className"],
+        },
       ],
     });
 
@@ -93,7 +87,6 @@ class StudentService extends BaseService<Student> {
     const { page, limit } = options;
 
     const startIndex = (page - 1) * limit;
-    console.log(startIndex);
 
     try {
       const results = await this.model.findAll({
@@ -101,6 +94,9 @@ class StudentService extends BaseService<Student> {
         include: [
           {
             model: Course,
+          },
+          {
+            model: Class,
           },
         ],
         offset: startIndex,
@@ -124,6 +120,30 @@ class StudentService extends BaseService<Student> {
 
       return null;
     }
+  }
+  async update(
+    studentId: number | string,
+    updatedData: Student
+  ): Promise<Student | null> {
+    await this.model.update(updatedData, {
+      where: { id: studentId },
+    });
+
+    const student = await this.model.findByPk(studentId, {
+      include: [
+        {
+          model: Course,
+          attributes: ["id", "courseName", "courseCode", "credit"],
+          through: { attributes: [] },
+        },
+        {
+          model: Class,
+          attributes: ["id", "className"],
+        },
+      ],
+    });
+
+    return student;
   }
 }
 

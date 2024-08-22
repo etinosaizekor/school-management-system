@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import axios from "axios";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Class, ClassInfo, Student } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { CgRemove } from "react-icons/cg";
 import {
+  useDeleteClassMutation,
   useEnrollStudentMutation,
   useUnenrollStudentMutation,
   useUpdateClassMutation,
@@ -59,7 +60,7 @@ export default function ClassDetails() {
   const [unenrollStudent, { isLoading: isUnenrolling }] =
     useUnenrollStudentMutation();
 
-  // const { className, Students } = classDetails;
+  const navigate = useNavigate();
 
   const handleUnenroll = (studentId: number) => {
     setStudentToUnenroll(studentId);
@@ -172,7 +173,7 @@ export default function ClassDetails() {
       .unwrap()
       .then((updatedClassDetails) => {
         console.log("Updated class details", updatedClassDetails);
-        
+
         setClassDetails(updatedClassDetails);
         setStudentsInClass(updatedClassDetails?.Students);
         displayNotification({
@@ -196,6 +197,28 @@ export default function ClassDetails() {
       setStudentsInClass(classDetails?.Students);
     }
   }, [classDetails]);
+
+  const [deleteClass, {isLoading: deleting}] = useDeleteClassMutation();
+
+  const handleDeletion = () => {
+    deleteClass(classDetails?.id)
+      .then(() => {
+        closeDeleteConfirmation();
+        navigate("/classes", { replace: true });
+        displayNotification({
+          title: "Success",
+          message: "Class deleted successfully",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        displayNotification({
+          title: "Deletion failed",
+          message: error?.data?.message || "An error occurred",
+          type: "error",
+        });
+      });
+  };
 
   return (
     <div>
@@ -268,6 +291,14 @@ export default function ClassDetails() {
         confirmationMessage="Are you sure you want to unenroll this student"
         onConfirm={confirmUnenroll}
         loading={isUnenrolling}
+      />
+      <ConfirmationModal
+        opened={confirmDeletion}
+        onClose={closeDeleteConfirmation}
+        title="Confirm Deletion"
+        confirmationMessage="Are you sure you want to delete this class"
+        onConfirm={handleDeletion}
+        loading={deleting}
       />
       <Modal
         opened={isStudentModalOpen}

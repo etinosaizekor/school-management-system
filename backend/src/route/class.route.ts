@@ -20,6 +20,6 @@ router.get("/classes", getClasses);
 router.get("/classes/:id", getClassById);
 router.put("/classes/:id", validate(classSchema), updateClass);
 router.delete("/classes/:classId/students", removeStudentFromClass);
-router.delete("/classes", deleteClass);
+router.delete("/classes/:id", deleteClass);
 
 export default router;

@@ -116,7 +116,7 @@ class ClassService extends BaseService<Class> {
       where: { id: classId },
     });
 
-    const foundClass = await this.model
+    const updatedClass = await this.model
       .findByPk(classId, {
         include: [
           {
@@ -136,7 +136,7 @@ class ClassService extends BaseService<Class> {
         return updatedClass;
       });
 
-    return foundClass;
+    return updatedClass;
   }
 }
 

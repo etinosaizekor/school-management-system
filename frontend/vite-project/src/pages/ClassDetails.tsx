@@ -59,7 +59,7 @@ export default function ClassDetails() {
     if (studentToUnenroll !== null) {
       unenrollStudent({
         classId: classDetails?.id,
-        studentIds: studentToUnenroll,
+        studentId: studentToUnenroll,
       })
         .unwrap()
         .then(() => {
@@ -90,18 +90,19 @@ export default function ClassDetails() {
   const [getStudents] = useLazyGetStudentsQuery();
 
   const handleOpen = () => {
-    if (studentList.length === 0) {
-      getStudents()
-        .unwrap()
-        .then((allStudentsList) =>
-          setStudentList(
-            allStudentsList.items?.map((studentInList) => ({
-              value: studentInList?.id.toString(),
-              label: studentInList?.firstName + studentInList?.lastName,
-            }))
-          )
+    getStudents()
+      .unwrap()
+      .then((allStudentsList) => {
+        const enrolledStudentIds = new Set(studentsInClass.map((s) => s.id));
+
+        setStudentList(
+          allStudentsList.items?.map((studentInList) => ({
+            value: studentInList?.id.toString(),
+            label: `${studentInList?.firstName} ${studentInList?.lastName}`,
+            disabled: enrolledStudentIds.has(studentInList?.id), // Disable if already enrolled
+          }))
         );
-    }
+      });
     openStudentModal();
   };
 

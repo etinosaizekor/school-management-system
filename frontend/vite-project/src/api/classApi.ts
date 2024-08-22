@@ -46,7 +46,7 @@ export const classApi = api.injectEndpoints({
       query: ({ classId, studentId }) => ({
         url: `/classes/${classId}/students`,
         method: "DELETE",
-        body: studentId,
+        body: [studentId],
       }),
       invalidatesTags: ["Class"],
     }),

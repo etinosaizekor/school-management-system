@@ -142,23 +142,19 @@ export default function StudentDetails() {
       .unwrap()
       .then((data) => {
         setCourses(data);
-        notifications.show({
+        displayNotification({
           title: "Successful",
           message: `Student successfully enrolled in ${courseText}`,
-          icon: <FaCheck />,
-          color: "teal",
-          position: "top-right",
+          type: "success",
         });
-        setCourseIds([]);
-        closeCourseEnrolmentModal()
+        setCoursesToEnrol([]);
+        closeCourseEnrolmentModal();
       })
       .catch((error) => {
-        notifications.show({
+        displayNotification({
           title: `Failed to enrol ${courseText}`,
           message: error?.data?.message || "An error occurred",
-          icon: <FaTimes />,
-          color: "red",
-          position: "top-right",
+          type: "error",
         });
       })
       .finally(() => {
@@ -359,7 +355,7 @@ export default function StudentDetails() {
             mt={10}
             radius={20}
             color="#15803d"
-            loading={isEnrolling} // Disable button and show loading state
+            loading={isEnrolling}
           >
             Submit
           </Button>

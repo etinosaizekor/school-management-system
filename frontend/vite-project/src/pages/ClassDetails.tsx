@@ -1,4 +1,12 @@
-import { ActionIcon, Button, Paper, Table, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Modal,
+  MultiSelect,
+  Paper,
+  Table,
+  Tooltip,
+} from "@mantine/core";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
 import { Class } from "../sharedTypes";
@@ -7,20 +15,36 @@ import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { CgRemove } from "react-icons/cg";
-import { useUnenrollStudentMutation } from "../api/classApi";
+import {
+  useEnrollStudentMutation,
+  useUnenrollStudentMutation,
+} from "../api/classApi";
 import { displayNotification } from "../components/notifications";
+import { useLazyGetStudentsQuery } from "../api/studentApi";
 
 export default function ClassDetails() {
   const classDetails = useLoaderData() as Class;
-  const [students, setStudents] = useState(classDetails?.Students);
+  const [studentsInClass, setStudentsInClass] = useState(
+    classDetails?.Students
+  );
   const [studentToUnenroll, setStudentToUnenroll] = useState<number | null>(
     null
   );
+  const [studentsToEnroll, setStudentsToEnroll] = useState<string[]>([]);
+  const [studentList, setStudentList] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [
     confirmUnenrollOpened,
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
   ] = useDisclosure(false);
+  const [
+    isStudentModalOpen,
+    { open: openStudentModal, close: closeStudentModal },
+  ] = useDisclosure(false);
 
+  const [enrollStudent, { isLoading: isEnrolling }] =
+    useEnrollStudentMutation();
   const [unenrollStudent, { isLoading: isUnenrolling }] =
     useUnenrollStudentMutation();
 
@@ -41,8 +65,8 @@ export default function ClassDetails() {
         .then(() => {
           console.log();
 
-          setStudents(
-            students.filter((student) => student.id != studentToUnenroll)
+          setStudentsInClass(
+            studentsInClass.filter((student) => student.id != studentToUnenroll)
           );
           displayNotification({
             title: "Successful",
@@ -63,16 +87,64 @@ export default function ClassDetails() {
     }
   };
 
+  const [getStudents] = useLazyGetStudentsQuery();
+
+  const handleOpen = () => {
+    if (studentList.length === 0) {
+      getStudents()
+        .unwrap()
+        .then((allStudentsList) =>
+          setStudentList(
+            allStudentsList.items?.map((studentInList) => ({
+              value: studentInList?.id.toString(),
+              label: studentInList?.firstName + studentInList?.lastName,
+            }))
+          )
+        );
+    }
+    openStudentModal();
+  };
+
+  const handleEnrolmentSubmission = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const ids = studentsToEnroll.map((studentId) => parseInt(studentId));
+
+    enrollStudent({ classId: classDetails?.id, studentId: ids })
+      .unwrap()
+      .then((data) => {
+        setStudentsInClass(data);
+        displayNotification({
+          title: "Successful",
+          message: `Student successfully enrolled in Class`,
+          type: "success",
+        });
+        setStudentsToEnroll([]);
+        closeStudentModal();
+      })
+      .catch((error) => {
+        displayNotification({
+          title: `Failed to enrol student`,
+          message: error?.data?.message || "An error occurred. Try again",
+          type: "error",
+        });
+      })
+      .finally(() => {
+        close();
+      });
+  };
+
   return (
     <div>
       <h4>{className}</h4>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
-        <span className="flex gap-6">
+        <span className="flex gap-6 justify-between">
           <>
             <h6>Number of students enrolled: </h6>
             <p> {Students.length}</p>
           </>
+          <Button onClick={handleOpen}>Add Student</Button>
         </span>
         {/* <Paper w="100%" mih={100}> */}
         <Table
@@ -93,7 +165,7 @@ export default function ClassDetails() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {students?.map((student) => (
+            {studentsInClass?.map((student) => (
               <Table.Tr>
                 <Table.Td>{student.firstName}</Table.Td>
                 <Table.Td>{student.lastName}</Table.Td>
@@ -123,6 +195,32 @@ export default function ClassDetails() {
         onConfirm={confirmUnenroll}
         loading={isUnenrolling}
       />
+      <Modal
+        opened={isStudentModalOpen}
+        onClose={closeStudentModal}
+        title="Enrol Student to course"
+        size="lg"
+        padding={30}
+      >
+        <form onSubmit={handleEnrolmentSubmission}>
+          <MultiSelect
+            data={studentList}
+            value={studentsToEnroll}
+            placeholder="Select courses"
+            searchable
+            onChange={setStudentsToEnroll}
+          />
+          <Button
+            type="submit"
+            mt={10}
+            radius={20}
+            color="#15803d"
+            loading={isEnrolling}
+          >
+            Submit
+          </Button>
+        </form>
+      </Modal>
     </div>
   );
 }

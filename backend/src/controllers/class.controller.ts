@@ -36,6 +36,16 @@ export const deleteClass = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(deletedClass);
 });
 
+export const addStudents = asyncHandler(async (req: Request, res: Response) => {
+  const students = req.body;
+
+  const { classId } = req.params;
+
+  const studentCourses = await classService.addStudents(classId, students);
+
+  res.send(studentCourses);
+});
+
 export const removeStudentFromClass = asyncHandler(
   async (req: Request, res: Response) => {
     const { classId } = req.params;

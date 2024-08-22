@@ -16,13 +16,8 @@ export const createStudent = asyncHandler(
 
 export const addCourses = asyncHandler(async (req: Request, res: Response) => {
   const courses = req.body;
-  console.log(courses);
-  console.log("Past");
-  
-  
+
   const { studentId } = req.params;
-  console.log(studentId);
-  
 
   const studentCourses = await studentService.addCourses(studentId, courses);
 

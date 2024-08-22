@@ -140,13 +140,13 @@ export default function ClassDetails() {
       <h4>{className}</h4>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
-        <span className="flex gap-6 justify-between">
-          <>
+        <section className="flex gap-6 justify-between">
+          <span className="flex gap-5">
             <h6>Number of students enrolled: </h6>
             <p> {Students.length}</p>
-          </>
+          </span>
           <Button onClick={handleOpen}>Add Student</Button>
-        </span>
+        </section>
         {/* <Paper w="100%" mih={100}> */}
         <Table
           striped

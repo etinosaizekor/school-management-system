@@ -26,12 +26,20 @@ export interface Course {
 }
 
 export interface Class {
-  id: number
+  id: number;
   className: string;
   Students: Student[];
+}
+
+export interface FormProps {
+  mode?: "creation" | "edit";
+  onSubmit: (data: any) => void;
 }
 
 export type StudentInfo = Omit<Student, "Courses" | "Class"> & {
   courseIds: string[];
   classId: string;
+};
+export type ClassInfo = Omit<Class, "Students"> & {
+  studentIds: string[];
 };

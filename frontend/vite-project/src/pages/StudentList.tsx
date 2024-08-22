@@ -69,59 +69,7 @@ export default function StudentList() {
   const [opened, { open, close }] = useDisclosure(false);
   const formMethods = useForm<StudentInfo>();
   const { reset } = formMethods;
-  const [classes, setClasses] = useState<{ label: string; value: string }[]>(
-    []
-  );
-  const [courses, setCourses] = useState<{ label: string; value: string }[]>(
-    []
-  );
-  const [courseIds, setCourseIds] = useState<string[]>([]);
   const [createStudent] = useCreateStudentMutation();
-
-  // const [
-  //   getCourses,
-  //   {
-  //     isLoading: isGetCoursesLoading,
-  //     isSuccess: isGetCoursesSuccess,
-  //     isError: isGetCoursesError,
-  //   },
-  // ] = useLazyGetCoursesQuery();
-  // const [
-  //   getClasses,
-  //   {
-  //     isLoading: isGetClassesLoading,
-  //     isSuccess: isGetClassesSuccess,
-  //     isError: isGetClassesError,
-  //   },
-  // ] = useLazyGetClassesQuery();
-
-  // const handleDialogOpen = () => {
-  //   open();
-  //   if (classes.length === 0) {
-  //     getClasses()
-  //       .unwrap()
-  //       .then((data) =>
-  //         setClasses(
-  //           data.items.map((cls) => ({
-  //             value: cls.id.toString(),
-  //             label: cls.className,
-  //           }))
-  //         )
-  //       );
-  //   }
-  //   if (courses.length === 0) {
-  //     getCourses()
-  //       .unwrap()
-  //       .then((data) =>
-  //         setCourses(
-  //           data.items.map((course) => ({
-  //             value: course.id.toString(),
-  //             label: course.courseName,
-  //           }))
-  //         )
-  //       );
-  //   }
-  // };
 
   const onSubmit = async (data: StudentInfo) => {
     console.log(data);
@@ -184,66 +132,6 @@ export default function StudentList() {
         title="Create New Student"
         size="lg"
       >
-        {/* <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput
-            label="First Name"
-            placeholder="Enter first name"
-            {...register("firstName", { required: "First name is required" })}
-            error={errors?.firstName?.message}
-          />
-
-          <TextInput
-            label="Last Name"
-            placeholder="Enter last name"
-            {...register("lastName", { required: "Last name is required" })}
-            error={errors.lastName?.message}
-          />
-
-          <TextInput
-            label="Date of Birth"
-            type="date"
-            {...register("dateOfBirth", {
-              required: "Date of birth is required",
-            })}
-            error={errors.dateOfBirth?.message}
-          />
-
-          <Select
-            value={watch("classId")}
-            label="Class"
-            placeholder="Select class"
-            data={classes}
-            {...register("classId", { required: "Class is required" })}
-            error={errors.classId?.message}
-            onChange={(value) => {
-              if (value) {
-                clearErrors("classId");
-                setValue("classId", value);
-              }
-            }}
-            nothingFoundMessage="No classes available"
-            rightSection={isGetClassesLoading && <Loader />}
-          />
-
-          <MultiSelect
-            value={watch("courseIds")}
-            label="Courses"
-            placeholder="Select courses"
-            data={courses}
-            error={errors.courseIds?.message}
-            multiple
-            onChange={(selectedValues: string[]) => {
-              clearErrors("courseIds");
-              setValue("courseIds", selectedValues);
-            }}
-            nothingFoundMessage="No courses available"
-            rightSection={isGetCoursesLoading && <Loader />}
-          />
-
-          <Button type="submit" color="#15803d" mt={10}>
-            Submit
-          </Button>
-        </form> */}
         <FormProvider {...formMethods}>
           <StudentForm onSubmit={onSubmit} />
         </FormProvider>

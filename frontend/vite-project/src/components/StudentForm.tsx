@@ -1,11 +1,10 @@
-import { useForm, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Button, Loader, MultiSelect, Select, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { useGetClassesQuery, useLazyGetClassesQuery } from "../api/classApi";
+import { useGetClassesQuery } from "../api/classApi";
 import { useGetCoursesQuery } from "../api/courseApi";
 import { StudentInfo } from "../sharedTypes";
 import { formatDate } from "../utils/dateUtils";
-import dayjs from "dayjs";
 
 interface StudentFormProps {
   mode?: "creation" | "edit";
@@ -13,12 +12,7 @@ interface StudentFormProps {
   initialData?: StudentInfo;
 }
 
-function StudentForm({
-  mode = "creation",
-  onSubmit,
-  initialData,
-}: //   isFormSubmissionSuccess
-StudentFormProps) {
+function StudentForm({ mode = "creation", onSubmit }: StudentFormProps) {
   const {
     register,
     watch,
@@ -70,25 +64,6 @@ StudentFormProps) {
       );
     }
   }, [isGetClassesSuccess, isGetClassesError, classData]);
-
-  //   const {
-  //     register,
-  //     watch,
-  //     handleSubmit,
-  //     formState: { errors },
-  //     reset,
-  //     setValue,
-  //     clearErrors,
-  //   } = useForm<StudentInfo>({
-  //     defaultValues: initialData || {}, // Populate with initialData if provided
-  //   });
-
-  // Populate fields on initialData change (for edit mode)
-  //   useEffect(() => {
-  //     if (mode === "edit" && initialData) {
-  //       reset(initialData);
-  //     }
-  //   }, [mode, initialData, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

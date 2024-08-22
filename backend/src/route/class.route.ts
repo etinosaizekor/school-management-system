@@ -18,7 +18,7 @@ router.post("/classes/:classId/students", addStudents);
 router.get("/classes", getClasses);
 
 router.get("/classes/:id", getClassById);
-router.patch("/classes", validate(classSchema), updateClass);
+router.put("/classes/:id", validate(classSchema), updateClass);
 router.delete("/classes/:classId/students", removeStudentFromClass);
 router.delete("/classes", deleteClass);
 

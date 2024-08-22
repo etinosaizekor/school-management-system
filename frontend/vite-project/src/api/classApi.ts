@@ -20,13 +20,13 @@ export const classApi = api.injectEndpoints({
       invalidatesTags: ["Class"],
     }),
     updateClass: builder.mutation({
-      query: ({ id, ...updateData }) => ({
+      query: ({ id, modifiedClassData }) => ({
         url: `/classes/${id}`,
         method: "PUT",
-        body: updateData,
+        body: modifiedClassData,
       }),
       invalidatesTags: ["Class"],
-    }),
+    }), 
     deleteClass: builder.mutation({
       query: (id) => ({
         url: `/classes/${id}`,

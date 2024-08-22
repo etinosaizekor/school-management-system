@@ -110,19 +110,31 @@ class ClassService extends BaseService<Class> {
   }
   async update(
     classId: number | string,
-    updatedData: Class
+    updatedData: Record<string, any>
   ): Promise<Class | null> {
     await this.model.update(updatedData, {
       where: { id: classId },
     });
 
-    const foundClass = await this.model.findByPk(classId, {
-      include: [
-        {
-          model: Student,
-        },
-      ],
-    });
+    const foundClass = await this.model
+      .findByPk(classId, {
+        include: [
+          {
+            model: Student,
+          },
+        ],
+      })
+      .then((foundClass) => foundClass?.setStudents(updatedData.studentIds))
+      .then(async () => {
+        const updatedClass = await this.model.findByPk(classId, {
+          include: [
+            {
+              model: Student,
+            },
+          ],
+        });
+        return updatedClass;
+      });
 
     return foundClass;
   }

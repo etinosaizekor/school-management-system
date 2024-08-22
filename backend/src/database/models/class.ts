@@ -6,6 +6,7 @@ import {
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
   HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
   HasOneGetAssociationMixin,
   HasOneSetAssociationMixin,
   Model,
@@ -17,7 +18,7 @@ import { Student } from "./student";
 interface ClassAttributes {
   id: number;
   className: string;
-  studentIds?: number[]
+  studentIds?: number[];
 }
 
 export interface ClassCreationAttributes
@@ -34,8 +35,7 @@ export class Class extends Model<
   declare createStudent: HasManyCreateAssociationMixin<Student, "id">;
   declare removeStudent: HasManyRemoveAssociationMixin<Student, string>;
   declare removeStudents: HasManyRemoveAssociationsMixin<Student, string>;
-  declare getClass: HasOneGetAssociationMixin<Class>;
-  declare setClass: HasOneSetAssociationMixin<Class, Class["id"]>;
+  declare setStudents: HasManySetAssociationsMixin<Student, number>;
 
   static associate(models: any) {
     this.hasMany(models.Student);

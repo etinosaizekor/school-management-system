@@ -9,24 +9,29 @@ import {
 } from "@mantine/core";
 import axios from "axios";
 import { useLoaderData } from "react-router-dom";
-import { Class } from "../sharedTypes";
+import { Class, ClassInfo, Student } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { CgRemove } from "react-icons/cg";
 import {
   useEnrollStudentMutation,
   useUnenrollStudentMutation,
+  useUpdateClassMutation,
 } from "../api/classApi";
 import { displayNotification } from "../components/notifications";
 import { useLazyGetStudentsQuery } from "../api/studentApi";
+import { MdDelete, MdModeEdit } from "react-icons/md";
+import { FormProvider, useForm } from "react-hook-form";
+import ClassForm from "../components/ClassForm";
 
 export default function ClassDetails() {
-  const classDetails = useLoaderData() as Class;
-  const [studentsInClass, setStudentsInClass] = useState(
-    classDetails?.Students
+  const [classDetails, setClassDetails] = useState(
+    useLoaderData() as Class | null
   );
+
+  const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
   const [studentToUnenroll, setStudentToUnenroll] = useState<number | null>(
     null
   );
@@ -38,6 +43,12 @@ export default function ClassDetails() {
     confirmUnenrollOpened,
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
   ] = useDisclosure(false);
+  const [isEditModalOpened, { open: openEditModal, close: closeEditModal }] =
+    useDisclosure(false);
+  const [
+    confirmDeletion,
+    { open: openDeleteConfirmation, close: closeDeleteConfirmation },
+  ] = useDisclosure(false);
   const [
     isStudentModalOpen,
     { open: openStudentModal, close: closeStudentModal },
@@ -48,7 +59,7 @@ export default function ClassDetails() {
   const [unenrollStudent, { isLoading: isUnenrolling }] =
     useUnenrollStudentMutation();
 
-  const { className, Students } = classDetails;
+  // const { className, Students } = classDetails;
 
   const handleUnenroll = (studentId: number) => {
     setStudentToUnenroll(studentId);
@@ -66,7 +77,9 @@ export default function ClassDetails() {
           console.log();
 
           setStudentsInClass(
-            studentsInClass.filter((student) => student.id != studentToUnenroll)
+            studentsInClass?.filter(
+              (student) => student.id != studentToUnenroll
+            )
           );
           displayNotification({
             title: "Successful",
@@ -93,7 +106,7 @@ export default function ClassDetails() {
     getStudents()
       .unwrap()
       .then((allStudentsList) => {
-        const enrolledStudentIds = new Set(studentsInClass.map((s) => s.id));
+        const enrolledStudentIds = new Set(studentsInClass?.map((s) => s.id));
 
         setStudentList(
           allStudentsList.items?.map((studentInList) => ({
@@ -135,15 +148,75 @@ export default function ClassDetails() {
       });
   };
 
+  const formMethods = useForm<ClassInfo>({
+    defaultValues: {
+      className: classDetails?.className,
+      studentIds:
+        classDetails?.Students?.map((student) => student.id.toString()) || [],
+    },
+  });
+
+  const [updateClass] = useUpdateClassMutation();
+
+  const handleUpdateSubmission = (data: ClassInfo) => {
+    const { className, studentIds } = data;
+    const classFormData = {
+      ...data,
+      studentIds: studentIds.map((courseId) => parseInt(courseId)),
+    };
+
+    updateClass({
+      id: classDetails?.id!,
+      modifiedClassData: classFormData,
+    })
+      .unwrap()
+      .then((updatedClassDetails) => {
+        console.log("Updated class details", updatedClassDetails);
+        
+        setClassDetails(updatedClassDetails);
+        setStudentsInClass(updatedClassDetails?.Students);
+        displayNotification({
+          title: "Success",
+          message: "Student updated successfully!",
+          type: "success",
+        });
+      })
+      .catch((error) =>
+        displayNotification({
+          title: "Error",
+          message: error?.data?.message || "An error occurred",
+          type: "error",
+        })
+      )
+      .finally(() => closeEditModal());
+  };
+
+  useEffect(() => {
+    if (classDetails) {
+      setStudentsInClass(classDetails?.Students);
+    }
+  }, [classDetails]);
+
   return (
     <div>
-      <h4>{className}</h4>
+      <section className="flex justify-between mb-6">
+        <div className="flex gap-8">
+          <h4>Class Information</h4>
+          <ActionIcon variant="subtle" onClick={openEditModal}>
+            <MdModeEdit fontSize="20px" color="black" />
+          </ActionIcon>
+        </div>
+        <ActionIcon variant="subtle" onClick={openDeleteConfirmation}>
+          <MdDelete fontSize="20px" color="red" />
+        </ActionIcon>
+      </section>
+      <h4>{classDetails?.className}</h4>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <section className="flex gap-6 justify-between">
           <span className="flex gap-5">
             <h6>Number of students enrolled: </h6>
-            <p> {Students.length}</p>
+            <p> {classDetails?.Students?.length}</p>
           </span>
           <Button onClick={handleOpen}>Add Student</Button>
         </section>
@@ -167,7 +240,7 @@ export default function ClassDetails() {
           </Table.Thead>
           <Table.Tbody>
             {studentsInClass?.map((student) => (
-              <Table.Tr>
+              <Table.Tr key={student.id}>
                 <Table.Td>{student.firstName}</Table.Td>
                 <Table.Td>{student.lastName}</Table.Td>
                 <Table.Td>{calculateAge(student.dateOfBirth)}</Table.Td>
@@ -207,7 +280,7 @@ export default function ClassDetails() {
           <MultiSelect
             data={studentList}
             value={studentsToEnroll}
-            placeholder="Select courses"
+            placeholder="Select Students"
             searchable
             onChange={setStudentsToEnroll}
           />
@@ -221,6 +294,16 @@ export default function ClassDetails() {
             Submit
           </Button>
         </form>
+      </Modal>
+      <Modal
+        opened={isEditModalOpened}
+        onClose={closeEditModal}
+        title="Edit Class Information"
+        size="lg"
+      >
+        <FormProvider {...formMethods}>
+          <ClassForm onSubmit={handleUpdateSubmission} mode="edit" />
+        </FormProvider>
       </Modal>
     </div>
   );

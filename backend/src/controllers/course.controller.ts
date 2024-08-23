@@ -11,6 +11,29 @@ export const createCourse = asyncHandler(
   }
 );
 
+export const addStudents = asyncHandler(async (req: Request, res: Response) => {
+  const students = req.body;
+
+  const { courseId } = req.params;
+
+  const studentCourses = await courseService.addStudents(courseId, students);
+  res.send(studentCourses);
+});
+
+export const removeStudents = asyncHandler(
+  async (req: Request, res: Response) => {
+    const students = req.body;
+    const { courseId } = req.params;
+
+    const studentCourses = await courseService.removeStudents(
+      courseId,
+      students
+    );
+
+    res.send(studentCourses);
+  }
+);
+
 export const getCourses = asyncHandler(async (req: Request, res: Response) => {
   const courses = await courseService.find();
   res.status(200).json(courses);

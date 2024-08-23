@@ -1,10 +1,12 @@
-import { DataTypes, Optional, Sequelize, Model, ModelStatic } from "sequelize";
+import { DataTypes, Optional, Sequelize, Model, ModelStatic, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin, HasManyCreateAssociationMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin, HasManySetAssociationsMixin } from "sequelize";
+import { Student } from "./student";
 
 interface CourseAttributes {
   id: number;
   courseName: string;
   courseCode: string;
-  credit: number;
+  credit: number; 
+  studentIds?: number[]
 }
 
 export interface CourseCreationAttributes
@@ -18,6 +20,13 @@ export class Course
   declare courseName: string;
   declare courseCode: string;
   declare credit: number;
+
+  declare addStudents: HasManyAddAssociationsMixin<Student, number>;
+  declare getStudents: HasManyGetAssociationsMixin<Student>;
+  declare createStudent: HasManyCreateAssociationMixin<Student, "id">;
+  declare removeStudent: HasManyRemoveAssociationMixin<Student, string>;
+  declare removeStudents: HasManyRemoveAssociationsMixin<Student, string>;
+  declare setStudents: HasManySetAssociationsMixin<Student, number>;
 
   static associate(models: any) {
     this.belongsTo(models.Class);

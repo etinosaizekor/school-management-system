@@ -1,6 +1,12 @@
-import { Grid, Paper } from "@mantine/core";
+import { Button, Grid, Modal, Paper } from "@mantine/core";
 import { Link, useLoaderData } from "react-router-dom";
-import { FindQueryResult } from "../sharedTypes";
+import { Course, CourseInfo, FindQueryResult } from "../sharedTypes";
+import { useCreateCourseMutation, useGetCoursesQuery } from "../api/courseApi";
+import { useEffect, useState } from "react";
+import { displayNotification } from "../components/notifications";
+import { useDisclosure } from "@mantine/hooks";
+import { FormProvider, useForm } from "react-hook-form";
+import CourseForm from "../components/CourseForm";
 
 interface CourseListCardProps {
   id: string;
@@ -26,22 +32,93 @@ function CourseListCard({
 }
 
 export default function CourseList() {
-  const courses = useLoaderData() as FindQueryResult;
-  console.log(courses);
-  let numberOfStudent = 1;
+  const { data, isLoading, isSuccess, isError, error } = useGetCoursesQuery();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [opened, { open, close }] = useDisclosure(false);
+  const formMethods = useForm<CourseInfo>();
+  const { reset } = formMethods;
+  const [createCourse] = useCreateCourseMutation();
+
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setCourses(data.items);
+    }
+    if (isError) {
+      let errorMessage;
+      if ("data" in error) {
+        const errorData: any = error.data;
+        errorMessage =
+          errorData.message ||
+          "Error occured while fetching classes. Try again";
+      }
+      displayNotification({
+        title: "Failed to fetch courses",
+        message: errorMessage,
+        type: "error",
+      });
+    }
+  }, [isSuccess, data, isError, error]);
+
+  const onSubmit = async (data: CourseInfo) => {
+    console.log(data);
+    const { studentIds } = data;
+    const studentFormData = {
+      ...data,
+      studentIds: studentIds.map((studentId) => parseInt(studentId)),
+    };
+
+
+    createCourse(studentFormData)
+      .unwrap()
+      .then((newCourse) => {
+        setCourses([...courses, newCourse]);
+
+        displayNotification({
+          title: "Success",
+          message: "Student created successfully!",
+          type: "success",
+        });
+        reset();
+      })
+      .catch((error) =>
+        displayNotification({
+          title: "Error",
+          message: error?.data?.message || "An error occurred",
+          type: "error",
+        })
+      )
+      .finally(() => close());
+  };
 
   return (
-    <Grid grow>
-      {courses?.items?.map(({ id, courseName, students }, index) => (
-        <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
-          <CourseListCard
-            id={id}
-            courseName={courseName}
-            numberOfStudent={numberOfStudent + 1}
-          />
-        </Grid.Col>
-      ))}
-    </Grid>
+    <>
+      <div className="flex justify-end">
+        <Button m={30} color="#15803d" onClick={open}>
+          Create New Course
+        </Button>
+      </div>
+      <Grid>
+        {courses?.map(({ id, courseName, Students }, index) => (
+          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
+            <CourseListCard
+              id={id.toString()}
+              courseName={courseName}
+              numberOfStudent={Students?.length}
+            />
+          </Grid.Col>
+        ))}
+      </Grid>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Create New Student"
+        size="lg"
+      >
+        <FormProvider {...formMethods}>
+          <CourseForm onSubmit={onSubmit} />
+        </FormProvider>
+      </Modal>
+    </>
   );
 }
-

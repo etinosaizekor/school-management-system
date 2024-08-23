@@ -118,11 +118,6 @@ class ClassService extends BaseService<Class> {
 
     const updatedClass = await this.model
       .findByPk(classId, {
-        include: [
-          {
-            model: Student,
-          },
-        ],
       })
       .then((foundClass) => foundClass?.setStudents(updatedData.studentIds))
       .then(async () => {

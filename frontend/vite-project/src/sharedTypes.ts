@@ -20,7 +20,7 @@ export interface FindQueryResult {
 export interface Course {
   id: number;
   courseName: string;
-  students: Student[];
+  Students: Student[];
   courseCode: string;
   credit: number;
 }
@@ -41,5 +41,9 @@ export type StudentInfo = Omit<Student, "Courses" | "Class"> & {
   classId: string;
 };
 export type ClassInfo = Omit<Class, "Students"> & {
+  studentIds: string[];
+};
+
+export type CourseInfo = Omit<Course, "Students"> & {
   studentIds: string[];
 };

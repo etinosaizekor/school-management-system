@@ -20,13 +20,32 @@ export const courseApi = api.injectEndpoints({
       invalidatesTags: ["Course"],
     }),
     updateCourse: builder.mutation({
-      query: ({ id, ...updateData }) => ({
+      query: ({ id, modifiedClassData }) => ({
         url: `/courses/${id}`,
         method: "PUT",
-        body: updateData,
+        body: modifiedClassData,
       }),
       invalidatesTags: ["Course"],
     }),
+    enrollStudents: builder.mutation({
+      query: ({ courseId, studentId }) => ({
+        url: `/courses/${courseId}/students`,
+        method: "POST",
+        body: studentId,
+      }),
+      invalidatesTags: ["Course"],
+    }),
+    unenrollStudentFromCourse: builder.mutation({
+      query: ({ courseId, studentId }) => {
+        return {
+          url: `/courses/${courseId}/students`,
+          method: "DELETE",
+          body: [studentId],
+        };
+      },
+      invalidatesTags: ["Course"],
+    }),
+
     deleteCourse: builder.mutation({
       query: (id) => ({
         url: `/courses/${id}`,
@@ -43,5 +62,7 @@ export const {
   useLazyGetCoursesQuery,
   useCreateCourseMutation,
   useUpdateCourseMutation,
+  useEnrollStudentsMutation,
+  useUnenrollStudentFromCourseMutation,
   useDeleteCourseMutation,
 } = courseApi;

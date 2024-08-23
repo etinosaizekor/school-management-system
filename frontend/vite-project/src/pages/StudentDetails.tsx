@@ -37,19 +37,20 @@ import { FormProvider, useForm } from "react-hook-form";
 import { StudentInfo } from "../sharedTypes";
 import { calculateAge, formatDate } from "../utils/dateUtils";
 import dayjs from "dayjs";
+import LabelValuePair from "../components/LabelValuePair";
 
-function StudentDetail({ label, value }: { label: string; value: any }) {
-  return (
-    <span className="flex gap-6 justify-between items-center">
-      <span className="flex-1">
-        <h6>{label}</h6>
-      </span>
-      <span className="flex-1">
-        <p>{value}</p>
-      </span>
-    </span>
-  );
-}
+// function StudentDetail({ label, value }: { label: string; value: any }) {
+//   return (
+//     <span className="flex gap-6 justify-between items-center">
+//       <span className="flex-1">
+//         <h6>{label}</h6>
+//       </span>
+//       <span className="flex-1">
+//         <p>{value}</p>
+//       </span>
+//     </span>
+//   );
+// }
 
 export default function StudentDetails() {
   const [studentDetails, setStudentDetails] = useState(
@@ -201,7 +202,7 @@ export default function StudentDetails() {
         closeConfirmDeletion();
         navigate("/students", { replace: true });
         displayNotification({
-          title: "Sucess",
+          title: "Success",
           message: "Student deleted successfully",
           type: "success",
         });
@@ -263,11 +264,13 @@ export default function StudentDetails() {
         </ActionIcon>
       </section>
       <div className="w-72 mb-10">
-        <StudentDetail label="First name" value={studentDetails?.firstName} />
-        <StudentDetail label="Last name" value={studentDetails?.lastName} />
-        <StudentDetail label="Class" value={studentDetails?.Class?.className} />
-
-        <StudentDetail
+        <LabelValuePair label="First name" value={studentDetails?.firstName} />
+        <LabelValuePair label="Last name" value={studentDetails?.lastName} />
+        <LabelValuePair
+          label="Class"
+          value={studentDetails?.Class?.className}
+        />
+        <LabelValuePair
           label="Age"
           value={
             studentDetails?.dateOfBirth

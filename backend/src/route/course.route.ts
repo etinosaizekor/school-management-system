@@ -19,7 +19,7 @@ router.post("/courses/:courseId/students", addStudents);
 
 router.get("/courses/:id", getCourseById);
 router.put("/courses/:id", validate(courseSchema), updateCourse);
-router.delete("/courses", deleteCourse);
+router.delete("/courses/:id", deleteCourse);
 router.delete("/courses/:courseId/students", removeStudents);
 
 export default router;

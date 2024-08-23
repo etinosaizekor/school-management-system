@@ -39,7 +39,6 @@ export default function CourseList() {
   const { reset } = formMethods;
   const [createCourse] = useCreateCourseMutation();
 
-
   useEffect(() => {
     if (isSuccess && data) {
       setCourses(data.items);
@@ -67,7 +66,6 @@ export default function CourseList() {
       ...data,
       studentIds: studentIds.map((studentId) => parseInt(studentId)),
     };
-
 
     createCourse(studentFormData)
       .unwrap()
@@ -100,7 +98,7 @@ export default function CourseList() {
       </div>
       <Grid>
         {courses?.map(({ id, courseName, Students }, index) => (
-          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2 }}>
+          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
             <CourseListCard
               id={id.toString()}
               courseName={courseName}

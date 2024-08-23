@@ -1,7 +1,7 @@
 import { BaseService } from "./baseService";
 import db from "../database/models";
 import { Course } from "../database/models/course";
-import { CreationAttributes, Model, ModelStatic } from "sequelize";
+import { CreationAttributes, Model, ModelStatic, Op } from "sequelize";
 import { PageOptions, PaginatedResult } from "../sharedTypes";
 import ApiError from "../helper/ApiError";
 import { getCourses } from "../controllers/course.controller";
@@ -116,21 +116,32 @@ class CourseService extends BaseService<Course> {
     courseId: number | string,
     updatedData: Record<string, any>
   ): Promise<Course | null> {
+    const existingCourse = await this.model.findOne({
+      where: {
+        courseCode: updatedData.courseCode,
+        id: { [Op.ne]: courseId },
+      },
+    });
+
+    if (existingCourse) {
+      throw new Error("A course with this course code already exists.");
+    }
+
     await this.model.update(updatedData, {
       where: { id: courseId },
     });
 
-    const course = await this.model
-      .findByPk(courseId)
-      .then((foundCourse) => foundCourse?.setStudents(updatedData.studentIds))
-      .then(async () => {
-        const updatedCourse = await this.model.findByPk(courseId, {
-          include: Student,
-        });
-        return updatedCourse;
-      });
+    const foundCourse = await this.model.findByPk(courseId);
 
-    return course;
+    if (foundCourse && updatedData.studentIds) {
+      await foundCourse.setStudents(updatedData.studentIds);
+    }
+
+    const updatedCourse = await this.model.findByPk(courseId, {
+      include: Student,
+    });
+
+    return updatedCourse;
   }
 }
 

@@ -27,6 +27,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import { useLazyGetStudentsQuery } from "../api/studentApi";
 import CourseForm from "../components/CourseForm";
+import LabelValuePair from "../components/LabelValuePair";
 
 export default function CourseDetails() {
   const navigate = useNavigate();
@@ -123,10 +124,10 @@ export default function CourseDetails() {
     deleteCourse(courseDetails?.id)
       .then(() => {
         closeDeleteConfirmation();
-        navigate("/classes", { replace: true });
+        navigate("/courses", { replace: true });
         displayNotification({
           title: "Success",
-          message: "Class deleted successfully",
+          message: "Course deleted successfully",
           type: "success",
         });
       })
@@ -238,7 +239,11 @@ export default function CourseDetails() {
           <MdDelete fontSize="20px" color="red" />
         </ActionIcon>
       </section>
-      <h4>{courseName}</h4>
+      <div className="w-72 mb-10">
+        <LabelValuePair label="Course name" value={courseName} />
+        <LabelValuePair label="Course code" value={courseCode} />
+        <LabelValuePair label="Credit" value={credit} />
+      </div>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <section className="flex gap-6 justify-between">
@@ -262,7 +267,7 @@ export default function CourseDetails() {
             <Table.Tr>
               <Table.Th>First Name</Table.Th>
               <Table.Th>Last Name</Table.Th>
-              <Table.Th>Number of courses registered</Table.Th>
+              <Table.Th>Age</Table.Th>
               <Table.Th>Action</Table.Th>
             </Table.Tr>
           </Table.Thead>

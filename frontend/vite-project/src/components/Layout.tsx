@@ -8,7 +8,7 @@ export default function Layout() {
       <Sidebar />
       <section className="bg-gray-100 h-screen w-full">
         <Appbar />
-        <main className="h-full m-6">
+        <main className="h-[calc(100%-6rem)] ml-48 w-[calc(100%-13rem)]">
           <Outlet />
         </main>
       </section>

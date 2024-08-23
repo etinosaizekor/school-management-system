@@ -7,6 +7,8 @@ import { useCreateClassMutation, useGetClassesQuery } from "../api/classApi";
 import { useEffect, useState } from "react";
 import { displayNotification } from "../components/notifications";
 import ClassForm from "../components/ClassForm";
+import { SlGraduation } from "react-icons/sl";
+import { GoPerson } from "react-icons/go";
 
 interface ClassListCardProps {
   className: string;
@@ -20,11 +22,19 @@ function ClassListCard({
   id,
 }: ClassListCardProps) {
   return (
-    <Paper w={300} h={130} p={10} className="border border-gray-400">
+    <Paper w={300} h={130} p={15} className="border border-gray-400">
       <Link to={`/classes/${id}`}>
-        <div className="flex flex-col justify-center h-full gap-1">
-          <h5 className="secondary-color">{className}</h5>
-          <h6>{numberOfStudents} students</h6>
+        <div className="flex flex-col h-full gap-2">
+          <div className="flex justify-between items-center">
+            <div>
+              <h5 className="secondary-color">{className}</h5>
+              <div className="flex items-center gap-2 mt-2 mr-10">
+                <GoPerson />
+                <h6 className="text-sm">{numberOfStudents} students</h6>
+              </div>
+            </div>
+            <SlGraduation fontSize={25} />
+          </div>
         </div>
       </Link>
     </Paper>
@@ -90,14 +100,15 @@ export default function Classes() {
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button m={30} color="#15803d" onClick={open}>
+      <div className="flex justify-between align-middle m-6 ml-0">
+        <h3>Classes</h3>
+        <Button color="#15803d" onClick={open}>
           Create New Class
         </Button>
       </div>
       <Grid gutter="lg">
         {classes?.map(({ id, className, Students }, index) => (
-          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 3 }}>
+          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
             <ClassListCard
               className={className}
               numberOfStudents={Students?.length || 0}

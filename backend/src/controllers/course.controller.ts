@@ -51,6 +51,7 @@ export const updateCourse = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body;
+    
     const updatedCourse = await courseService.update(id, body);
     res.status(200).json(updatedCourse);
   }

@@ -198,7 +198,7 @@ export default function ClassDetails() {
     }
   }, [classDetails]);
 
-  const [deleteClass, {isLoading: deleting}] = useDeleteClassMutation();
+  const [deleteClass, { isLoading: deleting }] = useDeleteClassMutation();
 
   const handleDeletion = () => {
     deleteClass(classDetails?.id)

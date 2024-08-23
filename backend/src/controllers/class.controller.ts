@@ -27,6 +27,7 @@ export const updateClass = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
   const updatedClass = await classService.update(id, body);
   res.status(200).json(updatedClass);
+  
 });
 
 export const deleteClass = asyncHandler(async (req: Request, res: Response) => {

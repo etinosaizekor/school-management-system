@@ -45,7 +45,7 @@ function StudentListCard({
           <h6 className="text-sm">{numberOfCoursesEnrolled} Courses</h6>
         </div>
       </Paper>
-    </Link> 
+    </Link>
   );
 }
 
@@ -69,7 +69,9 @@ export default function StudentList() {
     const { courseIds, classId } = data;
     const studentFormData = {
       ...data,
-      courseIds: courseIds.map((courseId) => parseInt(courseId)),
+      courseIds: courseIds
+        ? courseIds.map((courseId) => parseInt(courseId))
+        : [],
       classId: parseInt(classId),
     };
 
@@ -101,8 +103,10 @@ export default function StudentList() {
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button m={30} color="#15803d" onClick={open}>
+      <div className="flex justify-between align-middle m-6 ml-0">
+        <h3>Student</h3>
+
+        <Button color="#15803d" onClick={open}>
           Create New Student
         </Button>
       </div>

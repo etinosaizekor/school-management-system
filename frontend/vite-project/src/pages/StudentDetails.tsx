@@ -252,7 +252,7 @@ export default function StudentDetails() {
 
   return (
     <div>
-      <section className="flex justify-between mb-6">
+      <section className="flex justify-between m-6 ml-0">
         <div className="flex gap-8">
           <h4>Student Information</h4>
           <ActionIcon variant="subtle" onClick={open}>
@@ -282,10 +282,10 @@ export default function StudentDetails() {
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <span className="flex gap-6 justify-between">
-          <>
+          <span className="flex gap-5">
             <h6>Number of courses enrolled: </h6>
             <p>{studentDetails?.Courses.length}</p>
-          </>
+          </span>
           <Button onClick={handleCourseModalOpen}>Add Course</Button>
         </span>
         <Table
@@ -306,25 +306,33 @@ export default function StudentDetails() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {courses?.map(({ courseName, credit, courseCode, id }) => (
-              <Table.Tr key={courseCode}>
-                <Table.Td>{courseCode}</Table.Td>
-                <Table.Td>{courseName}</Table.Td>
-                <Table.Td>{credit}</Table.Td>
-                <Table.Td>
-                  <Tooltip label="Unenroll" position="top" withArrow>
-                    <Button
-                      variant="outline"
-                      color="red"
-                      size="xs"
-                      onClick={() => handleUnenroll(id)}
-                    >
-                      <CgRemove fontSize={20} />
-                    </Button>
-                  </Tooltip>
+            {courses?.length === 0 ? (
+              <Table.Tr>
+                <Table.Td colSpan={4} className="text-center">
+                  No courses available
                 </Table.Td>
               </Table.Tr>
-            ))}
+            ) : (
+              courses?.map(({ courseName, credit, courseCode, id }) => (
+                <Table.Tr key={courseCode}>
+                  <Table.Td>{courseCode}</Table.Td>
+                  <Table.Td>{courseName}</Table.Td>
+                  <Table.Td>{credit}</Table.Td>
+                  <Table.Td>
+                    <Tooltip label="Unenroll" position="top" withArrow>
+                      <Button
+                        variant="outline"
+                        color="red"
+                        size="xs"
+                        onClick={() => handleUnenroll(id)}
+                      >
+                        <CgRemove fontSize={20} />
+                      </Button>
+                    </Tooltip>
+                  </Table.Td>
+                </Table.Tr>
+              ))
+            )}
           </Table.Tbody>
         </Table>
       </Paper>

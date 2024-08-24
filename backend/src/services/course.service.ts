@@ -14,10 +14,26 @@ class CourseService extends BaseService<Course> {
   }
 
   async create(courseData: CreationAttributes<Course>): Promise<Course> {
-    const { studentIds } = courseData;
+    const { studentIds, courseCode } = courseData;
+
+    // Check if a course with the same course code already exists
+    const existingCourse = await this.model.findOne({
+      where: { courseCode },
+    });
+
+    if (existingCourse) {
+      throw new ApiError(
+        409,
+        `Course with code "${courseCode}" already exists.`
+      );
+    }
+
     const course = await this.model.create(courseData);
 
-    await course.addStudents(studentIds, { raw: true });
+    if (studentIds && studentIds.length > 0) {
+      await course.addStudents(studentIds, { raw: true });
+    }
+
     return course;
   }
 

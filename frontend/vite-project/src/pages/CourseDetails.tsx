@@ -37,6 +37,7 @@ export default function CourseDetails() {
     null
   );
   const [studentsToEnroll, setStudentsToEnroll] = useState<string[]>([]);
+  const [updateError, setUpdateError] = useState("");
   const [studentList, setStudentList] = useState<
     { value: string; label: string }[]
   >([]);
@@ -215,20 +216,18 @@ export default function CourseDetails() {
           message: "Course updated successfully!",
           type: "success",
         });
+        setUpdateError("");
+        closeEditModal();
       })
-      .catch((error) =>
-        displayNotification({
-          title: "Error",
-          message: error?.data?.message || "An error occurred",
-          type: "error",
-        })
-      )
-      .finally(() => closeEditModal());
+      .catch((error) => {
+        const err = error?.data?.message;
+        setUpdateError(err);
+      });
   };
 
   return (
     <div>
-      <section className="flex justify-between mb-6">
+      <section className="flex justify-between m-6 ml-0">
         <div className="flex gap-8">
           <h4>Course Information</h4>
           <ActionIcon variant="subtle" onClick={openEditModal}>
@@ -239,7 +238,7 @@ export default function CourseDetails() {
           <MdDelete fontSize="20px" color="red" />
         </ActionIcon>
       </section>
-      <div className="w-72 mb-10">
+      <div className="mb-10">
         <LabelValuePair label="Course name" value={courseName} />
         <LabelValuePair label="Course code" value={courseCode} />
         <LabelValuePair label="Credit" value={credit} />
@@ -272,25 +271,33 @@ export default function CourseDetails() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {studentsInClass?.map((student) => (
-              <Table.Tr key={student.id}>
-                <Table.Td>{student.firstName}</Table.Td>
-                <Table.Td>{student.lastName}</Table.Td>
-                <Table.Td>{calculateAge(student.dateOfBirth)}</Table.Td>
-                <Table.Td>
-                  <Tooltip label="Unenroll Student" position="top" withArrow>
-                    <Button
-                      variant="outline"
-                      color="red"
-                      size="xs"
-                      onClick={() => handleUnenrollClick(student.id)}
-                    >
-                      <CgRemove fontSize={20} />
-                    </Button>
-                  </Tooltip>
+            {studentsInClass.length === 0 ? (
+              <Table.Tr>
+                <Table.Td colSpan={4} className="text-center">
+                  No students available
                 </Table.Td>
               </Table.Tr>
-            ))}
+            ) : (
+              studentsInClass.map((student) => (
+                <Table.Tr key={student.id}>
+                  <Table.Td>{student.firstName}</Table.Td>
+                  <Table.Td>{student.lastName}</Table.Td>
+                  <Table.Td>{calculateAge(student.dateOfBirth)}</Table.Td>
+                  <Table.Td>
+                    <Tooltip label="Unenroll Student" position="top" withArrow>
+                      <Button
+                        variant="outline"
+                        color="red"
+                        size="xs"
+                        onClick={() => handleUnenrollClick(student.id)}
+                      >
+                        <CgRemove fontSize={20} />
+                      </Button>
+                    </Tooltip>
+                  </Table.Td>
+                </Table.Tr>
+              ))
+            )}
           </Table.Tbody>
         </Table>
       </Paper>
@@ -343,7 +350,11 @@ export default function CourseDetails() {
         size="lg"
       >
         <FormProvider {...formMethods}>
-          <CourseForm onSubmit={handleUpdateSubmission} mode="edit" />
+          <CourseForm
+            onSubmit={handleUpdateSubmission}
+            mode="edit"
+            errorMessage={updateError}
+          />
         </FormProvider>
       </Modal>
     </div>

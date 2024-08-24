@@ -51,6 +51,7 @@ export default function CourseList() {
   const formMethods = useForm<CourseInfo>();
   const { reset } = formMethods;
   const [createCourse] = useCreateCourseMutation();
+  const [creationError, setCreationError] = useState("");
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -73,11 +74,12 @@ export default function CourseList() {
   }, [isSuccess, data, isError, error]);
 
   const onSubmit = async (data: CourseInfo) => {
-    console.log(data);
     const { studentIds } = data;
     const studentFormData = {
       ...data,
-      studentIds: studentIds.map((studentId) => parseInt(studentId)),
+      studentIds: studentIds
+        ? studentIds?.map((studentId) => parseInt(studentId))
+        : [],
     };
 
     createCourse(studentFormData)
@@ -90,16 +92,14 @@ export default function CourseList() {
           message: "Student created successfully!",
           type: "success",
         });
+        setCreationError("");
         reset();
+        close();
       })
-      .catch((error) =>
-        displayNotification({
-          title: "Error",
-          message: error?.data?.message || "An error occurred",
-          type: "error",
-        })
-      )
-      .finally(() => close());
+      .catch((error) => {
+        const err = error?.data?.message;
+        setCreationError(err);
+      });
   };
 
   return (
@@ -113,8 +113,8 @@ export default function CourseList() {
       {courses.length === 0 ? (
         <NoEntity
           Icon={<HiOutlineBookOpen fontSize={200} />}
-          createNewText="Create New Class"
-          message="No Classes available"
+          createNewText="Create New course"
+          message="No courses available"
           onCreate={open}
         />
       ) : (
@@ -139,7 +139,7 @@ export default function CourseList() {
         size="lg"
       >
         <FormProvider {...formMethods}>
-          <CourseForm onSubmit={onSubmit} />
+          <CourseForm onSubmit={onSubmit} errorMessage={creationError} />
         </FormProvider>
       </Modal>
     </>

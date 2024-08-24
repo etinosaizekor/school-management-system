@@ -25,10 +25,10 @@ function CourseListCard({
   numberOfStudents,
 }: CourseListCardProps) {
   return (
-    <Paper w={300} h={130} p={13} className="border border-gray-400">
+    <Paper w={300} h={140} p={13} className="border border-gray-400">
       <Link to={`/courses/${id}`}>
         <div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-2">
             <p className="secondary-color">{courseCode}</p>
             <HiOutlineBookOpen fontSize={25} fontVariant="outlined" />
           </div>
@@ -103,8 +103,9 @@ export default function CourseList() {
 
   return (
     <>
-      <div className="flex justify-end">
-        <Button m={30} color="#15803d" onClick={open}>
+      <div className="flex justify-between align-middle m-6 ml-0">
+        <h3>Courses</h3>
+        <Button color="#15803d" onClick={open}>
           Create New Course
         </Button>
       </div>
@@ -123,7 +124,7 @@ export default function CourseList() {
       <Modal
         opened={opened}
         onClose={close}
-        title="Create New Student"
+        title="Create New Course"
         size="lg"
       >
         <FormProvider {...formMethods}>

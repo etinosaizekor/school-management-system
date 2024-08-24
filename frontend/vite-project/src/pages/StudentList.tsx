@@ -1,55 +1,47 @@
-import {
-  Button,
-  Grid,
-  Paper,
-  Modal,
-  TextInput,
-  Select,
-  Group,
-  Loader,
-  MultiSelect,
-} from "@mantine/core";
+import { Button, Grid, Paper, Modal, Loader } from "@mantine/core";
 import { useState, useEffect } from "react";
-import { Link, useLoaderData } from "react-router-dom";
-import {
-  Class,
-  Course,
-  FindQueryResult,
-  Student,
-  StudentInfo,
-} from "../sharedTypes";
+import { Link } from "react-router-dom";
+import { Student, StudentInfo } from "../sharedTypes";
 import { FormProvider, useForm } from "react-hook-form";
-import { notifications } from "@mantine/notifications";
-import { FaCheck, FaTimes } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
-import { useLazyGetCoursesQuery } from "../api/courseApi";
-import { useLazyGetClassesQuery } from "../api/classApi";
 import {
   useCreateStudentMutation,
   useGetStudentsQuery,
 } from "../api/studentApi";
-import { fetchStudents } from "../loaders";
 import StudentForm from "../components/StudentForm";
 import { displayNotification } from "../components/notifications";
+import { HiOutlineBookOpen } from "react-icons/hi";
+import { GoPerson } from "react-icons/go";
+import { CgProfile } from "react-icons/cg";
 
 interface StudentListCardProps {
   id: number;
   firstName: string;
-  classId: string;
+  lastName: string;
+  className: string;
   numberOfCoursesEnrolled: number;
 }
 
 function StudentListCard({
   id,
   firstName,
+  lastName,
+  className,
   numberOfCoursesEnrolled,
 }: StudentListCardProps) {
   return (
     <Paper w={300} h={130} p={10} className="border border-gray-400">
       <Link to={`/students/${id}`}>
-        <div className="flex flex-col justify-center h-full gap-1">
-          <h5 className="secondary-color">{firstName}</h5>
-          <h6> {numberOfCoursesEnrolled} Courses</h6>
+        <div className="flex justify-between items-center">
+          <div>
+            <h5 className="secondary-color">{`${firstName} ${lastName}`}</h5>
+            <p className="secondary-color">{className}</p>
+          </div>
+          <CgProfile fontSize={25} />
+        </div>
+        <div className="flex items-center gap-2 mt-3">
+          <HiOutlineBookOpen fontSize={20} />
+          <h6 className="text-sm">{numberOfCoursesEnrolled} Courses</h6>
         </div>
       </Link>
     </Paper>
@@ -114,13 +106,14 @@ export default function StudentList() {
         </Button>
       </div>
       <Grid>
-        {students?.map(({ id, firstName, Courses }, index) => (
+        {students?.map(({ id, firstName, lastName, Courses, Class }, index) => (
           <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
             <StudentListCard
               id={id}
               firstName={firstName}
+              lastName={lastName}
               numberOfCoursesEnrolled={Courses?.length || 0}
-              classId="12"
+              className={Class?.className}
             />
           </Grid.Col>
         ))}

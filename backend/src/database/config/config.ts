@@ -1,15 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
+// config.js
+import { db } from '../../settings.js'; // Use .js extension for ES modules
+import 'dotenv/config'; // Ensure dotenv is configured
 
 const config = {
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PSW,
-    database: process.env.DATABASE_NAME,
-    host: process.env.HOST,
-    dialect: "mysql",
-  },
+  username: db.DB_USERNAME,
+  password: db.DB_PASSWORD,
+  database: db.DB_NAME,
+  host: db.DB_HOST,
+  dialect: 'mysql',
 };
 
 module.exports = config;
-export default config

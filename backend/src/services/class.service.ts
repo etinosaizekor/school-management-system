@@ -135,4 +135,4 @@ class ClassService extends BaseService<Class> {
   }
 }
 
-export const classService = new ClassService(db.class);
+export const classService = new ClassService(Class);

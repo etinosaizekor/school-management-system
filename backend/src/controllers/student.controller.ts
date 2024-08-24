@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { studentService } from "../services/student.service";
-import asyncHandler from "../utils/asynHandler";
+import asyncHandler from "../utils/asyncHandler";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

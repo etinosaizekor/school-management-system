@@ -16,6 +16,7 @@ import {
 } from "sequelize";
 import { Course } from "./course";
 import { Class } from "./class";
+import connection from "../connection";
 
 interface StudentAttributes {
   id: number;
@@ -45,8 +46,7 @@ export class Student
   declare removeCourse: HasManyRemoveAssociationMixin<Course, string>;
   declare removeCourses: HasManyRemoveAssociationsMixin<Course, string>;
   declare getClass: HasOneGetAssociationMixin<Class>;
-  declare setClass: HasOneSetAssociationMixin<Class, Class['id']>;
-
+  declare setClass: HasOneSetAssociationMixin<Class, Class["id"]>;
 
   static associate(models: any) {
     this.belongsTo(models.Class);
@@ -56,29 +56,44 @@ export class Student
   }
 }
 
-export const initStudentModel = (sequelize: Sequelize) => {
-  Student.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      dateOfBirth: DataTypes.DATE
+// export const initStudentModel = (sequelize: Sequelize) => {
+Student.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    {
-      sequelize,
-      modelName: "Student",
-      timestamps: true,
-    }
-  );
-  return Student;
-};
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    classId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    dateOfBirth: DataTypes.DATE,
+  },
+  {
+    sequelize: connection,
+    modelName: "Student",
+    timestamps: true,
+  }
+);
+
+Student.belongsTo(Class, {
+  foreignKey: {
+    name: "classId",
+    allowNull: false,
+  },
+  foreignKeyConstraint: true,
+});
+Student.belongsToMany(Course, {
+  through: "StudentCourses",
+});
+
+export default Student

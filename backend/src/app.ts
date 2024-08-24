@@ -37,12 +37,12 @@ const port: string | undefined = process.env.PORT;
 //Typically specify endpoint
 
 db.sequelize
-  .sync({ alter: true }) // or { force: true } in development
+  // .sync({ alter: true }) // or { force: true } in development
   .then(() => {
     console.log("Database synchronized");
     // Start your server after synchronization
     app.listen(port, () => console.log(`Express server running at ${port}`));
   })
-  .catch((err) => {
+  .catch((err: any) => {
     console.error("Error synchronizing database:", err);
   });

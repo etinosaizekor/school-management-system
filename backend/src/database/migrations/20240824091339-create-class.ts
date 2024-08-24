@@ -1,6 +1,6 @@
 "use strict";
 
-import { DataTypes, QueryInterface, Sequelize } from "sequelize";
+import { DataTypes, QueryInterface } from "sequelize";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       className: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       createdAt: {
@@ -26,7 +26,7 @@ module.exports = {
       },
     });
   },
-  async down(queryInterface: QueryInterface, Sequelize: Sequelize) {
+  async down(queryInterface: QueryInterface, Sequelize: any) {
     await queryInterface.dropTable("Classes");
   },
 };

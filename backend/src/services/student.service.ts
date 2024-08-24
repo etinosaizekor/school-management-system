@@ -147,4 +147,4 @@ class StudentService extends BaseService<Student> {
   }
 }
 
-export const studentService = new StudentService(db.student);
+export const studentService = new StudentService(Student);

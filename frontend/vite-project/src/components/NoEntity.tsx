@@ -15,12 +15,12 @@ export default function NoEntity({
   Icon,
 }: NoEntityProps) {
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full flex items-center justify-center mt-10">
       <div className="w-72 flex flex-col items-center text-center">
         <div className="text-gray-400 mb-4">
           {Icon}
         </div>
-        <Text size="lg" className="mb-4">
+        <Text size="lg" mb={10}>
           {message}
         </Text>
         <Button color="#15803d" onClick={onCreate}>

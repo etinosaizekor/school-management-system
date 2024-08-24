@@ -11,8 +11,9 @@ import {
 import StudentForm from "../components/StudentForm";
 import { displayNotification } from "../components/notifications";
 import { HiOutlineBookOpen } from "react-icons/hi";
-import { GoPerson } from "react-icons/go";
+import { IoPersonOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
+import NoEntity from "../components/NoEntity";
 
 interface StudentListCardProps {
   id: number;
@@ -105,19 +106,30 @@ export default function StudentList() {
           Create New Student
         </Button>
       </div>
-      <Grid>
-        {students?.map(({ id, firstName, lastName, Courses, Class }, index) => (
-          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
-            <StudentListCard
-              id={id}
-              firstName={firstName}
-              lastName={lastName}
-              numberOfCoursesEnrolled={Courses?.length || 0}
-              className={Class?.className}
-            />
-          </Grid.Col>
-        ))}
-      </Grid>
+      {students.length === 0 ? (
+        <NoEntity
+          Icon={<IoPersonOutline fontSize={200} />}
+          createNewText="Create New Student"
+          message="No Students available"
+          onCreate={open}
+        />
+      ) : (
+        <Grid>
+          {students?.map(
+            ({ id, firstName, lastName, Courses, Class }, index) => (
+              <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
+                <StudentListCard
+                  id={id}
+                  firstName={firstName}
+                  lastName={lastName}
+                  numberOfCoursesEnrolled={Courses?.length || 0}
+                  className={Class?.className}
+                />
+              </Grid.Col>
+            )
+          )}
+        </Grid>
+      )}
 
       <Modal
         opened={opened}

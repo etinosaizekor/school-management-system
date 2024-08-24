@@ -108,15 +108,12 @@ export default function Classes() {
         </Button>
       </div>
       {classes.length === 0 ? (
-        <div className="flex justify-center mt-10">
-          <NoClasses
-            Icon={<SlGraduation fontSize={200}/>}
-            createNewText="Create New Class"
-            message="No Classes available"
-            onCreate={open}
-
-          />
-        </div>
+        <NoClasses
+          Icon={<SlGraduation fontSize={200} />}
+          createNewText="Create New Class"
+          message="No Classes available"
+          onCreate={open}
+        />
       ) : (
         <Grid gutter="lg">
           {classes?.map(({ id, className, Students }, index) => (

@@ -10,6 +10,7 @@ import CourseForm from "../components/CourseForm";
 import { GoBook, GoPerson } from "react-icons/go";
 import { FaBook } from "react-icons/fa";
 import { HiOutlineBookOpen } from "react-icons/hi";
+import NoEntity from "../components/NoEntity";
 
 interface CourseListCardProps {
   id: string;
@@ -109,18 +110,28 @@ export default function CourseList() {
           Create New Course
         </Button>
       </div>
-      <Grid>
-        {courses?.map(({ id, courseName, courseCode, Students }, index) => (
-          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
-            <CourseListCard
-              id={id.toString()}
-              courseName={courseName}
-              courseCode={courseCode}
-              numberOfStudents={Students?.length}
-            />
-          </Grid.Col>
-        ))}
-      </Grid>
+      {courses.length === 0 ? (
+        <NoEntity
+          Icon={<HiOutlineBookOpen fontSize={200} />}
+          createNewText="Create New Class"
+          message="No Classes available"
+          onCreate={open}
+        />
+      ) : (
+        <Grid>
+          {courses?.map(({ id, courseName, courseCode, Students }, index) => (
+            <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
+              <CourseListCard
+                id={id.toString()}
+                courseName={courseName}
+                courseCode={courseCode}
+                numberOfStudents={Students?.length}
+              />
+            </Grid.Col>
+          ))}
+        </Grid>
+      )}
+
       <Modal
         opened={opened}
         onClose={close}

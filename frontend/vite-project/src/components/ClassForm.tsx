@@ -5,7 +5,7 @@ import { ClassInfo, FormProps } from "../sharedTypes";
 import { useGetStudentsQuery } from "../api/studentApi";
 import { displayNotification } from "./notifications";
 
-function ClassForm({ mode = "creation", onSubmit }: FormProps) {
+function ClassForm({ mode = "creation", onSubmit, errorMessage }: FormProps) {
   const {
     register,
     watch,
@@ -72,9 +72,10 @@ function ClassForm({ mode = "creation", onSubmit }: FormProps) {
           clearErrors("studentIds");
           setValue("studentIds", selectedValues);
         }}
-        nothingFoundMessage="No courses available"
+        nothingFoundMessage="No students available"
         rightSection={isStudentFetchLoading && <Loader />}
       />
+      <p className="text-red-600 mt-3">{errorMessage}</p>
 
       <Button type="submit" color="#15803d" mt={10}>
         {mode === "edit" ? "Save Changes" : "Submit"}

@@ -23,8 +23,8 @@ function ClassListCard({
   id,
 }: ClassListCardProps) {
   return (
-    <Paper w={300} h={130} p={15} className="border border-gray-400">
-      <Link to={`/classes/${id}`}>
+    <Link to={`/classes/${id}`}>
+      <Paper w={300} h={130} p={15} className="border border-gray-400">
         <div className="flex justify-between items-center">
           <div>
             <h5 className="secondary-color">{className}</h5>
@@ -35,8 +35,8 @@ function ClassListCard({
           </div>
           <SlGraduation fontSize={25} />
         </div>
-      </Link>
-    </Paper>
+      </Paper>
+    </Link>
   );
 }
 
@@ -47,6 +47,7 @@ export default function Classes() {
   const { reset } = formMethods;
   const [createClass] = useCreateClassMutation();
   const { data, isLoading, isSuccess, isError, error } = useGetClassesQuery();
+  const [creationError, setCreationError] = useState("");
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -87,16 +88,19 @@ export default function Classes() {
           message: "Class created successfully!",
           type: "success",
         });
+        setCreationError("")
         reset();
+        close();
       })
-      .catch((error) =>
-        displayNotification({
-          title: "Failed to create class",
-          message: error?.data?.message || "An error occurred",
-          type: "error",
-        })
-      )
-      .finally(() => close());
+      .catch((error) => {
+        const err = error?.data?.message;
+        setCreationError(err);
+        // displayNotification({
+        //   title: "Failed to create class",
+        //   message: err || "An error occurred",
+        //   type: "error",
+        // });
+      });
   };
 
   return (
@@ -130,7 +134,7 @@ export default function Classes() {
 
       <Modal opened={opened} onClose={close} title="Create New Class">
         <FormProvider {...formMethods}>
-          <ClassForm onSubmit={onSubmit} />
+          <ClassForm onSubmit={onSubmit} errorMessage={creationError} />
         </FormProvider>
       </Modal>
     </>

@@ -222,7 +222,7 @@ export default function ClassDetails() {
 
   return (
     <div>
-      <section className="flex justify-between mb-6">
+      <section className="flex justify-between m-6 ml-0">
         <div className="flex gap-8">
           <h4>Class Information</h4>
           <ActionIcon variant="subtle" onClick={openEditModal}>
@@ -333,7 +333,7 @@ export default function ClassDetails() {
         size="lg"
       >
         <FormProvider {...formMethods}>
-          <ClassForm onSubmit={handleUpdateSubmission} mode="edit" />
+          <ClassForm onSubmit={handleUpdateSubmission} mode="edit"/>
         </FormProvider>
       </Modal>
     </div>

@@ -31,8 +31,8 @@ function StudentListCard({
   numberOfCoursesEnrolled,
 }: StudentListCardProps) {
   return (
-    <Paper w={300} h={130} p={10} className="border border-gray-400">
-      <Link to={`/students/${id}`}>
+    <Link to={`/students/${id}`}>
+      <Paper w={300} h={130} p={10} className="border border-gray-400">
         <div className="flex justify-between items-center">
           <div>
             <h5 className="secondary-color">{`${firstName} ${lastName}`}</h5>
@@ -44,8 +44,8 @@ function StudentListCard({
           <HiOutlineBookOpen fontSize={20} />
           <h6 className="text-sm">{numberOfCoursesEnrolled} Courses</h6>
         </div>
-      </Link>
-    </Paper>
+      </Paper>
+    </Link> 
   );
 }
 

@@ -7,8 +7,9 @@ import { useCreateClassMutation, useGetClassesQuery } from "../api/classApi";
 import { useEffect, useState } from "react";
 import { displayNotification } from "../components/notifications";
 import ClassForm from "../components/ClassForm";
-import { SlGraduation } from "react-icons/sl";
 import { GoPerson } from "react-icons/go";
+import NoClasses from "../components/NoEntity";
+import { SlGraduation } from "react-icons/sl";
 
 interface ClassListCardProps {
   className: string;
@@ -70,9 +71,11 @@ export default function Classes() {
   }, [isSuccess, data, isError, error]);
 
   const onSubmit = async (data: ClassInfo) => {
+    const { studentIds } = data;
+
     const classFormData = {
       ...data,
-      studentIds: data.studentIds.map((id) => parseInt(id)),
+      studentIds: studentIds ? studentIds.map((id) => parseInt(id)) : [],
     };
 
     createClass(classFormData)
@@ -104,17 +107,29 @@ export default function Classes() {
           Create New Class
         </Button>
       </div>
-      <Grid gutter="lg">
-        {classes?.map(({ id, className, Students }, index) => (
-          <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
-            <ClassListCard
-              className={className}
-              numberOfStudents={Students?.length || 0}
-              id={id}
-            />
-          </Grid.Col>
-        ))}
-      </Grid>
+      {classes.length === 0 ? (
+        <div className="flex justify-center mt-10">
+          <NoClasses
+            Icon={<SlGraduation fontSize={200}/>}
+            createNewText="Create New Class"
+            message="No Classes available"
+            onCreate={open}
+
+          />
+        </div>
+      ) : (
+        <Grid gutter="lg">
+          {classes?.map(({ id, className, Students }, index) => (
+            <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
+              <ClassListCard
+                className={className}
+                numberOfStudents={Students?.length || 0}
+                id={id}
+              />
+            </Grid.Col>
+          ))}
+        </Grid>
+      )}
 
       <Modal opened={opened} onClose={close} title="Create New Class">
         <FormProvider {...formMethods}>

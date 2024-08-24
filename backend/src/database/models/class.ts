@@ -14,7 +14,6 @@ import {
   Sequelize,
 } from "sequelize";
 import { Student } from "./student";
-import connection from "../connection";
 
 interface ClassAttributes {
   id: number;
@@ -43,27 +42,16 @@ export class Class extends Model<
   }
 }
 
-// export const initClassModel = (sequelize: Sequelize) => {
-Class.init(
-  {
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER,
+export const initClassModel = (sequelize: Sequelize) => {
+  Class.init(
+    {
+      className: DataTypes.STRING,
     },
-    className: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize: connection,
-    modelName: "Class",
-    timestamps: true,
-  }
-);
-
-Class.hasMany(Student);
-
-export default Student;
+    {
+      sequelize,
+      modelName: "Class",
+      timestamps: true,
+    }
+  );
+  return Class;
+};

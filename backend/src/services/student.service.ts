@@ -15,6 +15,8 @@ class StudentService extends BaseService<Student> {
 
   async create(studentData: CreationAttributes<Student>): Promise<Student> {
     const { courseIds, classId } = studentData;
+    console.log(studentData);
+    
     const student = await this.model.create(studentData);
 
     await student.addCourses(courseIds, { raw: true });
@@ -109,9 +111,9 @@ class StudentService extends BaseService<Student> {
       return {
         items: results,
         pagination: {
-          totalPages,
+          totalPages: 0,
           currentPage: page,
-          totalItems: totalDocumentCount,
+          totalItems: 0,
           limit,
         },
       };
@@ -147,4 +149,4 @@ class StudentService extends BaseService<Student> {
   }
 }
 
-export const studentService = new StudentService(Student);
+export const studentService = new StudentService(db.student);

@@ -25,7 +25,6 @@ export const addCourses = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getStudents = asyncHandler(async (req: Request, res: Response) => {
-  delay(10000);
   const students = await studentService.find();
   res.status(200).json(students);
 });

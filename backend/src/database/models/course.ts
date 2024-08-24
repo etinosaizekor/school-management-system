@@ -1,28 +1,12 @@
-import {
-  DataTypes,
-  Optional,
-  Sequelize,
-  Model,
-  ModelStatic,
-  HasManyAddAssociationsMixin,
-  HasManyGetAssociationsMixin,
-  HasManyCreateAssociationMixin,
-  HasManyRemoveAssociationMixin,
-  HasManyRemoveAssociationsMixin,
-  HasOneGetAssociationMixin,
-  HasOneSetAssociationMixin,
-  HasManySetAssociationsMixin,
-} from "sequelize";
+import { DataTypes, Optional, Sequelize, Model, ModelStatic, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin, HasManyCreateAssociationMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin, HasManySetAssociationsMixin } from "sequelize";
 import { Student } from "./student";
-import connection from "../connection";
-import { Class } from "./class";
 
 interface CourseAttributes {
   id: number;
   courseName: string;
   courseCode: string;
-  credit: number;
-  studentIds?: number[];
+  credit: number; 
+  studentIds?: number[]
 }
 
 export interface CourseCreationAttributes
@@ -45,39 +29,34 @@ export class Course
   declare setStudents: HasManySetAssociationsMixin<Student, number>;
 
   static associate(models: any) {
-    this.belongsTo(models.Class);
     this.belongsToMany(models.Student, { through: "StudentCourses" });
   }
 }
 
-// export const initCourseModel = (sequelize: Sequelize) => {
-Course.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+export const initCourseModel = (sequelize: Sequelize) => {
+  Course.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      courseName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      courseCode: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      credit: DataTypes.INTEGER,
     },
-    courseName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    courseCode: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    credit: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize: connection,
-    modelName: "Course",
-    timestamps: true,
-  }
-);
+    {
+      sequelize,
+      modelName: "Course",
+      timestamps: true,
+    }
+  );
 
-Course.belongsToMany(Student, { through: "StudentCourses" });
-
-export default Course;
+  return Course;
+};

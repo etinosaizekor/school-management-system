@@ -145,4 +145,4 @@ class CourseService extends BaseService<Course> {
   }
 }
 
-export const courseService = new CourseService(Course);
+export const courseService = new CourseService(db.course);

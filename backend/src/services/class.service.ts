@@ -12,10 +12,13 @@ class ClassService extends BaseService<Class> {
   }
 
   async create(classData: CreationAttributes<Class>): Promise<Class> {
+    console.log(classData);
+
     const { studentIds } = classData;
     const newClass = await this.model.create(classData);
-
-    await newClass.addStudents(studentIds, { raw: true });
+    if (studentIds) {
+      await newClass.addStudents(studentIds, { raw: true });
+    }
 
     return newClass;
   }
@@ -75,20 +78,12 @@ class ClassService extends BaseService<Class> {
     options: PageOptions = { page: 1, limit: 20 }
   ): Promise<PaginatedResult | null> {
     const { page, limit } = options;
+    console.log(criteria, options);
 
     const startIndex = (page - 1) * limit;
 
     try {
-      const results = await this.model.findAll({
-        where: criteria,
-        include: [
-          {
-            model: Student,
-          },
-        ],
-        offset: startIndex,
-        limit: limit,
-      });
+      const results = await this.model.findAll();
 
       const totalDocumentCount = await this.model.count(criteria);
       const totalPages = Math.ceil(totalDocumentCount / limit);
@@ -96,9 +91,9 @@ class ClassService extends BaseService<Class> {
       return {
         items: results,
         pagination: {
-          totalPages,
+          totalPages: 0,
           currentPage: page,
-          totalItems: totalDocumentCount,
+          totalItems: 0,
           limit,
         },
       };
@@ -117,8 +112,7 @@ class ClassService extends BaseService<Class> {
     });
 
     const updatedClass = await this.model
-      .findByPk(classId, {
-      })
+      .findByPk(classId, {})
       .then((foundClass) => foundClass?.setStudents(updatedData.studentIds))
       .then(async () => {
         const updatedClass = await this.model.findByPk(classId, {
@@ -135,4 +129,4 @@ class ClassService extends BaseService<Class> {
   }
 }
 
-export const classService = new ClassService(Class);
+export const classService = new ClassService(db.class);

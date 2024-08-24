@@ -59,6 +59,7 @@ export default function ClassDetails() {
     useEnrollStudentMutation();
   const [unenrollStudent, { isLoading: isUnenrolling }] =
     useUnenrollStudentMutation();
+  const [updateError, setUpdateError] = useState("");
 
   const navigate = useNavigate();
 
@@ -181,15 +182,13 @@ export default function ClassDetails() {
           message: "Student updated successfully!",
           type: "success",
         });
+        setUpdateError("");
+        closeEditModal();
       })
-      .catch((error) =>
-        displayNotification({
-          title: "Error",
-          message: error?.data?.message || "An error occurred",
-          type: "error",
-        })
-      )
-      .finally(() => closeEditModal());
+      .catch((error) => {
+        const err = error?.data?.message;
+        setUpdateError(err);
+      });
   };
 
   useEffect(() => {
@@ -333,7 +332,11 @@ export default function ClassDetails() {
         size="lg"
       >
         <FormProvider {...formMethods}>
-          <ClassForm onSubmit={handleUpdateSubmission} mode="edit"/>
+          <ClassForm
+            onSubmit={handleUpdateSubmission}
+            mode="edit"
+            errorMessage={updateError}
+          />
         </FormProvider>
       </Modal>
     </div>

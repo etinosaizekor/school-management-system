@@ -1,7 +1,7 @@
 import { BaseService } from "./baseService";
 import db from "../database/models";
 import { Class } from "../database/models/class";
-import { CreationAttributes, Model, ModelStatic } from "sequelize";
+import { CreationAttributes, Model, ModelStatic, Op } from "sequelize";
 import { PageOptions, PaginatedResult } from "../sharedTypes";
 import { Student } from "../database/models/student";
 import ApiError from "../helper/ApiError";
@@ -113,25 +113,34 @@ class ClassService extends BaseService<Class> {
     classId: number | string,
     updatedData: Record<string, any>
   ): Promise<Class | null> {
+    const { className, studentIds } = updatedData;
+
+    // Check if a class with the same name already exists, excluding the current class
+    const duplicateClass = await this.model.findOne({
+      where: { className, id: { [Op.ne]: classId } },
+    });
+
+    if (duplicateClass) {
+      throw new ApiError(409, `Class with name "${className}" already exists.`);
+    }
+
     await this.model.update(updatedData, {
       where: { id: classId },
     });
 
-    const updatedClass = await this.model
-      .findByPk(classId, {})
-      .then((foundClass) => foundClass?.setStudents(updatedData.studentIds))
-      .then(async () => {
-        const updatedClass = await this.model.findByPk(classId, {
-          include: [
-            {
-              model: Student,
-            },
-          ],
-        });
-        return updatedClass;
-      });
+    const updatedClass = await this.model.findByPk(classId, {
+      include: [{ model: Student }],
+    });
 
-    return updatedClass;
+    // Update the students if studentIds are provided
+    if (studentIds && updatedClass) {
+      await updatedClass.setStudents(studentIds);
+    }
+
+    // Re-fetch to ensure students are included
+    return await this.model.findByPk(classId, {
+      include: [{ model: Student }],
+    });
   }
 }
 

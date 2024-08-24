@@ -88,18 +88,13 @@ export default function Classes() {
           message: "Class created successfully!",
           type: "success",
         });
-        setCreationError("")
+        setCreationError("");
         reset();
         close();
       })
       .catch((error) => {
         const err = error?.data?.message;
         setCreationError(err);
-        // displayNotification({
-        //   title: "Failed to create class",
-        //   message: err || "An error occurred",
-        //   type: "error",
-        // });
       });
   };
 

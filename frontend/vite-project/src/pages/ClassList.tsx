@@ -24,17 +24,15 @@ function ClassListCard({
   return (
     <Paper w={300} h={130} p={15} className="border border-gray-400">
       <Link to={`/classes/${id}`}>
-        <div className="flex flex-col h-full gap-2">
-          <div className="flex justify-between items-center">
-            <div>
-              <h5 className="secondary-color">{className}</h5>
-              <div className="flex items-center gap-2 mt-2 mr-10">
-                <GoPerson />
-                <h6 className="text-sm">{numberOfStudents} students</h6>
-              </div>
+        <div className="flex justify-between items-center">
+          <div>
+            <h5 className="secondary-color">{className}</h5>
+            <div className="flex items-center gap-2 mt-2 mr-10">
+              <GoPerson />
+              <h6 className="text-sm">{numberOfStudents} students</h6>
             </div>
-            <SlGraduation fontSize={25} />
           </div>
+          <SlGraduation fontSize={25} />
         </div>
       </Link>
     </Paper>

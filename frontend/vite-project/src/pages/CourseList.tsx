@@ -7,24 +7,36 @@ import { displayNotification } from "../components/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { FormProvider, useForm } from "react-hook-form";
 import CourseForm from "../components/CourseForm";
+import { GoBook, GoPerson } from "react-icons/go";
+import { FaBook } from "react-icons/fa";
+import { HiOutlineBookOpen } from "react-icons/hi";
 
 interface CourseListCardProps {
   id: string;
   courseName: string;
-  numberOfStudent: number;
+  courseCode: string;
+  numberOfStudents: number;
 }
 
 function CourseListCard({
   id,
   courseName,
-  numberOfStudent,
+  courseCode,
+  numberOfStudents,
 }: CourseListCardProps) {
   return (
-    <Paper w={300} h={130} p={10} className="border border-gray-400">
+    <Paper w={300} h={130} p={13} className="border border-gray-400">
       <Link to={`/courses/${id}`}>
-        <div className="flex flex-col justify-center h-full gap-1">
+        <div>
+          <div className="flex justify-between items-center">
+            <p className="secondary-color">{courseCode}</p>
+            <HiOutlineBookOpen fontSize={25} fontVariant="outlined" />
+          </div>
           <h5 className="secondary-color">{courseName}</h5>
-          <h6> {numberOfStudent} students</h6>
+          <div className="flex items-center gap-2 mt-2 mr-10">
+            <GoPerson />
+            <h6 className="text-sm">{numberOfStudents} students</h6>
+          </div>
         </div>
       </Link>
     </Paper>
@@ -97,12 +109,13 @@ export default function CourseList() {
         </Button>
       </div>
       <Grid>
-        {courses?.map(({ id, courseName, Students }, index) => (
+        {courses?.map(({ id, courseName, courseCode, Students }, index) => (
           <Grid.Col key={index} span={{ xs: 12, md: 4, lg: 2.4 }}>
             <CourseListCard
               id={id.toString()}
               courseName={courseName}
-              numberOfStudent={Students?.length}
+              courseCode={courseCode}
+              numberOfStudents={Students?.length}
             />
           </Grid.Col>
         ))}

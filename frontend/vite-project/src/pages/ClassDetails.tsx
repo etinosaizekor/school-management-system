@@ -261,25 +261,33 @@ export default function ClassDetails() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {studentsInClass?.map((student) => (
-              <Table.Tr key={student.id}>
-                <Table.Td>{student.firstName}</Table.Td>
-                <Table.Td>{student.lastName}</Table.Td>
-                <Table.Td>{calculateAge(student.dateOfBirth)}</Table.Td>
-                <Table.Td>
-                  <Tooltip label="Unenroll Student" position="top" withArrow>
-                    <Button
-                      variant="outline"
-                      color="red"
-                      size="xs"
-                      onClick={() => handleUnenroll(student.id)}
-                    >
-                      <CgRemove fontSize={20} />
-                    </Button>
-                  </Tooltip>
+            {studentsInClass.length === 0 ? (
+              <Table.Tr>
+                <Table.Td colSpan={4} className="text-center">
+                  No students available
                 </Table.Td>
               </Table.Tr>
-            ))}
+            ) : (
+              studentsInClass.map((student) => (
+                <Table.Tr key={student.id}>
+                  <Table.Td>{student.firstName}</Table.Td>
+                  <Table.Td>{student.lastName}</Table.Td>
+                  <Table.Td>{calculateAge(student.dateOfBirth)}</Table.Td>
+                  <Table.Td>
+                    <Tooltip label="Unenroll Student" position="top" withArrow>
+                      <Button
+                        variant="outline"
+                        color="red"
+                        size="xs"
+                        onClick={() => handleUnenroll(student.id)}
+                      >
+                        <CgRemove fontSize={20} />
+                      </Button>
+                    </Tooltip>
+                  </Table.Td>
+                </Table.Tr>
+              ))
+            )}
           </Table.Tbody>
         </Table>
       </Paper>

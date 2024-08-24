@@ -1,6 +1,5 @@
-// config.js
-import { db } from '../../settings.js'; // Use .js extension for ES modules
-import 'dotenv/config'; // Ensure dotenv is configured
+import { db } from '../../settings.js'; 
+import 'dotenv/config';
 
 const config = {
   username: db.DB_USERNAME,

@@ -12,13 +12,11 @@ export class BaseService<T extends Model> {
     input: CreationAttributes<T> | CreationAttributes<T>[]
   ): Promise<T | T[]> {
     if (Array.isArray(input)) {
-      // Use bulkCreate for an array of records
       const data = await this.model.bulkCreate(
         input as CreationAttributes<T>[]
       );
       return data;
     } else {
-      // Use create for a single record
       const data = await this.model.create(input as CreationAttributes<T>);
       return data;
     }

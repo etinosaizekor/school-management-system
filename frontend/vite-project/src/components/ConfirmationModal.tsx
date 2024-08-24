@@ -1,11 +1,11 @@
 import React from "react";
-import { Modal, Button } from "@mantine/core"; // Replace with your UI library components if different
+import { Modal, Button } from "@mantine/core";
 
 interface ConfirmationModalProps {
   opened: boolean;
   onClose: () => void;
-  onConfirm: () => void; // Add this prop to handle the confirm action
-  loading?: boolean; // Optional: Loading state for confirm button
+  onConfirm: () => void; 
+  loading?: boolean;
   title: string
   confirmationMessage: string
 }
@@ -16,7 +16,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   title,
   confirmationMessage,
-  loading = false, // Default to false if not provided
+  loading = false,
 }) => {
   return (
     <Modal

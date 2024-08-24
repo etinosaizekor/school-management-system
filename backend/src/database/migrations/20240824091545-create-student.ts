@@ -1,7 +1,6 @@
-import "ts-node/register"; // Ensure ts-node is registered for TypeScript execution
+import "ts-node/register";
 import { DataTypes, QueryInterface, Sequelize } from "sequelize";
 
-// Define the migration functions
 module.exports = {
   async up(queryInterface: QueryInterface, sequelize: typeof Sequelize) {
     await queryInterface.createTable("Students", {
@@ -25,8 +24,8 @@ module.exports = {
       classId: {
         type: DataTypes.INTEGER,
         references: {
-          model: "Classes", // Name of Target model
-          key: "id", // Key in Target model that we're referencing
+          model: "Classes",
+          key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
@@ -41,10 +40,6 @@ module.exports = {
       },
     });
 
-    // await queryInterface.addColumn(
-    //   "Students", // Name of Source model
-    //   "classId" // Name of the key we're adding
-    // );
     async (queryInterface: QueryInterface) => {
       await queryInterface.dropTable("Students");
     };

@@ -7,7 +7,7 @@ import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import router from "./App.tsx";
 import { Notifications } from "@mantine/notifications";
-import store from "./api"; // Import your Redux store
+import store from "./api";
 import "@mantine/notifications/styles.css";
 
 createRoot(document.getElementById("root")!).render(

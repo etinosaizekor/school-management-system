@@ -21,7 +21,6 @@ class ClassService extends BaseService<Class> {
 
     const newClass = await this.model.create(classData);
 
-    // Associate students if provided
     if (studentIds) {
       await newClass.addStudents(studentIds, { raw: true });
     }
@@ -84,7 +83,6 @@ class ClassService extends BaseService<Class> {
     options: PageOptions = { page: 1, limit: 20 }
   ): Promise<PaginatedResult | null> {
     const { page, limit } = options;
-    console.log(criteria, options);
 
     const startIndex = (page - 1) * limit;
 

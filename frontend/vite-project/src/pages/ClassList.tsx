@@ -51,8 +51,6 @@ export default function Classes() {
 
   useEffect(() => {
     if (isSuccess && data) {
-      console.log(data.items);
-
       setClasses(data.items);
     }
     if (isError) {

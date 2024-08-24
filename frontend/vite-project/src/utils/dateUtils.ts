@@ -1,5 +1,3 @@
-import { Dayjs } from "dayjs";
-
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   if (date instanceof Date && !isNaN(date.getTime())) {

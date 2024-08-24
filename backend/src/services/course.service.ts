@@ -1,11 +1,9 @@
 import { BaseService } from "./baseService";
 import db from "../database/models";
 import { Course } from "../database/models/course";
-import { CreationAttributes, Model, ModelStatic, Op } from "sequelize";
+import { CreationAttributes, ModelStatic, Op } from "sequelize";
 import { PageOptions, PaginatedResult } from "../sharedTypes";
 import ApiError from "../helper/ApiError";
-import { getCourses } from "../controllers/course.controller";
-import { Class } from "../database/models/class";
 import { Student } from "../database/models/student";
 
 class CourseService extends BaseService<Course> {
@@ -16,7 +14,6 @@ class CourseService extends BaseService<Course> {
   async create(courseData: CreationAttributes<Course>): Promise<Course> {
     const { studentIds, courseCode } = courseData;
 
-    // Check if a course with the same course code already exists
     const existingCourse = await this.model.findOne({
       where: { courseCode },
     });
@@ -65,7 +62,6 @@ class CourseService extends BaseService<Course> {
     courseId: string,
     courseIds: string[]
   ): Promise<Student[]> {
-    // Fetch the course
     const course = await this.model.findByPk(courseId);
 
     if (!course) {

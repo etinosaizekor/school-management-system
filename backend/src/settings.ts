@@ -1,4 +1,3 @@
-// settings.js
 import 'dotenv/config';
 
 export const db = {

@@ -7,7 +7,6 @@ import {
   Table,
   Tooltip,
 } from "@mantine/core";
-import axios from "axios";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Class, ClassInfo, Student } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
@@ -76,8 +75,6 @@ export default function ClassDetails() {
       })
         .unwrap()
         .then(() => {
-          console.log();
-
           setStudentsInClass(
             studentsInClass?.filter(
               (student) => student.id != studentToUnenroll
@@ -114,7 +111,7 @@ export default function ClassDetails() {
           allStudentsList.items?.map((studentInList) => ({
             value: studentInList?.id.toString(),
             label: `${studentInList?.firstName} ${studentInList?.lastName}`,
-            disabled: enrolledStudentIds.has(studentInList?.id), // Disable if already enrolled
+            disabled: enrolledStudentIds.has(studentInList?.id),
           }))
         );
       });
@@ -161,7 +158,7 @@ export default function ClassDetails() {
   const [updateClass] = useUpdateClassMutation();
 
   const handleUpdateSubmission = (data: ClassInfo) => {
-    const { className, studentIds } = data;
+    const {studentIds } = data;
     const classFormData = {
       ...data,
       studentIds: studentIds.map((courseId) => parseInt(courseId)),
@@ -173,8 +170,6 @@ export default function ClassDetails() {
     })
       .unwrap()
       .then((updatedClassDetails) => {
-        console.log("Updated class details", updatedClassDetails);
-
         setClassDetails(updatedClassDetails);
         setStudentsInClass(updatedClassDetails?.Students);
         displayNotification({
@@ -242,7 +237,6 @@ export default function ClassDetails() {
           </span>
           <Button onClick={handleOpen}>Add Student</Button>
         </section>
-        {/* <Paper w="100%" mih={100}> */}
         <Table
           striped
           highlightOnHover

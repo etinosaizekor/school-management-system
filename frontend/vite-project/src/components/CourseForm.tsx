@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { Button, Loader, MultiSelect, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { ClassInfo, CourseInfo, FormProps } from "../sharedTypes";
+import { CourseInfo, FormProps } from "../sharedTypes";
 import { useGetStudentsQuery } from "../api/studentApi";
 import { displayNotification } from "./notifications";
 

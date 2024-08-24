@@ -1,4 +1,4 @@
-import { FindQueryResult, Student, StudentInfo } from "../sharedTypes";
+import { FindQueryResult, Student } from "../sharedTypes";
 import { api } from "./baseApi";
 
 export const studentApi = api.injectEndpoints({

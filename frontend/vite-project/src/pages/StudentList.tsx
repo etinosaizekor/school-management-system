@@ -65,7 +65,6 @@ export default function StudentList() {
   const [createStudent] = useCreateStudentMutation();
 
   const onSubmit = async (data: StudentInfo) => {
-    console.log(data);
     const { courseIds, classId } = data;
     const studentFormData = {
       ...data,

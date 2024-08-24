@@ -4,14 +4,12 @@ import asyncHandler from "express-async-handler";
 
 export const createClass = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
-  console.log("here");
-  
 
   const newClass = await classService.create(body);
   res.status(201).json(newClass);
 });
 
-export const getClasses = asyncHandler(async (req: Request, res: Response) => {  
+export const getClasses = asyncHandler(async (req: Request, res: Response) => {
   const classes = await classService.find(req.body);
   res.status(200).json(classes);
 });
@@ -29,7 +27,6 @@ export const updateClass = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
   const updatedClass = await classService.update(id, body);
   res.status(200).json(updatedClass);
-  
 });
 
 export const deleteClass = asyncHandler(async (req: Request, res: Response) => {

@@ -1,14 +1,13 @@
 import { Button, Grid, Modal, Paper } from "@mantine/core";
-import { Link, useLoaderData } from "react-router-dom";
-import { Course, CourseInfo, FindQueryResult } from "../sharedTypes";
+import { Link } from "react-router-dom";
+import { Course, CourseInfo } from "../sharedTypes";
 import { useCreateCourseMutation, useGetCoursesQuery } from "../api/courseApi";
 import { useEffect, useState } from "react";
 import { displayNotification } from "../components/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { FormProvider, useForm } from "react-hook-form";
 import CourseForm from "../components/CourseForm";
-import { GoBook, GoPerson } from "react-icons/go";
-import { FaBook } from "react-icons/fa";
+import { GoPerson } from "react-icons/go";
 import { HiOutlineBookOpen } from "react-icons/hi";
 import NoEntity from "../components/NoEntity";
 

@@ -7,9 +7,7 @@ import {
   Table,
   Tooltip,
 } from "@mantine/core";
-import axios from "axios";
 import { useLoaderData, useNavigate } from "react-router-dom";
-// import db from "../db";
 import { Course, CourseInfo, Student } from "../sharedTypes";
 import { useEffect, useState } from "react";
 import { calculateAge } from "../utils/dateUtils";
@@ -53,7 +51,6 @@ export default function CourseDetails() {
   ] = useDisclosure(false);
 
   const handleUnenrollClick = (studentId: number) => {
-    console.log(studentId);
     setStudentToUnenroll(studentId);
     openConfirmUnenroll();
   };
@@ -82,8 +79,6 @@ export default function CourseDetails() {
 
   const confirmUnenroll = () => {
     if (studentToUnenroll !== null && courseDetails?.id) {
-      console.log("Course id", courseDetails.id);
-
       unenrollStudent({
         courseId: courseDetails?.id,
         studentId: studentToUnenroll,
@@ -252,7 +247,6 @@ export default function CourseDetails() {
           </span>
           <Button onClick={handleOpenStudentList}>Add Student</Button>
         </section>
-        {/* <Paper w="100%" mih={100}> */}
         <Table
           striped
           highlightOnHover

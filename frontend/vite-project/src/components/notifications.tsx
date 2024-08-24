@@ -1,5 +1,4 @@
 import { notifications } from "@mantine/notifications";
-import { ReactNode } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 interface NotificationOptions {

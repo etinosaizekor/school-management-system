@@ -1,11 +1,10 @@
 import { BaseService } from "./baseService";
 import db from "../database/models";
 import { Student } from "../database/models/student";
-import { CreationAttributes, Model, ModelStatic } from "sequelize";
+import { CreationAttributes, ModelStatic } from "sequelize";
 import { PageOptions, PaginatedResult } from "../sharedTypes";
 import { Course } from "../database/models/course";
 import ApiError from "../helper/ApiError";
-import { getCourses } from "../controllers/course.controller";
 import { Class } from "../database/models/class";
 
 class StudentService extends BaseService<Student> {
@@ -15,8 +14,7 @@ class StudentService extends BaseService<Student> {
 
   async create(studentData: CreationAttributes<Student>): Promise<Student> {
     const { courseIds, classId } = studentData;
-    console.log(studentData);
-    
+
     const student = await this.model.create(studentData);
 
     await student.addCourses(courseIds, { raw: true });
@@ -51,7 +49,7 @@ class StudentService extends BaseService<Student> {
     studentId: string,
     courseIds: string[]
   ): Promise<Course[]> {
-    // Fetch the student
+
     const student = await this.model.findByPk(studentId);
 
     if (!student) {

@@ -1,4 +1,4 @@
-import { Course, FindQueryResult } from "../sharedTypes";
+import { FindQueryResult } from "../sharedTypes";
 import { api } from "./baseApi";
 
 export const courseApi = api.injectEndpoints({

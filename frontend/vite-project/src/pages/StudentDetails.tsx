@@ -8,17 +8,13 @@ import {
   Tooltip,
 } from "@mantine/core";
 import {
-  redirect,
   useLoaderData,
-  useLocation,
   useNavigate,
 } from "react-router-dom";
 import { Student } from "../sharedTypes";
 import { CgRemove } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { FaCheck, FaTimes } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 import {
@@ -30,27 +26,13 @@ import {
 import { useLazyGetCoursesQuery } from "../api/courseApi";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { displayNotification } from "../components/notifications";
-import { useRevalidator } from "react-router-dom";
 import { MdModeEdit } from "react-icons/md";
 import StudentForm from "../components/StudentForm";
 import { FormProvider, useForm } from "react-hook-form";
 import { StudentInfo } from "../sharedTypes";
-import { calculateAge, formatDate } from "../utils/dateUtils";
+import { calculateAge } from "../utils/dateUtils";
 import dayjs from "dayjs";
 import LabelValuePair from "../components/LabelValuePair";
-
-// function StudentDetail({ label, value }: { label: string; value: any }) {
-//   return (
-//     <span className="flex gap-6 justify-between items-center">
-//       <span className="flex-1">
-//         <h6>{label}</h6>
-//       </span>
-//       <span className="flex-1">
-//         <p>{value}</p>
-//       </span>
-//     </span>
-//   );
-// }
 
 export default function StudentDetails() {
   const [studentDetails, setStudentDetails] = useState(
@@ -63,7 +45,6 @@ export default function StudentDetails() {
     { open: openCourseEnrolmentModal, close: closeCourseEnrolmentModal },
   ] = useDisclosure(false);
 
-  const [courseIds, setCourseIds] = useState<string[]>([]);
   const [courses, setCourses] = useState(studentDetails?.Courses);
   const [coursesToEnrol, setCoursesToEnrol] = useState<string[]>([]);
 
@@ -133,11 +114,8 @@ export default function StudentDetails() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    console.log(coursesToEnrol);
-
     const courseText = coursesToEnrol.length === 1 ? "course" : "courses";
     const ids = coursesToEnrol.map((courseId) => Number(courseId));
-    console.log("ids", ids);
 
     enrollCourses({ studentId: studentDetails?.id, courseIds: ids })
       .unwrap()
@@ -219,7 +197,6 @@ export default function StudentDetails() {
   const [updateStudent] = useUpdateStudentMutation();
 
   const onSubmit = async (data: StudentInfo) => {
-    console.log(data);
     const { courseIds, classId } = data;
     const studentFormData = {
       ...data,

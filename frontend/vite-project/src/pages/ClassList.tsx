@@ -10,6 +10,7 @@ import ClassForm from "../components/ClassForm";
 import { GoPerson } from "react-icons/go";
 import NoClasses from "../components/NoEntity";
 import { SlGraduation } from "react-icons/sl";
+import { Loader } from "@mantine/core";
 
 interface ClassListCardProps {
   className: string;
@@ -48,10 +49,12 @@ export default function Classes() {
   const [createClass] = useCreateClassMutation();
   const { data, isLoading, isSuccess, isError, error } = useGetClassesQuery();
   const [creationError, setCreationError] = useState("");
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (isSuccess && data) {
       setClasses(data.items);
+      setLoaded(true);
     }
     if (isError) {
       let errorMessage;
@@ -96,6 +99,13 @@ export default function Classes() {
       });
   };
 
+  if (isLoading)
+    return (
+      <div className=" flex w-full justify-center pt-24">
+        <Loader fontSize={500} />;
+      </div>
+    );
+
   return (
     <>
       <div className="flex justify-between align-middle m-6 ml-0">
@@ -104,7 +114,7 @@ export default function Classes() {
           Create New Class
         </Button>
       </div>
-      {classes.length === 0 ? (
+      {loaded && classes.length === 0 ? (
         <NoClasses
           Icon={<SlGraduation fontSize={200} />}
           createNewText="Create New Class"

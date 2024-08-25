@@ -11,7 +11,7 @@ export const studentApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Student"],
     }),
-    getStudent: builder.query<Student, string>({
+    getStudent: builder.query({
       query: (id) => `/students/${id}`,
       providesTags: ["Student"],
     }),

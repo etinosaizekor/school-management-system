@@ -1,4 +1,4 @@
-import { Button, Grid, Modal, Paper } from "@mantine/core";
+import { Button, Grid, Loader, Modal, Paper } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { Course, CourseInfo } from "../sharedTypes";
 import { useCreateCourseMutation, useGetCoursesQuery } from "../api/courseApi";
@@ -51,10 +51,12 @@ export default function CourseList() {
   const { reset } = formMethods;
   const [createCourse] = useCreateCourseMutation();
   const [creationError, setCreationError] = useState("");
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (isSuccess && data) {
       setCourses(data.items);
+      setLoaded(true);
     }
     if (isError) {
       let errorMessage;
@@ -101,6 +103,13 @@ export default function CourseList() {
       });
   };
 
+  if (isLoading)
+    return (
+      <div className=" flex w-full justify-center pt-24">
+        <Loader fontSize={500} />;
+      </div>
+    );
+
   return (
     <>
       <div className="flex justify-between align-middle m-6 ml-0">
@@ -109,7 +118,7 @@ export default function CourseList() {
           Create New Course
         </Button>
       </div>
-      {courses.length === 0 ? (
+      {loaded && courses.length === 0 ? (
         <NoEntity
           Icon={<HiOutlineBookOpen fontSize={200} />}
           createNewText="Create New course"

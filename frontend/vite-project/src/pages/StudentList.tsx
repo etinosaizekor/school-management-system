@@ -52,10 +52,12 @@ function StudentListCard({
 export default function StudentList() {
   const [students, setStudents] = useState<Student[]>([]);
   const { data, isLoading, isSuccess } = useGetStudentsQuery();
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (isSuccess && data) {
       setStudents(data.items);
+      setLoaded(true)
     }
   }, [isSuccess, data]);
 
@@ -96,9 +98,12 @@ export default function StudentList() {
       .finally(() => close());
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading)
+    return (
+      <div className=" flex w-full justify-center pt-24">
+        <Loader fontSize={500} />;
+      </div>
+    );
 
   return (
     <>
@@ -109,7 +114,7 @@ export default function StudentList() {
           Create New Student
         </Button>
       </div>
-      {students.length === 0 ? (
+      {loaded && students.length === 0 ? (
         <NoEntity
           Icon={<IoPersonOutline fontSize={200} />}
           createNewText="Create New Student"

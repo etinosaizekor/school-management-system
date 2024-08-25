@@ -49,7 +49,6 @@ class StudentService extends BaseService<Student> {
     studentId: string,
     courseIds: string[]
   ): Promise<Course[]> {
-
     const student = await this.model.findByPk(studentId);
 
     if (!student) {

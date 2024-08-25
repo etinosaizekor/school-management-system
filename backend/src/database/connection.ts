@@ -1,17 +1,13 @@
 import { Sequelize } from "sequelize";
-import { db } from "./../settings";
-const { DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HOST } = db;
+import config from "./config/config";
 
-let sequelize: Sequelize = new Sequelize(
-  DB_NAME!,
-  DB_USERNAME!,
-  DB_PASSWORD,
-  {
-    host: DB_HOST,
-    dialect: "mysql",
-    port: 3306,
-    logging: false
-  },
-);
+const { username, password, database, host } = config.development;
+
+let sequelize: Sequelize = new Sequelize(database!, username!, password, {
+  host: host,
+  dialect: "mysql",
+  port: 3306,
+  logging: false,
+});
 
 export default sequelize;

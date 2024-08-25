@@ -1,12 +1,13 @@
-import { db } from '../../settings.js'; 
-import 'dotenv/config';
+import { db } from "../settings";
 
-const config = {
-  username: db.DB_USERNAME,
-  password: db.DB_PASSWORD,
-  database: db.DB_NAME,
-  host: db.DB_HOST,
-  dialect: 'mysql',
+export const config = {
+  development: {
+    username: db.DB_USERNAME,
+    password: db.DB_PASSWORD,
+    database: db.DB_NAME,
+    host: db.DB_HOST,
+    dialect: "mysql",
+  },
 };
 
-module.exports = config;
+export default config;

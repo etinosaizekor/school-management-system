@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Button,
+  Loader,
   Modal,
   MultiSelect,
   Paper,
@@ -17,6 +18,7 @@ import ConfirmationModal from "../components/ConfirmationModal";
 import {
   useDeleteCourseMutation,
   useEnrollStudentsMutation,
+  useGetCourseByIdQuery,
   useUnenrollStudentFromCourseMutation,
   useUpdateCourseMutation,
 } from "../api/courseApi";
@@ -26,8 +28,13 @@ import { MdDelete, MdModeEdit } from "react-icons/md";
 import { useLazyGetStudentsQuery } from "../api/studentApi";
 import CourseForm from "../components/CourseForm";
 import LabelValuePair from "../components/LabelValuePair";
+import { useParams } from "react-router-dom";
+import CenterContainer from "../components/CenterContainer";
 
 export default function CourseDetails() {
+  const { courseId } = useParams();
+  const { data, isLoading, isSuccess, isError, error } =
+    useGetCourseByIdQuery(courseId);
   const navigate = useNavigate();
   const [courseDetails, setCourseDetails] = useState(useLoaderData() as Course);
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
@@ -54,14 +61,33 @@ export default function CourseDetails() {
     setStudentToUnenroll(studentId);
     openConfirmUnenroll();
   };
-  const { courseName, courseCode, credit, Students, id } = courseDetails;
+  useEffect(() => {
+    if (isSuccess && data) {
+      setCourseDetails(data);
+    }
+    if (isError) {
+      let errorMessage;
+      if ("data" in error) {
+        const errorData: any = error.data;
+        errorMessage =
+          errorData.message ||
+          "Error occured while fetching classes. Try again";
+      }
+      displayNotification({
+        title: "Failed to fetch courses",
+        message: errorMessage,
+        type: "error",
+      });
+    }
+  }, [isSuccess, data, isError, error]);
 
   const formMethods = useForm<CourseInfo>({
     defaultValues: {
-      courseName,
-      courseCode,
-      credit,
-      studentIds: Students?.map((student) => student.id.toString()) || [],
+      courseName: courseDetails?.courseName,
+      courseCode: courseDetails?.courseCode,
+      credit: courseDetails?.credit,
+      studentIds:
+        courseDetails?.Students?.map((student) => student.id.toString()) || [],
     },
   });
 
@@ -141,7 +167,7 @@ export default function CourseDetails() {
 
     const ids = studentsToEnroll.map((studentId) => parseInt(studentId));
 
-    enrollStudent({ courseId: id, studentId: ids })
+    enrollStudent({ courseId: courseDetails?.id, studentId: ids })
       .unwrap()
       .then((data) => {
         setStudentsInClass(data);
@@ -220,6 +246,13 @@ export default function CourseDetails() {
       });
   };
 
+  if (isLoading)
+    return (
+      <CenterContainer>
+        <Loader fontSize={500} />;
+      </CenterContainer>
+    );
+
   return (
     <div>
       <section className="flex justify-between m-6 ml-0">
@@ -234,16 +267,16 @@ export default function CourseDetails() {
         </ActionIcon>
       </section>
       <div className="mb-10">
-        <LabelValuePair label="Course name" value={courseName} />
-        <LabelValuePair label="Course code" value={courseCode} />
-        <LabelValuePair label="Credit" value={credit} />
+        <LabelValuePair label="Course name" value={courseDetails?.courseName} />
+        <LabelValuePair label="Course code" value={courseDetails?.courseCode} />
+        <LabelValuePair label="Credit" value={courseDetails?.credit} />
       </div>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <section className="flex gap-6 justify-between">
           <span className="flex gap-5">
             <h6>Number of students enrolled: </h6>
-            <p> {Students?.length}</p>
+            <p> {courseDetails?.Students?.length}</p>
           </span>
           <Button onClick={handleOpenStudentList}>Add Student</Button>
         </section>

@@ -1,13 +1,14 @@
 import {
   ActionIcon,
   Button,
+  Loader,
   Modal,
   MultiSelect,
   Paper,
   Table,
   Tooltip,
 } from "@mantine/core";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { Class, ClassInfo, Student } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import { CgRemove } from "react-icons/cg";
 import {
   useDeleteClassMutation,
   useEnrollStudentMutation,
+  useGetClassByIdQuery,
   useUnenrollStudentMutation,
   useUpdateClassMutation,
 } from "../api/classApi";
@@ -25,11 +27,13 @@ import { useLazyGetStudentsQuery } from "../api/studentApi";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import ClassForm from "../components/ClassForm";
+import CenterContainer from "../components/CenterContainer";
 
 export default function ClassDetails() {
-  const [classDetails, setClassDetails] = useState(
-    useLoaderData() as Class | null
-  );
+  const [classDetails, setClassDetails] = useState<Class | null>(null);
+  const { classId } = useParams();
+  const { data, isLoading, isSuccess, isError, error } =
+    useGetClassByIdQuery(classId);
 
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
   const [studentToUnenroll, setStudentToUnenroll] = useState<number | null>(
@@ -61,6 +65,26 @@ export default function ClassDetails() {
   const [updateError, setUpdateError] = useState("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setClassDetails(data);
+    }
+    if (isError) {
+      let errorMessage;
+      if ("data" in error) {
+        const errorData: any = error.data;
+        errorMessage =
+          errorData.message ||
+          "Error occured while fetching classes. Try again";
+      }
+      displayNotification({
+        title: "Failed to fetch courses",
+        message: errorMessage,
+        type: "error",
+      });
+    }
+  }, [isSuccess, data, isError, error]);
 
   const handleUnenroll = (studentId: number) => {
     setStudentToUnenroll(studentId);
@@ -158,7 +182,7 @@ export default function ClassDetails() {
   const [updateClass] = useUpdateClassMutation();
 
   const handleUpdateSubmission = (data: ClassInfo) => {
-    const {studentIds } = data;
+    const { studentIds } = data;
     const classFormData = {
       ...data,
       studentIds: studentIds.map((courseId) => parseInt(courseId)),
@@ -213,6 +237,13 @@ export default function ClassDetails() {
         });
       });
   };
+
+  if (isLoading)
+    return (
+      <CenterContainer>
+        <Loader fontSize={500} />;
+      </CenterContainer>
+    );
 
   return (
     <div>

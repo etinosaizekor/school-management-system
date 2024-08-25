@@ -1,16 +1,14 @@
 import {
   ActionIcon,
   Button,
+  Loader,
   Modal,
   MultiSelect,
   Paper,
   Table,
   Tooltip,
 } from "@mantine/core";
-import {
-  useLoaderData,
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Student } from "../sharedTypes";
 import { CgRemove } from "react-icons/cg";
 import { useEffect, useState } from "react";
@@ -22,6 +20,7 @@ import {
   useEnrollCoursesMutation,
   useDeleteStudentMutation,
   useUpdateStudentMutation,
+  useGetStudentQuery,
 } from "../api/studentApi";
 import { useLazyGetCoursesQuery } from "../api/courseApi";
 import ConfirmationModal from "../components/ConfirmationModal";
@@ -33,12 +32,14 @@ import { StudentInfo } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
 import dayjs from "dayjs";
 import LabelValuePair from "../components/LabelValuePair";
+import CenterContainer from "../components/CenterContainer";
 
 export default function StudentDetails() {
-  const [studentDetails, setStudentDetails] = useState(
-    useLoaderData() as Student | null
-  );
+  const { studentId } = useParams();
 
+  const [studentDetails, setStudentDetails] = useState<Student | null>(null);
+  const { data, isLoading, isSuccess, isError, error } =
+    useGetStudentQuery(studentId);
   const [opened, { open, close }] = useDisclosure(false);
   const [
     isCourseEnrolmentModalOpen,
@@ -55,10 +56,8 @@ export default function StudentDetails() {
     useEnrollCoursesMutation();
   const [unenrollCourse, { isLoading: isUnenrolling }] =
     useUnenrollCoursesMutation();
-  const [
-    getCourses,
-    { isLoading, isSuccess: isGetCoursesSuccess, data: coursesData },
-  ] = useLazyGetCoursesQuery();
+  const [getCourses, { isSuccess: isGetCoursesSuccess, data: coursesData }] =
+    useLazyGetCoursesQuery();
   const [courseToUnenroll, setCourseToUnenroll] = useState<number | null>(null);
   const [
     confirmUnenrollOpened,
@@ -83,6 +82,27 @@ export default function StudentDetails() {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setStudentDetails(data);
+      setCourses(data.Courses)
+    }
+    if (isError) {
+      let errorMessage;
+      if ("data" in error) {
+        const errorData: any = error.data;
+        errorMessage =
+          errorData.message ||
+          "Error occured while fetching classes. Try again";
+      }
+      displayNotification({
+        title: "Failed to fetch courses",
+        message: errorMessage,
+        type: "error",
+      });
+    }
+  }, [isSuccess, data, isError, error]);
 
   useEffect(() => {
     if (coursesData) {
@@ -226,6 +246,13 @@ export default function StudentDetails() {
       )
       .finally(() => close());
   };
+
+  if (isLoading)
+    return (
+      <CenterContainer>
+        <Loader fontSize={500} />;
+      </CenterContainer>
+    );
 
   return (
     <div>

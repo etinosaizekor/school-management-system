@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { FaBook, FaUser, FaGraduationCap } from "react-icons/fa";
+import logo from "../assets/logo.png";
 
 function SidebarItem({
   label,
@@ -31,8 +32,11 @@ const sidebarItems = [
 ];
 export default function Sidebar() {
   return (
-    <aside className="h-screen primary-color w-48 fixed top-5 left-0 shadow-lg text-white">
-      <div className="mt-36">
+    <aside className="h-screen primary-color w-48 fixed  left-0 shadow-lg text-white">
+      <div className="flex flex-col items-center mt-2">
+        <img src={logo} alt="EduSphere Logo" className="w-24 h-24 mb-8" />
+      </div>
+      <div className="mt-5">
         <ul className="flex flex-col gap-6 p-4">
           {sidebarItems.map(({ label, link, icon }) => (
             <li key={link}>

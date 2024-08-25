@@ -122,22 +122,28 @@ class StudentService extends BaseService<Student> {
   }
   async update(
     studentId: number | string,
-    updatedData: Student
+    updatedData: Record<string, any>
   ): Promise<Student | null> {
+    const { courseIds, classId } = updatedData;
+
     await this.model.update(updatedData, {
       where: { id: studentId },
     });
+
+    const updatedStudent = await this.model.findByPk(studentId);
+
+    if (updatedStudent) {
+      await updatedStudent.setCourses(courseIds);
+      await updatedStudent.setClass(classId);
+    }
 
     const student = await this.model.findByPk(studentId, {
       include: [
         {
           model: Course,
-          attributes: ["id", "courseName", "courseCode", "credit"],
-          through: { attributes: [] },
         },
         {
           model: Class,
-          attributes: ["id", "className"],
         },
       ],
     });

@@ -87,6 +87,7 @@ function StudentForm({ mode = "creation", onSubmit }: StudentFormProps) {
         value={formatDate(watch("dateOfBirth"))}
         {...register("dateOfBirth", {
           required: "Date of birth is required",
+          max: { value: new Date().toString(), message: "Invalid date input" },
         })}
         error={errors.dateOfBirth?.message}
       />

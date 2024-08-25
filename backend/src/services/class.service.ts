@@ -126,9 +126,7 @@ class ClassService extends BaseService<Class> {
       where: { id: classId },
     });
 
-    const updatedClass = await this.model.findByPk(classId, {
-      include: [{ model: Student }],
-    });
+    const updatedClass = await this.model.findByPk(classId);
 
     // Update the students if studentIds are provided
     if (studentIds && updatedClass) {

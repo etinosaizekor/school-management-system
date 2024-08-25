@@ -2,6 +2,7 @@
 import {
   DataTypes,
   HasManyAddAssociationsMixin,
+  HasManyCountAssociationsMixin,
   HasManyCreateAssociationMixin,
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
@@ -34,6 +35,7 @@ export class Class extends Model<
   declare removeStudent: HasManyRemoveAssociationMixin<Student, string>;
   declare removeStudents: HasManyRemoveAssociationsMixin<Student, string>;
   declare setStudents: HasManySetAssociationsMixin<Student, number>;
+  declare countStudents: HasManyCountAssociationsMixin;
 
   static associate(models: any) {
     this.hasMany(models.Student);

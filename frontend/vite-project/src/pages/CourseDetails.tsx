@@ -33,7 +33,8 @@ import CenterContainer from "../components/CenterContainer";
 
 export default function CourseDetails() {
   const { courseId } = useParams();
-  const { data, isLoading, isSuccess, isError, error } =
+
+  const { data, isLoading, isSuccess, isError, error, refetch: refetchCourseDetails } =
     useGetCourseByIdQuery(courseId);
   const navigate = useNavigate();
   const [courseDetails, setCourseDetails] = useState(useLoaderData() as Course);
@@ -61,9 +62,15 @@ export default function CourseDetails() {
     setStudentToUnenroll(studentId);
     openConfirmUnenroll();
   };
+
+  useEffect(() => {
+    refetch: refetchCourseDetails();
+  }, []);
+
   useEffect(() => {
     if (isSuccess && data) {
       setCourseDetails(data);
+      setStudentsInClass(data.Students);
     }
     if (isError) {
       let errorMessage;
@@ -81,15 +88,20 @@ export default function CourseDetails() {
     }
   }, [isSuccess, data, isError, error]);
 
-  const formMethods = useForm<CourseInfo>({
-    defaultValues: {
-      courseName: courseDetails?.courseName,
-      courseCode: courseDetails?.courseCode,
-      credit: courseDetails?.credit,
-      studentIds:
-        courseDetails?.Students?.map((student) => student.id.toString()) || [],
-    },
-  });
+  const formMethods = useForm<CourseInfo>({});
+
+  useEffect(() => {
+    if (courseDetails) {
+      formMethods.reset({
+        courseName: courseDetails.courseName,
+        courseCode: courseDetails.courseCode,
+        credit: courseDetails.credit,
+        studentIds: courseDetails.Students
+          ? courseDetails.Students.map((student) => student.id.toString())
+          : [],
+      });
+    }
+  }, [courseDetails, formMethods]);
 
   useEffect(() => {
     if (courseDetails) {
@@ -358,6 +370,7 @@ export default function CourseDetails() {
             placeholder="Select Students"
             searchable
             onChange={setStudentsToEnroll}
+            nothingFoundMessage="No student available"
           />
           <Button
             type="submit"

@@ -7,6 +7,7 @@ import {
   HasManyGetAssociationsMixin,
   HasManyRemoveAssociationMixin,
   HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
   HasOneGetAssociationMixin,
   HasOneSetAssociationMixin,
   Model,
@@ -42,9 +43,11 @@ export class Student
   declare getCourses: HasManyGetAssociationsMixin<Course>;
   declare createCourse: HasManyCreateAssociationMixin<Course, "id">;
   declare removeCourse: HasManyRemoveAssociationMixin<Course, string>;
+  declare setCourses: HasManySetAssociationsMixin<Course, number>;
   declare removeCourses: HasManyRemoveAssociationsMixin<Course, string>;
   declare getClass: HasOneGetAssociationMixin<Class>;
   declare setClass: HasOneSetAssociationMixin<Class, Class['id']>;
+
 
 
   static associate(models: any) {

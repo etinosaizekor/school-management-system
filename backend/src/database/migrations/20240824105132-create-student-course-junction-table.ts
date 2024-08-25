@@ -18,6 +18,8 @@ module.exports = {
           model: "Students",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       courseId: {
         type: DataTypes.INTEGER,
@@ -25,6 +27,8 @@ module.exports = {
           model: "Courses",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       createdAt: {
         allowNull: false,

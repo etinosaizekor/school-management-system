@@ -30,7 +30,7 @@ export const studentApi = api.injectEndpoints({
     unenrollCourses: builder.mutation({
       query: ({ studentId, courseId }) => ({
         url: `/students/${studentId}/courses`,
-        method: "PATCH",
+        method: "DELETE",
         body: [courseId],
       }),
       invalidatesTags: ["Student"],

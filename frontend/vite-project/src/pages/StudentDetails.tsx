@@ -69,24 +69,31 @@ export default function StudentDetails() {
   ] = useDisclosure(false);
   const [deleteStudent, { isLoading: isDeletionLoading }] =
     useDeleteStudentMutation();
-  const dob = studentDetails?.dateOfBirth && dayjs(studentDetails?.dateOfBirth);
-  const formMethods = useForm<StudentInfo>({
-    defaultValues: {
-      firstName: studentDetails?.firstName || "",
-      lastName: studentDetails?.lastName || "",
-      dateOfBirth: dob ? dob.format("YYYY-MM-DD") : "",
-      courseIds:
-        studentDetails?.Courses.map((course) => course.id.toString()) || [],
-      classId: studentDetails?.Class?.id.toString() || "",
-    },
-  });
+
+  const formMethods = useForm<StudentInfo>();
+
+  useEffect(() => {
+    if (studentDetails) {
+      const { firstName, lastName, dateOfBirth, Class, Courses } =
+        studentDetails;
+
+      formMethods.reset({
+        firstName: firstName || "",
+        lastName: lastName || "",
+        dateOfBirth:
+          (dateOfBirth && dayjs(dateOfBirth).format("YYYY-MM-DD")) || "",
+        courseIds: Courses ? Courses.map((course) => course.id.toString()) : [],
+        classId: Class ? studentDetails.Class.id.toString() : "",
+      });
+    }
+  }, [studentDetails, formMethods]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isSuccess && data) {
       setStudentDetails(data);
-      setCourses(data.Courses)
+      setCourses(data.Courses);
     }
     if (isError) {
       let errorMessage;
@@ -111,13 +118,10 @@ export default function StudentDetails() {
         course.id.toString()
       );
 
-      const availableCourses = allCourses.filter(
-        (course) => !enrolledCourseIds?.includes(course.id.toString())
-      );
-
-      const courseData = availableCourses.map((course) => ({
+      const courseData = allCourses.map((course) => ({
         value: course.id.toString(),
         label: course.courseName,
+        disabled: enrolledCourseIds?.includes(course.id.toString()), // Disable already enrolled courses
       }));
 
       setCourseOptions(courseData);
@@ -353,7 +357,7 @@ export default function StudentDetails() {
       <Modal
         opened={isCourseEnrolmentModalOpen}
         onClose={closeCourseEnrolmentModal}
-        title="Enrol Student to course"
+        title="Enrol Student to courses"
         size="lg"
         padding={30}
       >

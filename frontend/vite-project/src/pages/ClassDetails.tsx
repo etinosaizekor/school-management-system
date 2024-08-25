@@ -171,13 +171,17 @@ export default function ClassDetails() {
       });
   };
 
-  const formMethods = useForm<ClassInfo>({
-    defaultValues: {
-      className: classDetails?.className,
-      studentIds:
-        classDetails?.Students?.map((student) => student.id.toString()) || [],
-    },
-  });
+  const formMethods = useForm<ClassInfo>({});
+
+  useEffect(() => {
+    if (classDetails) {
+      formMethods.reset({
+        className: classDetails.className,
+        studentIds:
+          classDetails.Students?.map((student) => student.id.toString()) || [],
+      });
+    }
+  }, [classDetails, formMethods]);
 
   const [updateClass] = useUpdateClassMutation();
 

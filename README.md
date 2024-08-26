@@ -5,13 +5,12 @@
 ### 1. Environment Setup
 
 - **Create `.env` files:**
-  - Copy the `.env.sample` file and rename the copy to `.env`.
-  - Update the `.env` file with the appropriate environment variables required by your project.
+  - Create .env file with variable similar to the .env.sample file in frontend and backend folders`.
 
 ### 2. Build the Project
 
 - **Build the project:**
-  - Due to an issue with Sequelize and TypeScript, migrations need to be executed from the compiled JavaScript files. 
+  - Due to compatibility challenges between Sequelize and TypeScript, migrations will be executed using the compiled JavaScript files.
   - To generate these files, first build the project by running:
     ```bash
     npm run build
@@ -28,7 +27,7 @@
 ### 4. Run Migrations
 
 - **Migrate the database with Sequelize:**
-  - After building the project, apply the migrations by running:
+  - Apply the migrations by running:
     ```bash
     npm run db::migrate
     ```

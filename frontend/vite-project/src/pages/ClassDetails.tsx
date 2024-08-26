@@ -8,7 +8,7 @@ import {
   Table,
   Tooltip,
 } from "@mantine/core";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Class, ClassInfo, Student } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
 import { useEffect, useState } from "react";

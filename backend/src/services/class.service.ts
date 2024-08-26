@@ -87,7 +87,13 @@ class ClassService extends BaseService<Class> {
     const startIndex = (page - 1) * limit;
 
     try {
-      const results = await this.model.findAll();
+      const results = await this.model.findAll({
+        include: [
+          {
+            model: Student,
+          },
+        ],
+      });
 
       const totalDocumentCount = await this.model.count(criteria);
       const totalPages = Math.ceil(totalDocumentCount / limit);

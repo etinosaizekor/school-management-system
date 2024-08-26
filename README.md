@@ -30,7 +30,7 @@
 - **Create the database:**
   - To create the database, use the following command:
     ```bash
-    npm run db::create
+    npm run db:create
     ```
 
 ### 5. Run Migrations
@@ -38,7 +38,7 @@
 - **Migrate the database with Sequelize:**
   - Apply the migrations by running:
     ```bash
-    npm run db::migrate
+    npm run db:migrate
     ```
 
 ### 6. Start the Application

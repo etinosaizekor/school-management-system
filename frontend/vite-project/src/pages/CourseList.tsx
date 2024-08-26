@@ -90,7 +90,7 @@ export default function CourseList() {
 
         displayNotification({
           title: "Success",
-          message: "Student created successfully!",
+          message: "Course created successfully!",
           type: "success",
         });
         setCreationError("");

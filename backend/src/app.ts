@@ -21,11 +21,6 @@ app.use(
   })
 );
 
-const delayMiddleware = (ms: any) => (req: any, res: any, next: any) => {
-  setTimeout(() => next(), ms);
-};
-// app.use(delayMiddleware(2000)); // Delay of 2000 milliseconds (2 seconds)
-
 app.use("/api", routes);
 
 app.use((req: Request, res: Response, next: NextFunction) => {

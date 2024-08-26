@@ -32,4 +32,18 @@
     npm run db::migrate
     ```
 
+### 5. Start the Application
+
+- **Start the backend:**
+  - Run the following command to start the backend server:
+    ```bash
+    npm start
+    ```
+
+- **Start the frontend:**
+  - Run the following command to start the frontend development server:
+    ```bash
+    npm run dev
+    ```
+
 ---

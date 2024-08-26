@@ -2,12 +2,21 @@
 
 ## Getting Started
 
-### 1. Environment Setup
+### 1. Install Dependencies
+
+- **Install required packages:**
+  - Install project dependencies by running the following command in the root folder:
+    ```bash
+    npm install
+    ```
+
+### 2. Environment Setup
 
 - **Create `.env` files:**
-  - Create .env file with variable similar to the .env.sample file in frontend and backend folders`.
+  - For both the `frontend` and `backend` folders, create a `.env` file by duplicating the `.env.sample` file.
+  - Ensure that the newly created `.env` files contain the same variables as in their corresponding `.env.sample` files, and update the values as necessary.
 
-### 2. Build the Project
+### 3. Build the Project
 
 - **Build the project:**
   - Due to compatibility challenges between Sequelize and TypeScript, migrations will be executed using the compiled JavaScript files.
@@ -16,7 +25,7 @@
     npm run build
     ```
 
-### 3. Database Setup
+### 4. Database Setup
 
 - **Create the database:**
   - To create the database, use the following command:
@@ -24,7 +33,7 @@
     npm run db::create
     ```
 
-### 4. Run Migrations
+### 5. Run Migrations
 
 - **Migrate the database with Sequelize:**
   - Apply the migrations by running:
@@ -32,9 +41,10 @@
     npm run db::migrate
     ```
 
-### 5. Start the Application
+### 6. Start the Application
 
 - **Start the backend:**
+
   - Run the following command to start the backend server:
     ```bash
     npm start
@@ -47,3 +57,5 @@
     ```
 
 ---
+
+This ensures that users install the necessary packages before proceeding with the rest of the setup.

@@ -5,7 +5,7 @@
 ### 1. Install Dependencies
 
 - **Install required packages:**
-  - Install project dependencies by running the following command in the root folder:
+  - Navigate to both the `frontend` and `backend` directories and install the necessary dependencies by running:
     ```bash
     npm install
     ```

@@ -1,11 +1,13 @@
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Button, Loader, Modal, MultiSelect, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { ClassInfo, FormProps, Student } from "../sharedTypes";
-import { useGetStudentsQuery } from "../api/studentApi";
+import { ClassInfo, FormProps, Student, StudentInfo } from "../sharedTypes";
+import {
+  useCreateStudentMutation,
+  useGetStudentsQuery,
+} from "../api/studentApi";
 import { displayNotification } from "./notifications";
 import StudentForm from "./StudentForm";
-import ModalTitleWithBackIcon from "./ModalTitleWithButton";
 import CustomModal from "./CustomModal";
 
 interface ClassFormProps extends FormProps {
@@ -42,6 +44,8 @@ export default function ClassForm({
     error: studentFetchError,
   } = useGetStudentsQuery();
 
+  const [createStudent, { isLoading }] = useCreateStudentMutation();
+
   useEffect(() => {
     if (isStudentFetchSuccess && studentData) {
       setStudents(
@@ -67,7 +71,59 @@ export default function ClassForm({
     }
   }, [isStudentFetchSuccess, isStudentFetchError, studentData]);
 
-  const formMethods = useForm<Student>();
+  const formMethods = useForm<Student>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      Class: {},
+      Courses: [],
+
+    },
+  });
+  const { reset } = formMethods;
+
+  const handleNewStudentCreation = (data: StudentInfo) => {
+    const { courseIds, classId } = data;
+    const studentFormData = {
+      ...data,
+      courseIds: courseIds
+        ? courseIds.map((courseId) => parseInt(courseId))
+        : [],
+      classId: parseInt(classId),
+    };
+    createStudent(studentFormData)
+      .unwrap()
+      .then(({ id, firstName, lastName }) => {
+        setStudents([
+          ...students,
+          {
+            label: `${firstName} ${lastName}`,
+            value: id.toString(),
+          },
+        ]);
+        const studentIds = watch("studentIds");
+        console.log("Current student Ids", studentIds);
+
+        setValue("studentIds", [...studentIds, id.toString()]);
+        setIsStudentFormOpen(false);
+
+        displayNotification({
+          title: "Success",
+          message: "Student created successfully!",
+          type: "success",
+        });
+        reset();
+      })
+      .catch((error) => {
+        console.log(error);
+        displayNotification({
+          title: "Error",
+          message: error?.data?.message || "An error occurred",
+          type: "error",
+        });
+      });
+  };
 
   return (
     <>
@@ -141,14 +197,20 @@ export default function ClassForm({
       <CustomModal
         opened={isOpen}
         onClose={close}
-        title="Create new class"
+        title={isStudentFormOpen ? "Create new student" : "Create new class"}
         buttonText=""
         open={() => void 0}
         size="lg"
+        withBackButton={isStudentFormOpen && true}
+        onBackButtonClick={() => setIsStudentFormOpen(false)}
       >
         {isStudentFormOpen ? (
           <FormProvider {...formMethods}>
-            <StudentForm onSubmit={() => void 0} mode="creation" />
+            <StudentForm
+              onSubmit={handleNewStudentCreation}
+              mode="creation"
+              isSubmitting={isLoading}
+            />
           </FormProvider>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)}>

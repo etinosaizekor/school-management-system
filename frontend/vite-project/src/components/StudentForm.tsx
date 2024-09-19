@@ -10,9 +10,10 @@ interface StudentFormProps {
   mode?: "creation" | "edit" | "inline-create";
   onSubmit: (data: StudentInfo) => void;
   initialData?: StudentInfo;
+  isSubmitting: boolean
 }
 
-function StudentForm({ mode = "creation", onSubmit }: StudentFormProps) {
+function StudentForm({ mode = "creation", onSubmit, isSubmitting }: StudentFormProps) {
   const {
     register,
     watch,
@@ -124,7 +125,7 @@ function StudentForm({ mode = "creation", onSubmit }: StudentFormProps) {
         rightSection={isGetCoursesLoading && <Loader />}
       />
 
-      <Button type="submit" color="#15803d" mt={10}>
+      <Button type="submit" color="#15803d" mt={10} loading={isSubmitting}>
         {mode === "edit" ? "Save Changes" : "Submit"}
       </Button>
     </form>

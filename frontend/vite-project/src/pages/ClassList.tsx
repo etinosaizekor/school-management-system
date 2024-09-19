@@ -50,14 +50,19 @@ function ClassListCard({
 export default function Classes() {
   const [classes, setClasses] = useState<Class[]>([]);
   // const [opened, { open, close }] = useDisclosure(false);
-  const formMethods = useForm<ClassInfo>();
-  const { reset } = formMethods;
+  
   const [createClass] = useCreateClassMutation();
   const { data, isLoading, isSuccess, isError, error } = useGetClassesQuery();
   const [creationError, setCreationError] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [isStudentFormOpen, { open, close }] = useDisclosure(false);
-
+  const formMethods = useForm<ClassInfo>({
+    defaultValues: {
+      className: "",
+      studentIds: [],
+    },
+  });
+  const { reset } = formMethods;
   useEffect(() => {
     if (isSuccess && data) {
       setClasses(data.items);

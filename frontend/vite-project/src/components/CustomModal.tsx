@@ -1,4 +1,4 @@
-import { Modal, Button, ActionIcon, Container } from "@mantine/core";
+import { Modal, Button, ActionIcon, Container, Text, Box } from "@mantine/core";
 import { ReactNode } from "react";
 import { IoChevronBack } from "react-icons/io5";
 
@@ -30,10 +30,11 @@ export default function CustomModal({
         <Modal.Content>
           <Modal.Header
             style={{
-              borderBottom: "1px solid #bcb7b7",
               marginBottom: 10,
               backgroundColor: "rgba(19, 115, 55, 1)",
               color: "#ece8e8",
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
             {withBackButton && (
@@ -42,20 +43,18 @@ export default function CustomModal({
                 c="white"
                 onClick={() => onBackButtonClick()}
               >
-                <IoChevronBack />   
+                <IoChevronBack />
               </ActionIcon>
             )}
-            <Modal.Title>
-              <h6>{title}</h6>
-            </Modal.Title>
-            <ActionIcon bg="inherit">
+            <Text fw="bold">{title}</Text>
+            <Box>
               <Modal.CloseButton
                 style={{
                   color: "#fff",
                   backgroundColor: "transparent", // Default background
                 }}
               />
-            </ActionIcon>
+            </Box>
           </Modal.Header>
           <Modal.Body>{children}</Modal.Body>
         </Modal.Content>

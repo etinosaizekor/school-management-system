@@ -7,7 +7,7 @@ import { StudentInfo } from "../sharedTypes";
 import { formatDate } from "../utils/dateUtils";
 
 interface StudentFormProps {
-  mode?: "creation" | "edit";
+  mode?: "creation" | "edit" | "inline-create";
   onSubmit: (data: StudentInfo) => void;
   initialData?: StudentInfo;
 }

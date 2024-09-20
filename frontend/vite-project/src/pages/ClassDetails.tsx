@@ -28,6 +28,7 @@ import { MdDelete, MdModeEdit } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import ClassForm from "../components/ClassForm";
 import CenterContainer from "../components/CenterContainer";
+import { toSentenceCase } from "../utils/textUtils";
 
 export default function ClassDetails() {
   const [classDetails, setClassDetails] = useState<Class | null>(null);
@@ -262,7 +263,7 @@ export default function ClassDetails() {
           <MdDelete fontSize="20px" color="red" />
         </ActionIcon>
       </section>
-      <h4>{classDetails?.className}</h4>
+      <h4>{toSentenceCase(classDetails?.className)}</h4>
 
       <Paper w="100%" mih={200} bg="#b6c4dd" p={20} mt={10}>
         <section className="flex gap-6 justify-between">
@@ -279,7 +280,7 @@ export default function ClassDetails() {
           className="w-full"
           mt={20}
           w="100%"
-          bg="#f9f5f5"
+          bg="#fff"
         >
           <Table.Thead>
             <Table.Tr>

@@ -25,7 +25,13 @@ function CourseListCard({
   numberOfStudents,
 }: CourseListCardProps) {
   return (
-    <Paper w={300} h={140} p={13} className="border border-gray-400">
+    <Paper
+      w={300}
+      h={140}
+      p={13}
+      className="border border-gray-300 rounded-lg"
+      radius={10}
+    >
       <Link to={`/courses/${id}`}>
         <div>
           <div className="flex justify-between items-center mb-2">

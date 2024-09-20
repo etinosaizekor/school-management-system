@@ -25,13 +25,7 @@ function ClassListCard({
 }: ClassListCardProps) {
   return (
     <Link to={`/classes/${id}`}>
-      <Paper
-        w={300}
-        h={130}
-        p={15}
-        className="border border-gray-300 rounded-lg"
-        radius={10}
-      >
+      <Paper w={300} h={130} p={15} className="border border-gray-400">
         <div className="flex justify-between items-center">
           <div>
             <h5 className="secondary-color">{className}</h5>
@@ -49,20 +43,14 @@ function ClassListCard({
 
 export default function Classes() {
   const [classes, setClasses] = useState<Class[]>([]);
-  // const [opened, { open, close }] = useDisclosure(false);
-  
+  const [opened, { open, close }] = useDisclosure(false);
+  const formMethods = useForm<ClassInfo>();
+  const { reset } = formMethods;
   const [createClass] = useCreateClassMutation();
   const { data, isLoading, isSuccess, isError, error } = useGetClassesQuery();
   const [creationError, setCreationError] = useState("");
   const [loaded, setLoaded] = useState(false);
-  const [isStudentFormOpen, { open, close }] = useDisclosure(false);
-  const formMethods = useForm<ClassInfo>({
-    defaultValues: {
-      className: "",
-      studentIds: [],
-    },
-  });
-  const { reset } = formMethods;
+
   useEffect(() => {
     if (isSuccess && data) {
       setClasses(data.items);
@@ -147,14 +135,11 @@ export default function Classes() {
         </Grid>
       )}
 
-      <FormProvider {...formMethods}>
-        <ClassForm
-          onSubmit={onSubmit}
-          errorMessage={creationError}
-          isOpen={isStudentFormOpen}
-          close={close}
-        />
-      </FormProvider>
+      <Modal opened={opened} onClose={close} title="Create New Class">
+        <FormProvider {...formMethods}>
+          <ClassForm onSubmit={onSubmit} errorMessage={creationError} />
+        </FormProvider>
+      </Modal>
     </>
   );
 }

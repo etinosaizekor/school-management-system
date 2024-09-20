@@ -299,7 +299,7 @@ export default function CourseDetails() {
           className="w-full"
           mt={20}
           w="100%"
-          bg="#f9f5f5"
+          bg="#fff"
         >
           <Table.Thead>
             <Table.Tr>

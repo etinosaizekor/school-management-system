@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CourseInfo, FormProps } from "../sharedTypes";
 import { useGetStudentsQuery } from "../api/studentApi";
 import { displayNotification } from "./notifications";
+import { FaPlus } from "react-icons/fa6";
 
 function CourseForm({ mode = "creation", onSubmit, errorMessage }: FormProps) {
   const {
@@ -66,6 +67,7 @@ function CourseForm({ mode = "creation", onSubmit, errorMessage }: FormProps) {
         {...register("courseCode", { required: "Code code is required" })}
         error={errors?.courseCode?.message}
       />
+      
       <TextInput
         type="number"
         label="Credit"
@@ -79,20 +81,6 @@ function CourseForm({ mode = "creation", onSubmit, errorMessage }: FormProps) {
         error={errors?.credit?.message}
       />
 
-      <MultiSelect
-        value={watch("studentIds")}
-        label="Students"
-        placeholder="Select students"
-        data={students}
-        error={errors.studentIds?.message}
-        multiple
-        onChange={(selectedValues: string[]) => {
-          clearErrors("studentIds");
-          setValue("studentIds", selectedValues);
-        }}
-        nothingFoundMessage="No courses available"
-        rightSection={isStudentFetchLoading && <Loader />}
-      />
       <p className="text-red-600 mt-3">{errorMessage}</p>
 
       <Button type="submit" color="#15803d" mt={10}>

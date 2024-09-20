@@ -4,10 +4,11 @@ import { Modal, Button } from "@mantine/core";
 interface ConfirmationModalProps {
   opened: boolean;
   onClose: () => void;
-  onConfirm: () => void; 
+  onConfirm: () => void;
   loading?: boolean;
-  title: string
-  confirmationMessage: string
+  title: string;
+  confirmationMessage: string;
+  size?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -17,13 +18,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
   confirmationMessage,
   loading = false,
+  size = "md",
 }) => {
   return (
     <Modal
       opened={opened}
       onClose={onClose}
       title={title}
-      size="sm"
+      size={size}
       padding={30}
     >
       <p>{confirmationMessage}</p>

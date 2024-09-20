@@ -366,8 +366,6 @@ export default function ClassDetails() {
 
       <FormProvider {...formMethods}>
         <ClassForm
-          isOpen={isEditModalOpened}
-          close={closeEditModal}
           onSubmit={handleUpdateSubmission}
           mode="edit"
           errorMessage={updateError}

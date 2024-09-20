@@ -139,16 +139,14 @@ export default function StudentList() {
         </Grid>
       )}
 
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Create New Student"
-        size="lg"
-      >
-        <FormProvider {...formMethods}>
-          <StudentForm onSubmit={onSubmit} isSubmitting={isLoading} />
-        </FormProvider>
-      </Modal>
+      <FormProvider {...formMethods}>
+        <StudentForm
+          isOpen={opened}
+          close={close}
+          onSubmit={onSubmit}
+          isSubmitting={isLoading}
+        />
+      </FormProvider>
     </>
   );
 }

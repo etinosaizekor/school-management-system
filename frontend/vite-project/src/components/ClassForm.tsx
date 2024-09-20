@@ -1,5 +1,5 @@
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { Button, Loader, Modal, MultiSelect, TextInput } from "@mantine/core";
+import { useForm, useFormContext } from "react-hook-form";
+import { Button, Loader, MultiSelect, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { ClassInfo, FormProps, Student, StudentInfo } from "../sharedTypes";
 import {
@@ -7,21 +7,12 @@ import {
   useGetStudentsQuery,
 } from "../api/studentApi";
 import { displayNotification } from "./notifications";
-import StudentForm from "./StudentForm";
-import CustomModal from "./CustomModal";
-
-interface ClassFormProps extends FormProps {
-  isOpen: boolean;
-  close: () => void;
-}
 
 export default function ClassForm({
   mode = "creation",
   onSubmit,
   errorMessage,
-  isOpen,
-  close,
-}: ClassFormProps) {
+}: FormProps) {
   const {
     register,
     watch,
@@ -125,99 +116,19 @@ export default function ClassForm({
   };
 
   return (
-    <>
-      {/* <Modal
-        opened={isOpen}
-        onClose={close}
-        title={
-          <ModalTitleWithBackIcon
-            title="Create new class"
-            onIconClick={() => void 0}
-          />
-        }
-        size="lg"
-        closeButtonProps={{
-          icon: null,
-        }}
-      >
-        {isStudentFormOpen ? (
-          <FormProvider {...formMethods}>
-            <StudentForm onSubmit={() => void 0} mode="creation" />
-          </FormProvider>
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <TextInput
-              label="Class name"
-              placeholder="Enter class name"
-              {...register("className", { required: "Class name is required" })}
-              error={errors?.className?.message}
-            />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <TextInput
+        label="Class name"
+        placeholder="Enter class name"
+        {...register("className", { required: "Class name is required" })}
+        error={errors?.className?.message}
+      />
 
-            <MultiSelect
-              value={watch("studentIds")}
-              label="Students"
-              placeholder="Select students"
-              data={students}
-              error={errors.studentIds?.message}
-              multiple
-              onChange={(selectedValues: string[]) => {
-                clearErrors("studentIds");
-                setValue("studentIds", selectedValues);
-              }}
-              nothingFoundMessage="No students available"
-              rightSection={isStudentFetchLoading && <Loader />}
-            />
+      <p className="text-red-600 mt-3">{errorMessage}</p>
 
-            <div className="flex justify-end mt-2">
-              <Button
-                variant="subtle"
-                styles={{
-                  root: {
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
-                  },
-                }}
-                color="green"
-                onClick={() => setIsStudentFormOpen(true)}
-              >
-                Create Student
-              </Button>
-            </div>
-
-            <p className="text-red-600 mt-3">{errorMessage}</p>
-
-            <Button type="submit" color="green" mt={10}>
-              {mode === "edit" ? "Save Changes" : "Submit"}
-            </Button>
-          </form>
-        )}
-      </Modal> */}
-      <CustomModal
-        opened={isOpen}
-        onClose={close}
-        title={isStudentFormOpen ? "Create new student" : "Create new class"}
-        buttonText=""
-        open={() => void 0}
-        size="lg"
-        withBackButton={isStudentFormOpen && true}
-        onBackButtonClick={() => setIsStudentFormOpen(false)}
-      >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput
-            label="Class name"
-            placeholder="Enter class name"
-            {...register("className", { required: "Class name is required" })}
-            error={errors?.className?.message}
-          />
-
-          <p className="text-red-600 mt-3">{errorMessage}</p>
-
-          <Button type="submit" color="#15803d" mt={10}>
-            {mode === "edit" ? "Save Changes" : "Submit"}
-          </Button>
-        </form>
-      </CustomModal>
-    </>
+      <Button type="submit" color="#15803d" mt={10}>
+        {mode === "edit" ? "Save Changes" : "Submit"}
+      </Button>
+    </form>
   );
 }

@@ -344,16 +344,20 @@ export default function StudentDetails() {
           </Table.Tbody>
         </Table>
       </Paper>
-      <Modal
-        opened={opened}
-        onClose={close}
+      {/* <Modal
+        
         title="Edit Student Information"
         size="lg"
-      >
-        <FormProvider {...formMethods}>
-          <StudentForm onSubmit={onSubmit} />
-        </FormProvider>
-      </Modal>
+      > */}
+      <FormProvider {...formMethods}>
+        <StudentForm
+          onSubmit={onSubmit}
+          isOpen={opened}
+          close={close}
+          isSubmitting={isLoading}
+        />
+      </FormProvider>
+      {/* </Modal> */}
       <Modal
         opened={isCourseEnrolmentModalOpen}
         onClose={closeCourseEnrolmentModal}

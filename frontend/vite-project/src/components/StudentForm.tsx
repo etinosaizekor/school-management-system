@@ -11,19 +11,23 @@ import ClassForm from "./ClassForm";
 import { useCreateStudentMutation } from "../api/studentApi";
 import { displayNotification } from "./notifications";
 
-interface StudentFormProps extends FormProps {
+interface StudentFormModalProps extends FormProps {
   isSubmitting: boolean;
   isOpen: boolean;
   close: () => void;
+  includeBackButton?: boolean;
+  onBackButtonClick?: () => void;
 }
 
-function StudentForm({
+function StudentFormModal({
   mode = "creation",
   onSubmit,
   isSubmitting,
   isOpen,
   close,
-}: StudentFormProps) {
+  includeBackButton = false,
+  onBackButtonClick = () => void 0,
+}: StudentFormModalProps) {
   const {
     register,
     watch,
@@ -100,7 +104,7 @@ function StudentForm({
           ...prevClasses,
           { label: newClass.className, value: newClass.id.toString() },
         ]);
-        setValue('classId', newClass.id.toString())
+        setValue("classId", newClass.id.toString());
         displayNotification({
           title: "Success",
           message: "Class created successfully!",
@@ -124,8 +128,14 @@ function StudentForm({
       buttonText=""
       open={() => void 0}
       size="lg"
-      withBackButton={isClassFormOpen && true}
-      onBackButtonClick={() => setIsClassFormOpen(false)}
+      withBackButton={includeBackButton || isClassFormOpen}
+      onBackButtonClick={() => {
+        if (isClassFormOpen) {
+          setIsClassFormOpen(false);
+        } else {
+          onBackButtonClick();
+        }
+      }}
     >
       {isClassFormOpen ? (
         <FormProvider {...formMethods}>
@@ -198,4 +208,4 @@ function StudentForm({
   );
 }
 
-export default StudentForm;
+export default StudentFormModal;

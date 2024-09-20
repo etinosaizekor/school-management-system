@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { Class, ClassInfo, Student } from "../sharedTypes";
+import { Class, ClassInfo, Student, StudentInfo } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -23,12 +23,18 @@ import {
   useUpdateClassMutation,
 } from "../api/classApi";
 import { displayNotification } from "../components/notifications";
-import { useLazyGetStudentsQuery } from "../api/studentApi";
+import {
+  useCreateStudentMutation,
+  useLazyGetStudentsQuery,
+} from "../api/studentApi";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import ClassForm from "../components/ClassForm";
 import CenterContainer from "../components/CenterContainer";
 import { toSentenceCase } from "../utils/textUtils";
+import { IoAdd } from "react-icons/io5";
+import StudentForm from "../components/StudentForm";
+import CustomModal from "../components/CustomModal";
 
 export default function ClassDetails() {
   const [classDetails, setClassDetails] = useState<Class | null>(null);
@@ -64,7 +70,9 @@ export default function ClassDetails() {
   const [unenrollStudent, { isLoading: isUnenrolling }] =
     useUnenrollStudentMutation();
   const [updateError, setUpdateError] = useState("");
+  const [createStudent] = useCreateStudentMutation();
 
+  const [isStudentFormOpen, setIsStudentFormOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -124,6 +132,48 @@ export default function ClassDetails() {
     }
   };
 
+  const handleStudentSubmission = async (data: StudentInfo) => {
+    const { courseIds, classId } = data;
+    const studentFormData = {
+      ...data,
+      courseIds: courseIds
+        ? courseIds.map((courseId) => parseInt(courseId))
+        : [],
+      classId: parseInt(classId),
+    };
+
+    createStudent(studentFormData)
+      .unwrap()
+      .then((newStudent) => {
+        setStudentsInClass([...studentsInClass, newStudent]);
+        const { id, firstName, lastName } = newStudent;
+        setStudentList([
+          ...studentList,
+          {
+            value: newStudent?.id.toString(),
+            label: `${firstName} ${lastName}`,
+          },
+        ]);
+        setStudentsToEnroll([...studentsToEnroll, id.toString()]);
+
+        setIsStudentFormOpen(false);
+        displayNotification({
+          title: "Success",
+          message: "Student created successfully!",
+          type: "success",
+        });
+        resetStudentForm();
+      })
+      .catch((error) =>
+        displayNotification({
+          title: "Error",
+          message: error?.data?.message || "An error occurred",
+          type: "error",
+        })
+      )
+      .finally(() => close());
+  };
+
   const [getStudents] = useLazyGetStudentsQuery();
 
   const handleOpen = () => {
@@ -172,17 +222,19 @@ export default function ClassDetails() {
       });
   };
 
-  const formMethods = useForm<ClassInfo>({});
+  const classFormMethods = useForm<ClassInfo>({});
+  const studentFormMethods = useForm<StudentInfo>({});
+  const { reset: resetStudentForm, setValue } = studentFormMethods;
 
   useEffect(() => {
     if (classDetails) {
-      formMethods.reset({
+      classFormMethods.reset({
         className: classDetails.className,
         studentIds:
           classDetails.Students?.map((student) => student.id.toString()) || [],
       });
     }
-  }, [classDetails, formMethods]);
+  }, [classDetails, classFormMethods]);
 
   const [updateClass] = useUpdateClassMutation();
 
@@ -337,40 +389,76 @@ export default function ClassDetails() {
         onConfirm={handleDeletion}
         loading={deleting}
       />
-      <Modal
-        opened={isStudentModalOpen}
-        onClose={closeStudentModal}
-        title="Enrol Student to course"
-        size="lg"
-        padding={30}
-      >
-        <form onSubmit={handleEnrolmentSubmission}>
-          <MultiSelect
-            data={studentList}
-            value={studentsToEnroll}
-            placeholder="Select Students"
-            searchable
-            onChange={setStudentsToEnroll}
+      {isStudentFormOpen ? (
+        <FormProvider {...studentFormMethods}>
+          <StudentForm
+            isOpen={isStudentFormOpen}
+            close={() => setIsStudentFormOpen(false)}
+            onSubmit={handleStudentSubmission}
+            isSubmitting={false}
+            includeBackButton={true}
+            onBackButtonClick={() => {
+              setIsStudentFormOpen(false);
+            }}
           />
-          <Button
-            type="submit"
-            mt={10}
-            radius={20}
-            color="#15803d"
-            loading={isEnrolling}
-          >
-            Submit
-          </Button>
-        </form>
-      </Modal>
+        </FormProvider>
+      ) : (
+        <CustomModal
+          opened={isStudentModalOpen}
+          onClose={closeStudentModal}
+          title="Enrol Student to course"
+          size="lg"
+          withBackButton={false}
+          // padding={30}
+        >
+          <div className="mt-5">
+            <form onSubmit={handleEnrolmentSubmission}>
+              <MultiSelect
+                data={studentList}
+                value={studentsToEnroll}
+                placeholder="Select Students"
+                searchable
+                onChange={setStudentsToEnroll}
+              />
+              <div className="flex justify-end mt-2">
+                <Button
+                  variant="subtle"
+                  color="#15803d"
+                  p={5}
+                  onClick={() => setIsStudentFormOpen(true)}
+                  rightSection={<IoAdd color="#15803d" size={20} />}
+                >
+                  Create Student
+                </Button>
+              </div>
+              <Button
+                type="submit"
+                mt={10}
+                radius={20}
+                color="#15803d"
+                loading={isEnrolling}
+              >
+                Submit
+              </Button>
+            </form>
+          </div>
+        </CustomModal>
+      )}
 
-      <FormProvider {...formMethods}>
-        <ClassForm
-          onSubmit={handleUpdateSubmission}
-          mode="edit"
-          errorMessage={updateError}
-        />
-      </FormProvider>
+      <Modal
+        opened={isEditModalOpened}
+        onClose={closeEditModal}
+        title="Edit Class Information"
+        size="lg"
+      >
+        <FormProvider {...classFormMethods}>
+          <ClassForm
+            onSubmit={handleUpdateSubmission}
+            mode="edit"
+            errorMessage={updateError}
+          />
+        </FormProvider>
+      </Modal>
     </div>
   );
 }

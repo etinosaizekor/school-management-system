@@ -57,7 +57,7 @@ export default function StudentList() {
   useEffect(() => {
     if (isSuccess && data) {
       setStudents(data.items);
-      setLoaded(true)
+      setLoaded(true);
     }
   }, [isSuccess, data]);
 
@@ -146,7 +146,7 @@ export default function StudentList() {
         size="lg"
       >
         <FormProvider {...formMethods}>
-          <StudentForm onSubmit={onSubmit} />
+          <StudentForm onSubmit={onSubmit} isSubmitting={isLoading} />
         </FormProvider>
       </Modal>
     </>

@@ -78,7 +78,6 @@ export default function ClassForm({
       dateOfBirth: "",
       Class: {},
       Courses: [],
-
     },
   });
   const { reset } = formMethods;
@@ -204,62 +203,20 @@ export default function ClassForm({
         withBackButton={isStudentFormOpen && true}
         onBackButtonClick={() => setIsStudentFormOpen(false)}
       >
-        {isStudentFormOpen ? (
-          <FormProvider {...formMethods}>
-            <StudentForm
-              onSubmit={handleNewStudentCreation}
-              mode="creation"
-              isSubmitting={isLoading}
-            />
-          </FormProvider>
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <TextInput
-              label="Class name"
-              placeholder="Enter class name"
-              {...register("className", { required: "Class name is required" })}
-              error={errors?.className?.message}
-            />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <TextInput
+            label="Class name"
+            placeholder="Enter class name"
+            {...register("className", { required: "Class name is required" })}
+            error={errors?.className?.message}
+          />
 
-            <MultiSelect
-              value={watch("studentIds")}
-              label="Students"
-              placeholder="Select students"
-              data={students}
-              error={errors.studentIds?.message}
-              multiple
-              onChange={(selectedValues: string[]) => {
-                clearErrors("studentIds");
-                setValue("studentIds", selectedValues);
-              }}
-              nothingFoundMessage="No students available"
-              rightSection={isStudentFetchLoading && <Loader />}
-            />
+          <p className="text-red-600 mt-3">{errorMessage}</p>
 
-            <div className="flex justify-end mt-2">
-              <Button
-                variant="subtle"
-                styles={{
-                  root: {
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
-                  },
-                }}
-                color="green"
-                onClick={() => setIsStudentFormOpen(true)}
-              >
-                Create Student
-              </Button>
-            </div>
-
-            <p className="text-red-600 mt-3">{errorMessage}</p>
-
-            <Button type="submit" color="green" mt={10}>
-              {mode === "edit" ? "Save Changes" : "Submit"}
-            </Button>
-          </form>
-        )}
+          <Button type="submit" color="#15803d" mt={10}>
+            {mode === "edit" ? "Save Changes" : "Submit"}
+          </Button>
+        </form>
       </CustomModal>
     </>
   );

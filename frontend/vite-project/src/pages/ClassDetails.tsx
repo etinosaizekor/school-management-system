@@ -362,20 +362,16 @@ export default function ClassDetails() {
           </Button>
         </form>
       </Modal>
-      <Modal
-        opened={isEditModalOpened}
-        onClose={closeEditModal}
-        title="Edit Class Information"
-        size="lg"
-      >
-        <FormProvider {...formMethods}>
-          <ClassForm
-            onSubmit={handleUpdateSubmission}
-            mode="edit"
-            errorMessage={updateError}
-          />
-        </FormProvider>
-      </Modal>
+
+      <FormProvider {...formMethods}>
+        <ClassForm
+          isOpen={isEditModalOpened}
+          close={closeEditModal}
+          onSubmit={handleUpdateSubmission}
+          mode="edit"
+          errorMessage={updateError}
+        />
+      </FormProvider>
     </div>
   );
 }

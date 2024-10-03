@@ -28,6 +28,8 @@ function CourseEnrollmentForm({
   const [coursesToEnrol, setCoursesToEnrol] = useState<string[]>([]);
 
   const [createCourse] = useCreateCourseMutation();
+  const [coursecreationError, setCourseCreationError] = useState("");
+
   const formMethods = useForm<CourseInfo>();
   const { reset } = formMethods;
 
@@ -59,6 +61,7 @@ function CourseEnrollmentForm({
       })
       .catch((error) => {
         const err = error?.data?.message;
+        setCourseCreationError(err);
       });
   };
 
@@ -77,7 +80,10 @@ function CourseEnrollmentForm({
     >
       {isCourseCreationFormOpen ? (
         <FormProvider {...formMethods}>
-          <CourseForm onSubmit={handleNewCourseSubmission} />
+          <CourseForm
+            onSubmit={handleNewCourseSubmission}
+            errorMessage={coursecreationError}
+          />
         </FormProvider>
       ) : (
         <form onSubmit={handleSubmit}>

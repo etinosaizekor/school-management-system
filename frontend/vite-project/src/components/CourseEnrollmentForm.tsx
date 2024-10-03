@@ -1,0 +1,117 @@
+import { useState } from "react";
+import CourseForm from "./CourseForm";
+import { Button, Modal, MultiSelect } from "@mantine/core";
+import { useCreateCourseMutation } from "../api/courseApi";
+import { Course, CourseInfo } from "../sharedTypes";
+import { displayNotification } from "./notifications";
+import { FormProvider, useForm } from "react-hook-form";
+import { IoAdd } from "react-icons/io5";
+
+interface CourseEnrollmentFormProps {
+  isOpen: boolean;
+  close: () => void;
+  onEnrollmentSubmission: (coursesToEnrol: string[]) => void;
+  isEnrolling: boolean;
+}
+
+function CourseEnrollmentForm({
+  isOpen,
+  close,
+  onEnrollmentSubmission,
+  isEnrolling,
+}: CourseEnrollmentFormProps) {
+  const [isCourseCreationFormOpen, setIsCourseCreationFormOpen] =
+    useState(false);
+  const [courseOptions, setCourseOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [coursesToEnrol, setCoursesToEnrol] = useState<string[]>([]);
+
+  const [createCourse] = useCreateCourseMutation();
+  const formMethods = useForm<CourseInfo>();
+  const { reset } = formMethods;
+
+  const handleNewCourseSubmission = async (data: CourseInfo) => {
+    const { studentIds } = data;
+    const studentFormData = {
+      ...data,
+      studentIds: studentIds
+        ? studentIds?.map((studentId) => parseInt(studentId))
+        : [],
+    };
+
+    createCourse(studentFormData)
+      .unwrap()
+      .then((newCourse) => {
+        setCourseOptions([
+          ...courseOptions,
+          { value: newCourse.id.toString(), label: newCourse.courseName },
+        ]);
+        setCoursesToEnrol([...coursesToEnrol, newCourse.id.toString()]);
+
+        displayNotification({
+          title: "Success",
+          message: "Course created successfully!",
+          type: "success",
+        });
+        reset();
+        setIsCourseCreationFormOpen(false);
+      })
+      .catch((error) => {
+        const err = error?.data?.message;
+      });
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onEnrollmentSubmission(coursesToEnrol);
+  };
+
+  return (
+    <Modal
+      opened={isOpen}
+      onClose={close}
+      title="Enrol Student to courses"
+      size="lg"
+      padding={30}
+    >
+      {isCourseCreationFormOpen ? (
+        <FormProvider {...formMethods}>
+          <CourseForm onSubmit={handleNewCourseSubmission} />
+        </FormProvider>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <MultiSelect
+            data={courseOptions}
+            value={coursesToEnrol}
+            placeholder="Select courses"
+            searchable
+            onChange={setCoursesToEnrol}
+          />
+          <div className="flex justify-end mt-2">
+            <Button
+              variant="subtle"
+              color="#15803d"
+              p={5}
+              onClick={() => setIsCourseCreationFormOpen(true)}
+              rightSection={<IoAdd color="#15803d" size={20} />}
+            >
+              Create Course
+            </Button>
+          </div>
+          <Button
+            type="submit"
+            mt={10}
+            radius={20}
+            color="#15803d"
+            loading={isEnrolling}
+          >
+            Submit
+          </Button>
+        </form>
+      )}
+    </Modal>
+  );
+}
+
+export default CourseEnrollmentForm;

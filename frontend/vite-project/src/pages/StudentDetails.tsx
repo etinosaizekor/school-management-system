@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { Student } from "../sharedTypes";
+import { Course, CourseInfo, Student } from "../sharedTypes";
 import { CgRemove } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -22,7 +22,10 @@ import {
   useUpdateStudentMutation,
   useGetStudentQuery,
 } from "../api/studentApi";
-import { useLazyGetCoursesQuery } from "../api/courseApi";
+import {
+  useCreateCourseMutation,
+  useLazyGetCoursesQuery,
+} from "../api/courseApi";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { displayNotification } from "../components/notifications";
 import { MdModeEdit } from "react-icons/md";
@@ -33,6 +36,9 @@ import { calculateAge } from "../utils/dateUtils";
 import dayjs from "dayjs";
 import LabelValuePair from "../components/LabelValuePair";
 import CenterContainer from "../components/CenterContainer";
+import { IoAdd } from "react-icons/io5";
+import CourseForm from "../components/CourseForm";
+import CourseEnrollmentForm from "../components/CourseEnrollmentForm";
 
 export default function StudentDetails() {
   const { studentId } = useParams();
@@ -63,6 +69,8 @@ export default function StudentDetails() {
     confirmUnenrollOpened,
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
   ] = useDisclosure(false);
+  const [isCourseFormOpen, setIsCourseFormOpen] = useState(false);
+
   const [
     confirmStudentDeletion,
     { open: openConfirmDeletion, close: closeConfirmDeletion },
@@ -135,9 +143,7 @@ export default function StudentDetails() {
     openCourseEnrolmentModal();
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const handleSubmit = (coursesToEnrol: string[]) => {
     const courseText = coursesToEnrol.length === 1 ? "course" : "courses";
     const ids = coursesToEnrol.map((courseId) => Number(courseId));
 
@@ -163,6 +169,16 @@ export default function StudentDetails() {
       .finally(() => {
         close();
       });
+  };
+
+  const addNewCourseToEnrolmentOptions = (newCourse: Course) => {
+    setCourseOptions([
+      ...courseOptions,
+      {
+        value: newCourse.id.toString(),
+        label: newCourse.courseName,
+      },
+    ]);
   };
 
   const handleUnenroll = (courseId: number) => {
@@ -344,11 +360,7 @@ export default function StudentDetails() {
           </Table.Tbody>
         </Table>
       </Paper>
-      {/* <Modal
-        
-        title="Edit Student Information"
-        size="lg"
-      > */}
+
       <FormProvider {...formMethods}>
         <StudentForm
           onSubmit={onSubmit}
@@ -358,33 +370,53 @@ export default function StudentDetails() {
         />
       </FormProvider>
       {/* </Modal> */}
-      <Modal
+      {/* <Modal
         opened={isCourseEnrolmentModalOpen}
         onClose={closeCourseEnrolmentModal}
         title="Enrol Student to courses"
         size="lg"
         padding={30}
       >
-        <form onSubmit={handleSubmit}>
-          <MultiSelect
-            data={courseOptions}
-            value={coursesToEnrol}
-            placeholder="Select courses"
-            searchable
-            onChange={setCoursesToEnrol}
-          />
-          <Button
-            type="submit"
-            mt={10}
-            radius={20}
-            color="#15803d"
-            loading={isEnrolling}
-          >
-            Submit
-          </Button>
-        </form>
-      </Modal>
-
+        {isCourseFormOpen ? (
+          <CourseForm />
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <MultiSelect
+              data={courseOptions}
+              value={coursesToEnrol}
+              placeholder="Select courses"
+              searchable
+              onChange={setCoursesToEnrol}
+            />
+            <div className="flex justify-end mt-2">
+              <Button
+                variant="subtle"
+                color="#15803d"
+                p={5}
+                onClick={() => setIsCourseFormOpen(true)}
+                rightSection={<IoAdd color="#15803d" size={20} />}
+              >
+                Create Course
+              </Button>
+            </div>
+            <Button
+              type="submit"
+              mt={10}
+              radius={20}
+              color="#15803d"
+              loading={isEnrolling}
+            >
+              Submit
+            </Button>
+          </form>
+        )}
+      </Modal> */}
+      <CourseEnrollmentForm
+        isOpen={isCourseEnrolmentModalOpen}
+        close={() => closeCourseEnrolmentModal()}
+        onEnrollmentSubmission={handleSubmit}
+        isEnrolling={isEnrolling}
+      />
       <ConfirmationModal
         opened={confirmUnenrollOpened}
         onClose={closeConfirmUnenroll}

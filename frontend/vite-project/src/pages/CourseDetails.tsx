@@ -3,7 +3,6 @@ import {
   Button,
   Loader,
   Modal,
-  MultiSelect,
   Paper,
   Table,
   Tooltip,
@@ -30,12 +29,19 @@ import CourseForm from "../components/CourseForm";
 import LabelValuePair from "../components/LabelValuePair";
 import { useParams } from "react-router-dom";
 import CenterContainer from "../components/CenterContainer";
+import StudentEnrollmentForm from "../components/StudentEnrollmentForm";
 
 export default function CourseDetails() {
   const { courseId } = useParams();
 
-  const { data, isLoading, isSuccess, isError, error, refetch: refetchCourseDetails } =
-    useGetCourseByIdQuery(courseId);
+  const {
+    data,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+    refetch: refetchCourseDetails,
+  } = useGetCourseByIdQuery(courseId);
   const navigate = useNavigate();
   const [courseDetails, setCourseDetails] = useState(useLoaderData() as Course);
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
@@ -174,9 +180,7 @@ export default function CourseDetails() {
       });
   };
 
-  const handleEnrolmentSubmission = (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const handleEnrolmentSubmission = (studentsToEnroll: string[]) => {
     const ids = studentsToEnroll.map((studentId) => parseInt(studentId));
 
     enrollStudent({ courseId: courseDetails?.id, studentId: ids })
@@ -356,33 +360,13 @@ export default function CourseDetails() {
         onConfirm={handleDeletion}
         loading={deleting}
       />
-      <Modal
-        opened={isStudentModalOpen}
+
+      <StudentEnrollmentForm
+        isEnrolling={isEnrolling}
+        isOpened={isStudentModalOpen}
         onClose={closeStudentModal}
-        title="Enrol Student to course"
-        size="lg"
-        padding={30}
-      >
-        <form onSubmit={handleEnrolmentSubmission}>
-          <MultiSelect
-            data={studentList}
-            value={studentsToEnroll}
-            placeholder="Select Students"
-            searchable
-            onChange={setStudentsToEnroll}
-            nothingFoundMessage="No student available"
-          />
-          <Button
-            type="submit"
-            mt={10}
-            radius={20}
-            color="#15803d"
-            loading={isEnrolling}
-          >
-            Submit
-          </Button>
-        </form>
-      </Modal>
+        onEnrollmentSubmission={handleEnrolmentSubmission}
+      />
       <Modal
         opened={isEditModalOpened}
         onClose={closeEditModal}

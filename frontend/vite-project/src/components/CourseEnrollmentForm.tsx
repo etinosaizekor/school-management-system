@@ -6,6 +6,7 @@ import { Course, CourseInfo } from "../sharedTypes";
 import { displayNotification } from "./notifications";
 import { FormProvider, useForm } from "react-hook-form";
 import { IoAdd } from "react-icons/io5";
+import CustomModal from "./CustomModal";
 
 interface CourseEnrollmentFormProps {
   isOpen: boolean;
@@ -71,12 +72,13 @@ function CourseEnrollmentForm({
   };
 
   return (
-    <Modal
+    <CustomModal
       opened={isOpen}
       onClose={close}
       title="Enrol Student to courses"
       size="lg"
-      padding={30}
+      withBackButton={isCourseCreationFormOpen && true}
+      onBackButtonClick={() => setIsCourseCreationFormOpen(false)}
     >
       {isCourseCreationFormOpen ? (
         <FormProvider {...formMethods}>
@@ -116,7 +118,7 @@ function CourseEnrollmentForm({
           </Button>
         </form>
       )}
-    </Modal>
+    </CustomModal>
   );
 }
 

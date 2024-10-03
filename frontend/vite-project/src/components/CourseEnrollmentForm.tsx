@@ -75,7 +75,11 @@ function CourseEnrollmentForm({
     <CustomModal
       opened={isOpen}
       onClose={close}
-      title="Enrol Student to courses"
+      title={
+        isCourseCreationFormOpen
+          ? "Create New Course"
+          : "Enrol Student to courses"
+      }
       size="lg"
       withBackButton={isCourseCreationFormOpen && true}
       onBackButtonClick={() => setIsCourseCreationFormOpen(false)}

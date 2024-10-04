@@ -11,16 +11,16 @@ import Signup from "./components/SignupForm";
 
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
     element: <Layout />,
     children: [
-      {
-        path: '/login',
-        element: <Login/>
-      },
-      {
-        path: '/signup',
-        element: <Signup/>
-      },
       {
         path: "/classes",
         element: <Classes />,

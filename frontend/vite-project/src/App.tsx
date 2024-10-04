@@ -6,11 +6,21 @@ import CourseList from "./pages/CourseList";
 import CourseDetails from "./pages/CourseDetails";
 import StudentList from "./pages/StudentList";
 import StudentDetails from "./pages/StudentDetails";
+import Login from "./components/LoginForm";
+import Signup from "./components/SignupForm";
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
+      {
+        path: '/login',
+        element: <Login/>
+      },
+      {
+        path: '/signup',
+        element: <Signup/>
+      },
       {
         path: "/classes",
         element: <Classes />,

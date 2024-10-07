@@ -10,10 +10,12 @@ const env = process.env.NODE_ENV || "development";
 import { Class, initClassModel } from "./class";
 import { Student, initStudentModel } from "./student";
 import sequelize from "../connection";
+import { initUserModel } from "./user";
 
 const courseModel = initCourseModel(sequelize);
 const classModel = initClassModel(sequelize);
 const studentModel = initStudentModel(sequelize);
+const userModel = initUserModel(sequelize);
 
 courseModel.associate({ Class, Student });
 studentModel.associate({ Class, Course });
@@ -25,6 +27,7 @@ const db = {
   course: courseModel,
   class: classModel,
   student: studentModel,
+  user: userModel,
 };
 
 export default db;

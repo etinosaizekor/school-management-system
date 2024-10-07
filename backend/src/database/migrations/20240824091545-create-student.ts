@@ -1,6 +1,6 @@
-import "ts-node/register";
 import { DataTypes, QueryInterface, Sequelize } from "sequelize";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface: QueryInterface, sequelize: typeof Sequelize) {
     await queryInterface.createTable("Students", {

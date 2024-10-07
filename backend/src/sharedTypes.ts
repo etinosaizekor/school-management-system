@@ -12,3 +12,8 @@ export interface PaginatedResult {
     limit: number;
   };
 }
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}

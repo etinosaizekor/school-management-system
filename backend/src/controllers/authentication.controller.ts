@@ -4,8 +4,6 @@ import { LoginPayload } from "../sharedTypes";
 import asyncHandler from "express-async-handler";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  console.log(req.body);
-  
   const { email, password } = req.body as LoginPayload;
   const result = await authService.login({ email, password });
   res.send(result);

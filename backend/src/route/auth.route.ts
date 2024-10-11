@@ -1,4 +1,4 @@
-import { login, signup } from "../controllers/authentication.controller";
+import { login, signup } from "../controllers/auth.controller";
 import express from "express";
 import { validate } from "../middleware/validate";
 import { loginSchema, signupSchema } from "../validations/auth.validation";

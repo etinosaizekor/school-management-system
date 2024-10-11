@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextInput, PasswordInput, Button, Title } from "@mantine/core";
+import { useLoginMutation } from "../api/authApi";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface Credentials {
   email: string;
@@ -16,10 +19,28 @@ export default function Login() {
   } = useForm<Credentials>({
     resolver: zodResolver(loginSchema),
   });
+  const navigate = useNavigate();
+  const [loginErrorMessage, setloginErrorMessage] = useState("");
+  const [login, { isSuccess, isError, error }] = useLoginMutation();
 
-  const onSubmit = (data: Credentials) => {
-    console.log(data);
+  const onSubmit = (loginCredentials: Credentials) => {
+    login(loginCredentials);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/");
+    } else if (isError) {
+      let errorMessage;
+      if ("data" in error) {
+        const errorData: any = error.data;
+        errorMessage =
+          errorData.message ||
+          "Error occured while fetching students. Try again";
+      }
+      setloginErrorMessage(errorMessage);
+    }
+  }, [error, isError, isSuccess]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -38,6 +59,7 @@ export default function Login() {
             {...register("password")}
             error={errors.password ? errors.password.message : null}
           />
+          {error && <p className="text-red-500">{loginErrorMessage}</p>}
           <Button type="submit" fullWidth>
             Login
           </Button>

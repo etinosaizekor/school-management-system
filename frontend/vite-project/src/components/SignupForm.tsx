@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextInput, PasswordInput, Button, Title } from "@mantine/core";
+import { useSignupMutation } from "../api/authApi";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface SignupCredential {
   firstName: string;
@@ -11,6 +14,8 @@ interface SignupCredential {
 }
 
 export default function Signup() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -19,9 +24,28 @@ export default function Signup() {
     resolver: zodResolver(signupSchema),
   });
 
+  const [signup, { isSuccess, isError, error }] = useSignupMutation();
+  const [signupErrorMessage, setsignupErrorMessage] = useState("");
+
   const onSubmit = (data: SignupCredential) => {
-    console.log(data);
+    signup(data);
+    //Handle Error, etc
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/login");
+    } else if (isError) {
+      let errorMessage;
+      if ("data" in error) {
+        const errorData: any = error.data;
+        errorMessage =
+          errorData.message ||
+          "Error occured while fetching students. Try again";
+      }
+      setsignupErrorMessage(errorMessage);
+    }
+  }, [error, isError, isSuccess]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -29,14 +53,14 @@ export default function Signup() {
         <Title className="text-center mb-6">Sign Up</Title>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <TextInput
-            label="Name"
-            placeholder="Your name"
+            label="First Name"
+            placeholder="Enter first name"
             {...register("firstName")}
             error={errors.firstName ? errors.firstName.message : null}
           />
           <TextInput
-            label="Name"
-            placeholder="Your name"
+            label="Last name"
+            placeholder="Enter last name"
             {...register("lastName")}
             error={errors.lastName ? errors.lastName.message : null}
           />
@@ -52,6 +76,10 @@ export default function Signup() {
             {...register("password")}
             error={errors.password ? errors.password.message : null}
           />
+          {signupErrorMessage && (
+            <p className="text-red-500">{signupErrorMessage}</p>
+          )}
+
           <Button type="submit" fullWidth>
             Sign Up
           </Button>
@@ -68,7 +96,8 @@ export default function Signup() {
 }
 
 const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters long"),
-  email: z.string().email("Invalid email").nonempty("Email is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(2, "Last name is required"),
+  email: z.string().email("Invalid email").email().min(1, "Email is required"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });

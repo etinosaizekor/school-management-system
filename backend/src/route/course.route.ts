@@ -10,8 +10,10 @@ import {
 import express from "express";
 import { courseSchema } from "../validations/course.validation";
 import { validate } from "../middleware/validate";
+import { authenticateJWT } from "../middleware/jwtMiddleware";
 
 const router = express.Router();
+router.use(authenticateJWT)
 
 router.post("/courses", validate(courseSchema), createCourse);
 router.get("/courses", getCourses);

@@ -1,17 +1,17 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import ApiError from "../helper/ApiError";
 
 export const authenticateJWT = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization")?.split(" ")[1]; // 'Bearer <token>'
+  const token = req.cookies.Authorization; // Get the token from cookies
+  console.log(token);
 
   if (!token) {
-    return res
-      .status(403)  
-      .json({ message: "Access denied. No token provided." });
+    return next(new ApiError(403, "Access denied. No token provided."));
   }
 
   try {

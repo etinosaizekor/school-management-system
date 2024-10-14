@@ -20,7 +20,7 @@
     "strict": true,
     "pretty": true,
     "target": "es6",
-    "typeRoots": ["./src/typings", "../../node_modules/@types"],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "outDir": "build"
   },
   "include": ["./**/*.ts"],

@@ -10,8 +10,10 @@ import {
 import express from "express";
 import { validate } from "../middleware/validate";
 import { studentSchema } from "../validations/student.validation";
+import { authenticateJWT } from "../middleware/jwtMiddleware";
 
 const router = express.Router();
+router.use(authenticateJWT)
 
 router.post("/students", validate(studentSchema), createStudent);
 router.post("/students/:studentId/courses", addCourses);

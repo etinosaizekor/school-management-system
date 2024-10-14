@@ -8,7 +8,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const result = await authService.login({ email, password });
   const maxAge = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
-  res.cookie("token", result.token, {
+  res.cookie("Authorization", result.token, {
     httpOnly: true,
     secure: false,
     maxAge,

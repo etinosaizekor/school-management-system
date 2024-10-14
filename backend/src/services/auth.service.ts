@@ -2,7 +2,7 @@ import ApiError from "../helper/ApiError";
 import { userService } from "./user.service";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { LoginPayload } from "../sharedTypes";
+import { LoginPayload } from "../types/sharedTypes";
 import { User } from "../database/models/user";
 
 interface SignupPayload {
@@ -25,7 +25,6 @@ export class AuthenticationService {
     const { email, password } = loginData;
 
     const result = await userService.find({ email });
-    console.log(result);
 
     if (result?.items.length === 0) {
       throw new ApiError(401, "Invalid credentials");
@@ -45,7 +44,6 @@ export class AuthenticationService {
 
     // Check if user already exists
     const existingUser = await userService.find({ email });
-    console.log(existingUser);
 
     if (existingUser?.items.length) {
       throw new ApiError(400, "Email already in use.");

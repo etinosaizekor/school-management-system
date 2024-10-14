@@ -1,5 +1,5 @@
 import { Model, FindOptions, ModelStatic, CreationAttributes } from "sequelize";
-import { PageOptions, PaginatedResult } from "../sharedTypes";
+import { PageOptions, PaginatedResult } from "../types/sharedTypes";
 
 export class BaseService<T extends Model> {
   protected model: ModelStatic<T>;

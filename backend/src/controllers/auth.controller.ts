@@ -1,12 +1,21 @@
 import { Request, Response } from "express";
 import { authService } from "../services/auth.service";
-import { LoginPayload } from "../sharedTypes";
+import { LoginPayload } from "../types/sharedTypes";
 import asyncHandler from "express-async-handler";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body as LoginPayload;
   const result = await authService.login({ email, password });
-  res.send(result);
+  const maxAge = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+
+  res.cookie("token", result.token, {
+    httpOnly: true,
+    secure: false,
+    maxAge,
+    sameSite: "strict",
+  });
+
+  res.send(result.user);
 });
 
 export const signup = asyncHandler(async (req: Request, res: Response) => {

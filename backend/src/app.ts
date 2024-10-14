@@ -6,20 +6,19 @@ import httpStatus from "http-status";
 import { errorFormatter, errorHandler } from "./middleware/error";
 dotenv.config();
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
-
-app.use(express.urlencoded({ extended: true }));
-
 app.use(
   cors({
-    origin: "*",
-    methods: "*",
-    allowedHeaders: "*",
-    credentials: true,
+    origin: "http://localhost:3000", // frontend domain
+    credentials: true, // Allow credentials (cookies)
   })
 );
+app.use(cookieParser());
+
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", routes);
 
@@ -30,4 +29,4 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(errorFormatter);
 app.use(errorHandler);
 
-export default app
+export default app;

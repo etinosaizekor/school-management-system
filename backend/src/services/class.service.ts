@@ -2,7 +2,7 @@ import { BaseService } from "./baseService";
 import db from "../database/models";
 import { Class } from "../database/models/class";
 import { CreationAttributes, Model, ModelStatic, Op } from "sequelize";
-import { PageOptions, PaginatedResult } from "../sharedTypes";
+import { PageOptions, PaginatedResult } from "../types/sharedTypes";
 import { Student } from "../database/models/student";
 import ApiError from "../helper/ApiError";
 

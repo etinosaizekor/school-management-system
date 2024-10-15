@@ -13,11 +13,11 @@ import { classSchema } from "../validations/class.validation";
 import { authenticateJWT } from "../middleware/jwtMiddleware";
 
 const router = express.Router();
-router.use(authenticateJWT)
+router.use(authenticateJWT);
 
 router.post("/classes", validate(classSchema), createClass);
-router.post("/classes/:classId/students", authenticateJWT,addStudents);
-router.get("/classes", authenticateJWT, getClasses);
+router.post("/classes/:classId/students", addStudents);
+router.get("/classes", getClasses);
 
 router.get("/classes/:id", getClassById);
 router.put("/classes/:id", validate(classSchema), updateClass);

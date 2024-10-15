@@ -6,7 +6,7 @@ import authRoute from './auth.route'
 
 const router = express.Router();
 
-const routes = [courseRoute, classRoute, studentRoute, authRoute];
+const routes = [authRoute, courseRoute, classRoute, studentRoute];
 
 routes.forEach((route) => {
   router.use("/", route);

@@ -7,7 +7,7 @@ import { errorFormatter, errorHandler } from "./middleware/error";
 dotenv.config();
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
+import authRoute from "./route/auth.route";
 const app = express();
 app.use(express.json());
 app.use(
@@ -20,6 +20,7 @@ app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/auth", authRoute);
 app.use("/api", routes);
 
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -4,19 +4,24 @@ import asyncHandler from "express-async-handler";
 
 export const createClass = asyncHandler(async (req: Request, res: Response) => {
   const body = req.body;
+  const userId = req.userId;
 
-  const newClass = await classService.create(body);
+  const newClass = await classService.create({ ...body, userId });
   res.status(201).json(newClass);
 });
 
 export const getClasses = asyncHandler(async (req: Request, res: Response) => {
-  const classes = await classService.find(req.body);
+  const userId = req.userId;
+
+  const classes = await classService.find({ userId });
   res.status(200).json(classes);
 });
 
 export const getClassById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
+    const userId = req.userId;
+
     const classes = await classService.findById(id);
     res.status(200).json(classes);
   }

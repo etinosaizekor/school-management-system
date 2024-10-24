@@ -12,9 +12,11 @@ class ClassService extends BaseService<Class> {
   }
 
   async create(classData: CreationAttributes<Class>): Promise<Class> {
-    const { studentIds, className } = classData;
+    const { studentIds, className, userId } = classData;
 
-    const existingClass = await this.model.findOne({ where: { className } });
+    const existingClass = await this.model.findOne({
+      where: { className, userId },
+    });
     if (existingClass) {
       throw new ApiError(409, `Class with name "${className}" already exists.`);
     }
@@ -88,6 +90,7 @@ class ClassService extends BaseService<Class> {
 
     try {
       const results = await this.model.findAll({
+        where: criteria,
         include: [
           {
             model: Student,

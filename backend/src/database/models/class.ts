@@ -18,6 +18,7 @@ interface ClassAttributes {
   id: number;
   className: string;
   studentIds?: number[];
+  userId: number;
 }
 
 export interface ClassCreationAttributes
@@ -45,7 +46,14 @@ export class Class extends Model<
 export const initClassModel = (sequelize: Sequelize) => {
   Class.init(
     {
-      className: DataTypes.STRING,
+      className: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     {
       sequelize,
@@ -53,5 +61,6 @@ export const initClassModel = (sequelize: Sequelize) => {
       timestamps: true,
     }
   );
+
   return Class;
 };

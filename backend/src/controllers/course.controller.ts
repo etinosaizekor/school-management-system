@@ -5,8 +5,9 @@ import asyncHandler from "express-async-handler";
 export const createCourse = asyncHandler(
   async (req: Request, res: Response) => {
     const body = req.body;
+    const userId = req.userId;
 
-    const newCourse = await courseService.create(body);
+    const newCourse = await courseService.create({ ...body, userId });
     res.status(201).json(newCourse);
   }
 );
@@ -35,7 +36,9 @@ export const removeStudents = asyncHandler(
 );
 
 export const getCourses = asyncHandler(async (req: Request, res: Response) => {
-  const courses = await courseService.find();
+  const userId = req.userId;
+
+  const courses = await courseService.find({ userId });
   res.status(200).json(courses);
 });
 
@@ -51,7 +54,7 @@ export const updateCourse = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const body = req.body;
-    
+
     const updatedCourse = await courseService.update(id, body);
     res.status(200).json(updatedCourse);
   }

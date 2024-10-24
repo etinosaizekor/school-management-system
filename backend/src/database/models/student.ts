@@ -24,6 +24,7 @@ interface StudentAttributes {
   dateOfBirth: Date;
   classId?: number;
   courseIds?: number[];
+  userId: number;
 }
 
 export interface StudentCreationAttributes
@@ -37,6 +38,7 @@ export class Student
   declare firstName: string;
   declare lastName: string;
   declare dateOfBirth: Date;
+  declare userId: number;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare addCourses: HasManyAddAssociationsMixin<Course, number>;
@@ -46,9 +48,7 @@ export class Student
   declare setCourses: HasManySetAssociationsMixin<Course, number>;
   declare removeCourses: HasManyRemoveAssociationsMixin<Course, string>;
   declare getClass: HasOneGetAssociationMixin<Class>;
-  declare setClass: HasOneSetAssociationMixin<Class, Class['id']>;
-
-
+  declare setClass: HasOneSetAssociationMixin<Class, Class["id"]>;
 
   static associate(models: any) {
     this.belongsTo(models.Class);
@@ -74,7 +74,11 @@ export const initStudentModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      dateOfBirth: DataTypes.DATE
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      dateOfBirth: DataTypes.DATE,
     },
     {
       sequelize,

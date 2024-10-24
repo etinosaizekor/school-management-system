@@ -1,12 +1,24 @@
-import { DataTypes, Optional, Sequelize, Model, ModelStatic, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin, HasManyCreateAssociationMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin, HasManySetAssociationsMixin } from "sequelize";
+import {
+  DataTypes,
+  Optional,
+  Sequelize,
+  Model,
+  HasManyAddAssociationsMixin,
+  HasManyGetAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
+} from "sequelize";
 import { Student } from "./student";
 
 interface CourseAttributes {
   id: number;
   courseName: string;
   courseCode: string;
-  credit: number; 
-  studentIds?: number[]
+  credit: number;
+  studentIds?: number[];
+  userId: number;
 }
 
 export interface CourseCreationAttributes
@@ -20,6 +32,7 @@ export class Course
   declare courseName: string;
   declare courseCode: string;
   declare credit: number;
+  declare userId: number;
 
   declare addStudents: HasManyAddAssociationsMixin<Student, number>;
   declare getStudents: HasManyGetAssociationsMixin<Student>;
@@ -47,6 +60,10 @@ export const initCourseModel = (sequelize: Sequelize) => {
       },
       courseCode: {
         type: DataTypes.STRING,
+        allowNull: false,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       credit: DataTypes.INTEGER,

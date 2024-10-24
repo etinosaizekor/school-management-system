@@ -12,10 +12,10 @@ class CourseService extends BaseService<Course> {
   }
 
   async create(courseData: CreationAttributes<Course>): Promise<Course> {
-    const { studentIds, courseCode } = courseData;
+    const { studentIds, courseCode, userId } = courseData;
 
     const existingCourse = await this.model.findOne({
-      where: { courseCode },
+      where: { courseCode, userId },
     });
 
     if (existingCourse) {

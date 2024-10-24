@@ -5,8 +5,9 @@ import asyncHandler from "../utils/asyncHandler";
 export const createStudent = asyncHandler(
   async (req: Request, res: Response) => {
     const { courseIds, classId } = req.body;
+    const userId = req.userId;
 
-    const newStudent = await studentService.create(req.body);
+    const newStudent = await studentService.create({ ...req.body, userId });
 
     res.status(201).json(newStudent);
   }
@@ -23,7 +24,9 @@ export const addCourses = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getStudents = asyncHandler(async (req: Request, res: Response) => {
-  const students = await studentService.find();
+  const userId = req.userId;
+
+  const students = await studentService.find({ userId });
   res.status(200).json(students);
 });
 

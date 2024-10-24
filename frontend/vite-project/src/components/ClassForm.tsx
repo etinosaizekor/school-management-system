@@ -93,7 +93,6 @@ export default function ClassForm({
           },
         ]);
         const studentIds = watch("studentIds");
-        console.log("Current student Ids", studentIds);
 
         setValue("studentIds", [...studentIds, id.toString()]);
         setIsStudentFormOpen(false);

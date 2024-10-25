@@ -1,5 +1,4 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import Layout from "./components/Layout";
 import Classes from "./pages/ClassList";
 import ClassDetails from "./pages/ClassDetails";
 import CourseList from "./pages/CourseList";
@@ -8,18 +7,25 @@ import StudentList from "./pages/StudentList";
 import StudentDetails from "./pages/StudentDetails";
 import Login from "./components/LoginForm";
 import Signup from "./components/SignupForm";
+import RequireAuth from "./components/RequireAuth";
+import NoAuthAccess from "./components/NoAuthAccess";
 
 const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <Login />,
+    element: <NoAuthAccess />,
+    children: [
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/signup",
+        element: <Signup />,
+      },
+    ],
   },
   {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    element: <Layout />,
+    element: <RequireAuth />,
     children: [
       {
         path: "/classes",

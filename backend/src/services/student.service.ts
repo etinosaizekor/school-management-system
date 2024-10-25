@@ -13,7 +13,7 @@ class StudentService extends BaseService<Student> {
   }
 
   async create(studentData: CreationAttributes<Student>): Promise<Student> {
-    const { courseIds, classId } = studentData;
+    const { courseIds, classId, userId } = studentData;
 
     const student = await this.model.create(studentData);
 

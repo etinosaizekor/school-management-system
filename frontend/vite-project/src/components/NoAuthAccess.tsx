@@ -4,15 +4,14 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 function NoAuthAccess() {
   const navigate = useNavigate();
-  const token = getCookie("Authorization"); // Replace with your cookie name if different
+  const token = getCookie("Authorization");
 
   useEffect(() => {
     if (token) {
-      navigate("/", { replace: true }); // Redirect to the protected route
+      navigate("/", { replace: true });
     }
   }, [token, navigate]);
 
-  // Render Outlet only if there's no token (i.e., user is not logged in)
   return !token ? <Outlet /> : null;
 }
 

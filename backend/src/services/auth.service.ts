@@ -42,17 +42,14 @@ export class AuthenticationService {
   async signup(signupData: SignupPayload) {
     const { firstName, lastName, email, password } = signupData;
 
-    // Check if user already exists
     const existingUser = await userService.find({ email });
 
     if (existingUser?.items.length) {
       throw new ApiError(400, "Email already in use.");
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the user
     const newUser = (await userService.create({
       firstName,
       lastName,
@@ -60,7 +57,6 @@ export class AuthenticationService {
       password: hashedPassword,
     })) as User;
 
-    // Issue a JWT token
     const token = this.generateToken(newUser?.id);
 
     return { user: newUser, token };

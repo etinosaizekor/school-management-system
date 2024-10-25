@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import CourseForm from "./CourseForm";
-import { Button, Modal, MultiSelect } from "@mantine/core";
+import { Button, MultiSelect } from "@mantine/core";
 import { useCreateCourseMutation, useGetCoursesQuery } from "../api/courseApi";
-import { Course, CourseInfo } from "../sharedTypes";
+import { CourseInfo } from "../sharedTypes";
 import { displayNotification } from "./notifications";
 import { FormProvider, useForm } from "react-hook-form";
 import { IoAdd } from "react-icons/io5";

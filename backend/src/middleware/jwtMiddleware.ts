@@ -7,7 +7,7 @@ export const authenticateJWT = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.Authorization; // Get the token from cookies
+  const token = req.cookies.Authorization;
   if (!token) {
     return next(new ApiError(403, "Access denied. No token provided."));
   }

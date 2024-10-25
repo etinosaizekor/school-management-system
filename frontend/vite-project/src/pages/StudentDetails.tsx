@@ -2,14 +2,12 @@ import {
   ActionIcon,
   Button,
   Loader,
-  Modal,
-  MultiSelect,
   Paper,
   Table,
   Tooltip,
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { Course, CourseInfo, Student } from "../sharedTypes";
+import { Student } from "../sharedTypes";
 import { CgRemove } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -22,7 +20,6 @@ import {
   useUpdateStudentMutation,
   useGetStudentQuery,
 } from "../api/studentApi";
-import { useLazyGetCoursesQuery } from "../api/courseApi";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { displayNotification } from "../components/notifications";
 import { MdModeEdit } from "react-icons/md";
@@ -50,9 +47,6 @@ export default function StudentDetails() {
   const [courses, setCourses] = useState(studentDetails?.Courses);
   const [coursesEnrolled, setCoursesEnrolled] = useState<string[]>([]);
 
-  const [courseOptions, setCourseOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
   const [enrollCourses, { isLoading: isEnrolling }] =
     useEnrollCoursesMutation();
   const [unenrollCourse, { isLoading: isUnenrolling }] =
@@ -63,7 +57,6 @@ export default function StudentDetails() {
     confirmUnenrollOpened,
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
   ] = useDisclosure(false);
-  const [isCourseFormOpen, setIsCourseFormOpen] = useState(false);
 
   const [
     confirmStudentDeletion,
@@ -337,48 +330,7 @@ export default function StudentDetails() {
           isSubmitting={isLoading}
         />
       </FormProvider>
-      {/* </Modal> */}
-      {/* <Modal
-        opened={isCourseEnrolmentModalOpen}
-        onClose={closeCourseEnrolmentModal}
-        title="Enrol Student to courses"
-        size="lg"
-        padding={30}
-      >
-        {isCourseFormOpen ? (
-          <CourseForm />
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <MultiSelect
-              data={courseOptions}
-              value={coursesToEnrol}
-              placeholder="Select courses"
-              searchable
-              onChange={setCoursesToEnrol}
-            />
-            <div className="flex justify-end mt-2">
-              <Button
-                variant="subtle"
-                color="#15803d"
-                p={5}
-                onClick={() => setIsCourseFormOpen(true)}
-                rightSection={<IoAdd color="#15803d" size={20} />}
-              >
-                Create Course
-              </Button>
-            </div>
-            <Button
-              type="submit"
-              mt={10}
-              radius={20}
-              color="#15803d"
-              loading={isEnrolling}
-            >
-              Submit
-            </Button>
-          </form>
-        )}
-      </Modal> */}
+
       <CourseEnrollmentForm
         isOpen={isCourseEnrolmentModalOpen}
         close={() => closeCourseEnrolmentModal()}

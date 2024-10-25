@@ -29,7 +29,6 @@ export default function Signup() {
 
   const onSubmit = (data: SignupCredential) => {
     signup(data);
-    //Handle Error, etc
   };
 
   useEffect(() => {

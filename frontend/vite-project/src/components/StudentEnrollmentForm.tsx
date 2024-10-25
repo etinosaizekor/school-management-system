@@ -36,7 +36,7 @@ function StudentEnrollmentForm({
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
 
   const studentFormMethods = useForm<StudentInfo>({});
-  const { reset: resetStudentForm, setValue } = studentFormMethods;
+  const { reset: resetStudentForm } = studentFormMethods;
 
   const [createStudent] = useCreateStudentMutation();
 
@@ -95,8 +95,6 @@ function StudentEnrollmentForm({
 
   useEffect(() => {
     if (data && studentsInClass) {
-      const enrolledStudentIds = new Set(studentsInClass?.map((s) => s.id));
-
       setStudentList(
         data?.items?.map((studentInList) => ({
           value: studentInList?.id.toString(),

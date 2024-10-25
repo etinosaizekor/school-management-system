@@ -4,7 +4,7 @@ import { IoChevronBack } from "react-icons/io5";
 
 interface CustomModalProps {
   title: string;
-  children: ReactNode; // Replacing 'content' with 'children'
+  children: ReactNode;
   buttonText?: string;
   opened: boolean;
   open?: () => void;
@@ -16,7 +16,7 @@ interface CustomModalProps {
 
 export default function CustomModal({
   title,
-  children, // Using children for modal body content
+  children,
   opened,
   onClose,
   size = "md",
@@ -51,7 +51,7 @@ export default function CustomModal({
               <Modal.CloseButton
                 style={{
                   color: "#fff",
-                  backgroundColor: "transparent", // Default background
+                  backgroundColor: "transparent",
                 }}
               />
             </Box>
@@ -59,8 +59,6 @@ export default function CustomModal({
           <Modal.Body>{children}</Modal.Body>
         </Modal.Content>
       </Modal.Root>
-
-      {/* <Button onClick={open}>{buttonText}</Button> */}
     </>
   );
 }

@@ -1,5 +1,3 @@
-// Given a cookie key `name`, returns the value of
-// the cookie or `null`, if the key is not found.
 export function getCookie(name: string): string | null {
   const nameLenPlus = name.length + 1;
   return (

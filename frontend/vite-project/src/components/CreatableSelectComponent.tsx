@@ -3,11 +3,15 @@ import { Combobox, InputBase, useCombobox } from "@mantine/core";
 
 interface CreatableSelectProps {
   initialData: { value: string; label: string }[];
-  value: string[]; // Array of selected values
-  onChange: (selectedValues: string[]) => void; // Callback to notify parent of changes
+  value: string[];
+  onChange: (selectedValues: string[]) => void;
 }
 
-export default function CreatableSelect({ initialData, value, onChange }: CreatableSelectProps) {
+export default function CreatableSelect({
+  initialData,
+  value,
+  onChange,
+}: CreatableSelectProps) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -41,14 +45,14 @@ export default function CreatableSelect({ initialData, value, onChange }: Creata
       if (!selectedOptions.includes(newItem.value)) {
         const updatedSelection = [...selectedOptions, newItem.value];
         setSelectedOptions(updatedSelection);
-        onChange(updatedSelection); // Notify parent of new value
+        onChange(updatedSelection);
       }
       setSearch("");
     } else {
       if (!selectedOptions.includes(val)) {
         const updatedSelection = [...selectedOptions, val];
         setSelectedOptions(updatedSelection);
-        onChange(updatedSelection); // Notify parent of selected value
+        onChange(updatedSelection);
       }
       setSearch("");
     }

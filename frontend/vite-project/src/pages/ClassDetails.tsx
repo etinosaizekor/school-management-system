@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import { Class, ClassInfo, Student, StudentInfo } from "../sharedTypes";
+import { Class, ClassInfo, Student } from "../sharedTypes";
 import { calculateAge } from "../utils/dateUtils";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
@@ -22,10 +22,7 @@ import {
   useUpdateClassMutation,
 } from "../api/classApi";
 import { displayNotification } from "../components/notifications";
-import {
-  useCreateStudentMutation,
-  useLazyGetStudentsQuery,
-} from "../api/studentApi";
+import { useLazyGetStudentsQuery } from "../api/studentApi";
 import { MdDelete, MdModeEdit } from "react-icons/md";
 import { FormProvider, useForm } from "react-hook-form";
 import ClassForm from "../components/ClassForm";

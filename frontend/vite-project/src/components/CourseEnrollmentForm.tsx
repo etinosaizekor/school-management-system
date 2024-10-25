@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CourseForm from "./CourseForm";
 import { Button, Modal, MultiSelect } from "@mantine/core";
-import { useCreateCourseMutation } from "../api/courseApi";
+import { useCreateCourseMutation, useGetCoursesQuery } from "../api/courseApi";
 import { Course, CourseInfo } from "../sharedTypes";
 import { displayNotification } from "./notifications";
 import { FormProvider, useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ interface CourseEnrollmentFormProps {
   close: () => void;
   onEnrollmentSubmission: (coursesToEnrol: string[]) => void;
   isEnrolling: boolean;
+  initialData?: string[];
 }
 
 function CourseEnrollmentForm({
@@ -20,6 +21,7 @@ function CourseEnrollmentForm({
   close,
   onEnrollmentSubmission,
   isEnrolling,
+  initialData = [],
 }: CourseEnrollmentFormProps) {
   const [isCourseCreationFormOpen, setIsCourseCreationFormOpen] =
     useState(false);
@@ -33,6 +35,26 @@ function CourseEnrollmentForm({
 
   const formMethods = useForm<CourseInfo>();
   const { reset } = formMethods;
+
+  const { data: coursesData } = useGetCoursesQuery();
+
+  useEffect(() => {
+    setCoursesToEnrol(initialData);
+  }, [initialData]);
+
+  useEffect(() => {
+    if (coursesData) {
+      const allCourses = coursesData?.items || [];
+
+      const courseData = allCourses.map((course) => ({
+        value: course.id.toString(),
+        label: course.courseName,
+        disabled: coursesToEnrol?.includes(course.id.toString()),
+      }));
+
+      setCourseOptions(courseData);
+    }
+  }, [coursesData]);
 
   const handleNewCourseSubmission = async (data: CourseInfo) => {
     const { studentIds } = data;

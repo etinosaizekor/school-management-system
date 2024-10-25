@@ -44,10 +44,8 @@ export default function ClassDetails() {
   const [studentToUnenroll, setStudentToUnenroll] = useState<number | null>(
     null
   );
-  const [studentsToEnroll, setStudentsToEnroll] = useState<string[]>([]);
-  const [studentList, setStudentList] = useState<
-    { value: string; label: string }[]
-  >([]);
+
+  const [enrolledStudent, setEnrolledStudents] = useState<string[]>([]);
   const [
     confirmUnenrollOpened,
     { open: openConfirmUnenroll, close: closeConfirmUnenroll },
@@ -68,7 +66,6 @@ export default function ClassDetails() {
   const [unenrollStudent, { isLoading: isUnenrolling }] =
     useUnenrollStudentMutation();
   const [updateError, setUpdateError] = useState("");
-  const [createStudent] = useCreateStudentMutation();
 
   const navigate = useNavigate();
 
@@ -134,16 +131,12 @@ export default function ClassDetails() {
   const handleOpen = () => {
     getStudents()
       .unwrap()
-      .then((allStudentsList) => {
-        const enrolledStudentIds = new Set(studentsInClass?.map((s) => s.id));
-
-        setStudentList(
-          allStudentsList.items?.map((studentInList) => ({
-            value: studentInList?.id.toString(),
-            label: `${studentInList?.firstName} ${studentInList?.lastName}`,
-            disabled: enrolledStudentIds.has(studentInList?.id),
-          }))
+      .then(() => {
+        const enrolledStudentIds = new Set(
+          studentsInClass?.map((s) => s.id.toString())
         );
+
+        setEnrolledStudents(Array.from(enrolledStudentIds));
       });
     openStudentModal();
   };
@@ -160,7 +153,6 @@ export default function ClassDetails() {
           message: `Student successfully enrolled in Class`,
           type: "success",
         });
-        setStudentsToEnroll([]);
         closeStudentModal();
       })
       .catch((error) => {
@@ -201,7 +193,7 @@ export default function ClassDetails() {
       modifiedClassData: classFormData,
     })
       .unwrap()
-      .then((updatedClassDetails) => {
+      .then((updatedClassDetails: Class) => {
         setClassDetails(updatedClassDetails);
         setStudentsInClass(updatedClassDetails?.Students);
         displayNotification({
@@ -346,6 +338,7 @@ export default function ClassDetails() {
         isOpened={isStudentModalOpen}
         onClose={closeStudentModal}
         onEnrollmentSubmission={handleEnrolmentSubmission}
+        initialData={enrolledStudent}
       />
 
       <Modal

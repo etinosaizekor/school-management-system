@@ -48,11 +48,9 @@ export default function CourseDetails() {
   const [studentToUnenroll, setStudentToUnenroll] = useState<number | null>(
     null
   );
-  const [studentsToEnroll, setStudentsToEnroll] = useState<string[]>([]);
+  const [studentsEnrolled, setStudentsEnrolled] = useState<string[]>([]);
   const [updateError, setUpdateError] = useState("");
-  const [studentList, setStudentList] = useState<
-    { value: string; label: string }[]
-  >([]);
+
   const [
     isStudentModalOpen,
     { open: openStudentModal, close: closeStudentModal },
@@ -192,7 +190,6 @@ export default function CourseDetails() {
           message: `Student successfully enrolled in Class`,
           type: "success",
         });
-        setStudentsToEnroll([]);
         closeStudentModal();
       })
       .catch((error) => {
@@ -212,16 +209,11 @@ export default function CourseDetails() {
   const prepareStudentSelectionList = () => {
     getStudents()
       .unwrap()
-      .then((allStudentsList) => {
-        const enrolledStudentIds = new Set(studentsInClass?.map((s) => s.id));
-
-        setStudentList(
-          allStudentsList.items?.map((studentInList) => ({
-            value: studentInList?.id.toString(),
-            label: `${studentInList?.firstName} ${studentInList?.lastName}`,
-            disabled: enrolledStudentIds.has(studentInList?.id),
-          }))
+      .then(() => {
+        const enrolledStudentIds = new Set(
+          studentsInClass?.map((s) => s.id.toString())
         );
+        setStudentsEnrolled(Array.from(enrolledStudentIds));
       });
   };
 
@@ -366,6 +358,7 @@ export default function CourseDetails() {
         isOpened={isStudentModalOpen}
         onClose={closeStudentModal}
         onEnrollmentSubmission={handleEnrolmentSubmission}
+        initialData={studentsEnrolled}
       />
       <Modal
         opened={isEditModalOpened}

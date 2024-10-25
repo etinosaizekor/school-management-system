@@ -34,7 +34,7 @@ export interface Class {
 export interface FormProps {
   mode?: "creation" | "edit";
   onSubmit: (data: any) => void;
-  errorMessage?: string
+  errorMessage?: string;
 }
 
 export type StudentInfo = Omit<Student, "Courses" | "Class"> & {
@@ -48,3 +48,8 @@ export type ClassInfo = Omit<Class, "Students"> & {
 export type CourseInfo = Omit<Course, "Students"> & {
   studentIds: string[];
 };
+
+export interface labelValuePair {
+  label: string;
+  value: any;
+}

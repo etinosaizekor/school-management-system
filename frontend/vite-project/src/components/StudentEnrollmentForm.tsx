@@ -16,6 +16,7 @@ interface StudentEnrollmentFormProps {
   onClose: () => void;
   isEnrolling: boolean;
   onEnrollmentSubmission: (data: string[]) => void;
+  initialData?: string[];
 }
 
 function StudentEnrollmentForm({
@@ -23,11 +24,14 @@ function StudentEnrollmentForm({
   isOpened,
   onClose,
   onEnrollmentSubmission,
+  initialData = [],
 }: StudentEnrollmentFormProps) {
   const [studentList, setStudentList] = useState<
     { value: string; label: string }[]
   >([]);
-  const [studentsToEnroll, setStudentsToEnroll] = useState<string[]>([]);
+
+  const [studentsToEnroll, setStudentsToEnroll] =
+    useState<string[]>(initialData);
   const [isStudentFormOpen, setIsStudentFormOpen] = useState(false);
   const [studentsInClass, setStudentsInClass] = useState<Student[]>([]);
 
@@ -40,6 +44,10 @@ function StudentEnrollmentForm({
     event.preventDefault();
     onEnrollmentSubmission(studentsToEnroll);
   };
+
+  useEffect(() => {
+    setStudentsToEnroll(initialData);
+  }, [initialData]);
 
   const handleStudentSubmission = async (data: StudentInfo) => {
     const { courseIds, classId } = data;

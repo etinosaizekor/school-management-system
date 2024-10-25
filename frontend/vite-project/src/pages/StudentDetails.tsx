@@ -22,10 +22,7 @@ import {
   useUpdateStudentMutation,
   useGetStudentQuery,
 } from "../api/studentApi";
-import {
-  useCreateCourseMutation,
-  useLazyGetCoursesQuery,
-} from "../api/courseApi";
+import { useLazyGetCoursesQuery } from "../api/courseApi";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { displayNotification } from "../components/notifications";
 import { MdModeEdit } from "react-icons/md";
@@ -36,8 +33,6 @@ import { calculateAge } from "../utils/dateUtils";
 import dayjs from "dayjs";
 import LabelValuePair from "../components/LabelValuePair";
 import CenterContainer from "../components/CenterContainer";
-import { IoAdd } from "react-icons/io5";
-import CourseForm from "../components/CourseForm";
 import CourseEnrollmentForm from "../components/CourseEnrollmentForm";
 
 export default function StudentDetails() {
@@ -53,7 +48,7 @@ export default function StudentDetails() {
   ] = useDisclosure(false);
 
   const [courses, setCourses] = useState(studentDetails?.Courses);
-  const [coursesToEnrol, setCoursesToEnrol] = useState<string[]>([]);
+  const [coursesEnrolled, setCoursesEnrolled] = useState<string[]>([]);
 
   const [courseOptions, setCourseOptions] = useState<
     { value: string; label: string }[]
@@ -62,8 +57,7 @@ export default function StudentDetails() {
     useEnrollCoursesMutation();
   const [unenrollCourse, { isLoading: isUnenrolling }] =
     useUnenrollCoursesMutation();
-  const [getCourses, { isSuccess: isGetCoursesSuccess, data: coursesData }] =
-    useLazyGetCoursesQuery();
+
   const [courseToUnenroll, setCourseToUnenroll] = useState<number | null>(null);
   const [
     confirmUnenrollOpened,
@@ -120,28 +114,13 @@ export default function StudentDetails() {
   }, [isSuccess, data, isError, error]);
 
   useEffect(() => {
-    if (coursesData) {
-      const allCourses = coursesData?.items || [];
-      const enrolledCourseIds = studentDetails?.Courses.map((course) =>
-        course.id.toString()
-      );
-
-      const courseData = allCourses.map((course) => ({
-        value: course.id.toString(),
-        label: course.courseName,
-        disabled: enrolledCourseIds?.includes(course.id.toString()), // Disable already enrolled courses
-      }));
-
-      setCourseOptions(courseData);
+    const enrolledCourseIds = studentDetails?.Courses.map((course) =>
+      course.id.toString()
+    );
+    if (enrolledCourseIds) {
+      setCoursesEnrolled(enrolledCourseIds);
     }
-  }, [isGetCoursesSuccess, coursesData, studentDetails?.Courses]);
-
-  const handleCourseModalOpen = () => {
-    if (courseOptions.length === 0) {
-      getCourses();
-    }
-    openCourseEnrolmentModal();
-  };
+  }, [studentDetails?.Courses]);
 
   const handleSubmit = (coursesToEnrol: string[]) => {
     const courseText = coursesToEnrol.length === 1 ? "course" : "courses";
@@ -156,7 +135,6 @@ export default function StudentDetails() {
           message: `Student successfully enrolled in ${courseText}`,
           type: "success",
         });
-        setCoursesToEnrol([]);
         closeCourseEnrolmentModal();
       })
       .catch((error) => {
@@ -169,16 +147,6 @@ export default function StudentDetails() {
       .finally(() => {
         close();
       });
-  };
-
-  const addNewCourseToEnrolmentOptions = (newCourse: Course) => {
-    setCourseOptions([
-      ...courseOptions,
-      {
-        value: newCourse.id.toString(),
-        label: newCourse.courseName,
-      },
-    ]);
   };
 
   const handleUnenroll = (courseId: number) => {
@@ -310,7 +278,7 @@ export default function StudentDetails() {
             <h6>Number of courses enrolled: </h6>
             <p>{studentDetails?.Courses.length}</p>
           </span>
-          <Button onClick={handleCourseModalOpen}>Add Course</Button>
+          <Button onClick={() => openCourseEnrolmentModal()}>Add Course</Button>
         </span>
         <Table
           striped
@@ -416,6 +384,7 @@ export default function StudentDetails() {
         close={() => closeCourseEnrolmentModal()}
         onEnrollmentSubmission={handleSubmit}
         isEnrolling={isEnrolling}
+        initialData={coursesEnrolled}
       />
       <ConfirmationModal
         opened={confirmUnenrollOpened}

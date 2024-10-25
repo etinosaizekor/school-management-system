@@ -1,4 +1,4 @@
-import { Modal, Button, ActionIcon, Container, Text, Box } from "@mantine/core";
+import { Modal, ActionIcon, Text, Box } from "@mantine/core";
 import { ReactNode } from "react";
 import { IoChevronBack } from "react-icons/io5";
 

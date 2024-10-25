@@ -91,7 +91,7 @@ function StudentEnrollmentForm({
       .finally(() => close());
   };
 
-  const { data, isLoading, isSuccess } = useGetStudentsQuery();
+  const { data } = useGetStudentsQuery();
 
   useEffect(() => {
     if (data && studentsInClass) {
@@ -101,13 +101,13 @@ function StudentEnrollmentForm({
         data?.items?.map((studentInList) => ({
           value: studentInList?.id.toString(),
           label: `${studentInList?.firstName} ${studentInList?.lastName}`,
-          disabled: enrolledStudentIds.has(studentInList?.id),
+          disabled: initialData.includes(studentInList?.id?.toString()),
         })) || []
       );
     } else {
       setStudentList([]);
     }
-  }, [data, studentsInClass]);
+  }, [data, studentsInClass, initialData]);
 
   return (
     <>

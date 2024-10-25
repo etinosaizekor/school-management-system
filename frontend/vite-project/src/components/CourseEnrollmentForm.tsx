@@ -49,12 +49,12 @@ function CourseEnrollmentForm({
       const courseData = allCourses.map((course) => ({
         value: course.id.toString(),
         label: course.courseName,
-        disabled: coursesToEnrol?.includes(course.id.toString()),
+        disabled: initialData?.includes(course.id.toString()),
       }));
 
       setCourseOptions(courseData);
     }
-  }, [coursesData]);
+  }, [coursesData, initialData]);
 
   const handleNewCourseSubmission = async (data: CourseInfo) => {
     const { studentIds } = data;

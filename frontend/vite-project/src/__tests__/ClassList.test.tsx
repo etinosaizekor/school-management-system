@@ -15,11 +15,6 @@ const mockClasses = [
   { id: 2, className: "Science", Students: [{ id: 1, name: "John Doe" }] },
 ];
 
-const updatedClasses = [
-  ...mockClasses,
-  { id: 3, className: "History", Students: [] },
-];
-
 describe("Classes Component", () => {
   it("should add a new class to the screen after creation", async () => {
     const createClassMock = vi.fn().mockImplementation((classData) => ({
@@ -34,7 +29,7 @@ describe("Classes Component", () => {
     // Mock the API hooks' return values
     (useCreateClassMutation as any).mockReturnValue([createClassMock]);
     (useGetClassesQuery as any).mockReturnValue({
-      data: { items: updatedClasses },
+      data: { items: mockClasses },
       isLoading: false,
       isSuccess: true,
     });
@@ -58,9 +53,11 @@ describe("Classes Component", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-    // // Wait for the new class to appear on the screen
     await waitFor(() => {
+      // // Wait for the new class to appear on the screen
       expect(screen.getByText("History")).toBeInTheDocument();
+      //The modal is expected to be closed at this point
+      expect(screen.queryByLabelText(/class name/i)).not.toBeInTheDocument();
     });
 
     // Ensure that the mutation was called with the correct data

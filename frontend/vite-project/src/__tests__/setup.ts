@@ -14,7 +14,6 @@ beforeAll(() => {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   }));
-  vi.clearAllMocks();
 });
 
 afterEach(() => {

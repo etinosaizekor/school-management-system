@@ -1,5 +1,5 @@
 import { useForm, useFormContext } from "react-hook-form";
-import { Button, Loader, MultiSelect, TextInput } from "@mantine/core";
+import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { ClassInfo, FormProps, Student, StudentInfo } from "../sharedTypes";
 import {

@@ -120,6 +120,8 @@ function StudentFormModal({
       });
   };
 
+  console.log(watch("dateOfBirth"));
+
   return (
     <CustomModal
       opened={isOpen}

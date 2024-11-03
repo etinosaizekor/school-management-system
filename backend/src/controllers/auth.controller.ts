@@ -6,7 +6,7 @@ import asyncHandler from "express-async-handler";
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body as LoginPayload;
   const result = await authService.login({ email, password });
-  const maxAge = 24 * 60 * 60 * 1000;
+  const maxAge = 1 * 60 * 60 * 1000;
 
   res.cookie("Authorization", result.token, {
     secure: false,
